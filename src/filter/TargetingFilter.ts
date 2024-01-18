@@ -1,6 +1,5 @@
-import { ClientFilterParameters } from "../model";
 
-interface TargetingParameters extends ClientFilterParameters {
+interface TargetingParameters {
     // TODO: add targeting parameters.
 }
 

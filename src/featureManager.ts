@@ -16,13 +16,13 @@ export class FeatureManager {
     }
 
     listFeatureNames(): string[] {
-        // TODO: whether to deduplicate the feature names?
-        return this.#featureFlags.map((flag) => flag.id);
+        const featureNameSet = new Set(this.#features.map((feature) => feature.id));
+        return Array.from(featureNameSet);
     }
 
     // If multiple feature flags are found, the first one takes precedence.
     async isEnabled(featureId: string, context?: unknown): Promise<boolean> {
-        const featureFlag = this.#featureFlags.find((flag) => flag.id === featureId);
+        const featureFlag = this.#features.find((flag) => flag.id === featureId);
         if (featureFlag === undefined) {
             // If the feature is not found, then it is disabled.
             return false;
@@ -61,7 +61,7 @@ export class FeatureManager {
         }
     }
 
-    get #featureFlags(): FeatureDefinition[] {
+    get #features(): FeatureDefinition[] {
         return this.#provider.getFeatureDefinitions();
     }
 
