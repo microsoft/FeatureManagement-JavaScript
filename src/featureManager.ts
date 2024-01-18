@@ -1,22 +1,16 @@
 import { TimewindowFilter } from "./filter/TimeWindowFilter";
-import { FeatureFilter } from "./filter/FeatureFilter";
-import { FEATURE_FLAGS_KEY, FEATURE_MANAGEMENT_KEY, FeatureDeclaration, FeatureManagement, RequirementType } from "./model";
+import { IFeatureFilter } from "./filter/FeatureFilter";
+import { FEATURE_FLAGS_KEY, FEATURE_MANAGEMENT_KEY, FeatureDefinition, FeatureManagement, RequirementType } from "./model";
 
 export class FeatureManager {
-    #dataSource: IFeatureManagerDataSource;
-    #featureFilters: Map<string, FeatureFilter> = new Map();
+    #provider: IFeatureDefinitionProvider;
+    #featureFilters: Map<string, IFeatureFilter> = new Map();
 
-    constructor(inputData: unknown, featureFilters?: FeatureFilter[]) {
-        if (typeof inputData === "object" && inputData instanceof Map) {
-            this.#dataSource = new MapBasedDataSource(inputData);
-        } else if (typeof inputData === "string") {
-            this.#dataSource = new JsonBasedDataSource(inputData);
-        } else {
-            throw new Error("Invalid input data");
-        }
+    constructor(provider: IFeatureDefinitionProvider, options?: FeatureManagerOptions) {
+        this.#provider = provider;
 
         const defaultFilters = [new TimewindowFilter()];
-        for (const filter of [...defaultFilters, ...(featureFilters ?? [])]) {
+        for (const filter of [...defaultFilters, ...(options?.customFilters ?? [])]) {
             this.#featureFilters.set(filter.name, filter);
         }
     }
@@ -26,7 +20,8 @@ export class FeatureManager {
         return this.#featureFlags.map((flag) => flag.id);
     }
 
-    isEnabled(featureId: string): boolean {
+    // If multiple feature flags are found, the first one takes precedence.
+    async isEnabled(featureId: string, context?: unknown): Promise<boolean> {
         const featureFlag = this.#featureFlags.find((flag) => flag.id === featureId);
         if (featureFlag === undefined) {
             // If the feature is not found, then it is disabled.
@@ -47,9 +42,9 @@ export class FeatureManager {
             for (const clientFilter of clientFilters) {
                 const matchedFeatureFilter = this.#featureFilters.get(clientFilter.name);
                 if (matchedFeatureFilter !== undefined) {
-                    if (requirementType === RequirementType.Any && matchedFeatureFilter.evaluate(clientFilter.parameters)) {
+                    if (requirementType === RequirementType.Any && await matchedFeatureFilter.evaluate(clientFilter.parameters, context)) {
                         return true;
-                    } else if (requirementType === RequirementType.All && !matchedFeatureFilter.evaluate(clientFilter.parameters)) {
+                    } else if (requirementType === RequirementType.All && !await matchedFeatureFilter.evaluate(clientFilter.parameters, context)) {
                         return false;
                     }
                 } else {
@@ -66,30 +61,30 @@ export class FeatureManager {
         }
     }
 
-    get #featureFlags(): FeatureDeclaration[] {
-        return this.#dataSource.featureFlags;
+    get #featureFlags(): FeatureDefinition[] {
+        return this.#provider.getFeatureDefinitions();
     }
 
 }
 
-interface IFeatureManagerDataSource {
-    get featureFlags(): FeatureDeclaration[];
+export interface IFeatureDefinitionProvider {
+    getFeatureDefinitions(): FeatureDefinition[];
 }
 
-class MapBasedDataSource implements IFeatureManagerDataSource {
+export class MapBasedFeatureDefinitionProvider implements IFeatureDefinitionProvider {
     #map: Map<string, FeatureManagement>;
 
     constructor(map: Map<string, FeatureManagement>) {
         this.#map = map;
     }
 
-    get featureFlags(): FeatureDeclaration[] {
+    getFeatureDefinitions(): FeatureDefinition[] {
         return this.#map.get(FEATURE_MANAGEMENT_KEY)?.[FEATURE_FLAGS_KEY] ?? [];
     }
 }
 
-class JsonBasedDataSource implements IFeatureManagerDataSource {
-    #featureFlags: FeatureDeclaration[];
+export class JsonBasedFeatureDefinitionProvider implements IFeatureDefinitionProvider {
+    #featureFlags: FeatureDefinition[];
 
     constructor(private json: string) {
         const featureManagement = JSON.parse(this.json) as FeatureManagement;
@@ -101,7 +96,11 @@ class JsonBasedDataSource implements IFeatureManagerDataSource {
         this.#featureFlags = featureManagement[FEATURE_MANAGEMENT_KEY][FEATURE_FLAGS_KEY];
     }
 
-    get featureFlags(): FeatureDeclaration[] {
+    getFeatureDefinitions(): FeatureDefinition[] {
         return this.#featureFlags;
     }
+}
+
+interface FeatureManagerOptions {
+    customFilters?: IFeatureFilter[];
 }

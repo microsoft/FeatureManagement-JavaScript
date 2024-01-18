@@ -1,4 +1,4 @@
-import { FeatureFilter } from "./FeatureFilter";
+import { IFeatureFilter } from "./FeatureFilter";
 
 // [Start, End)
 type TimeWindowParameters = {
@@ -6,7 +6,7 @@ type TimeWindowParameters = {
     End?: string;
 }
 
-export class TimewindowFilter implements FeatureFilter {
+export class TimewindowFilter implements IFeatureFilter {
     name: string = "Microsoft.TimeWindow";
 
     evaluate(parameters: TimeWindowParameters): boolean {

@@ -35,7 +35,7 @@ export type ClientFilterName = string
  */
 export type ClientFilterCollection = ClientFilter[]
 
-export interface FeatureDeclaration {
+export interface FeatureDefinition {
   id: FeatureID
   description?: FeatureDescription
   display_name?: FeatureDisplayName
@@ -79,5 +79,5 @@ export interface ClientFilterParameters {
 export const FEATURE_MANAGEMENT_KEY = "FeatureManagement"
 export const FEATURE_FLAGS_KEY = "FeatureFlags"
 export interface FeatureManagement {
-  [FEATURE_FLAGS_KEY]: FeatureDeclaration[]
+  [FEATURE_FLAGS_KEY]: FeatureDefinition[]
 }
