@@ -1,12 +1,13 @@
 import { TimewindowFilter } from "./filter/TimeWindowFilter";
 import { IFeatureFilter } from "./filter/FeatureFilter";
-import { FEATURE_FLAGS_KEY, FEATURE_MANAGEMENT_KEY, FeatureDefinition, FeatureManagement, RequirementType } from "./model";
+import { FeatureDefinition, RequirementType } from "./model";
+import { IFeatureProvider } from "./featureProvider";
 
 export class FeatureManager {
-    #provider: IFeatureDefinitionProvider;
+    #provider: IFeatureProvider;
     #featureFilters: Map<string, IFeatureFilter> = new Map();
 
-    constructor(provider: IFeatureDefinitionProvider, options?: FeatureManagerOptions) {
+    constructor(provider: IFeatureProvider, options?: FeatureManagerOptions) {
         this.#provider = provider;
 
         const defaultFilters = [new TimewindowFilter()];
@@ -15,14 +16,16 @@ export class FeatureManager {
         }
     }
 
-    listFeatureNames(): string[] {
-        const featureNameSet = new Set(this.#features.map((feature) => feature.id));
+    async listFeatureNames(): Promise<string[]> {
+        const features = await this.#features();
+        const featureNameSet = new Set(features.map((feature) => feature.id));
         return Array.from(featureNameSet);
     }
 
     // If multiple feature flags are found, the first one takes precedence.
     async isEnabled(featureId: string, context?: unknown): Promise<boolean> {
-        const featureFlag = this.#features.find((flag) => flag.id === featureId);
+        const features = await this.#features();
+        const featureFlag = features.find((flag) => flag.id === featureId);
         if (featureFlag === undefined) {
             // If the feature is not found, then it is disabled.
             return false;
@@ -61,44 +64,11 @@ export class FeatureManager {
         }
     }
 
-    get #features(): FeatureDefinition[] {
-        return this.#provider.getFeatureDefinitions();
+    async #features(): Promise<FeatureDefinition[]> {
+        const features = await this.#provider.getFeatureFlags();
+        return features;
     }
 
-}
-
-export interface IFeatureDefinitionProvider {
-    getFeatureDefinitions(): FeatureDefinition[];
-}
-
-export class MapBasedFeatureDefinitionProvider implements IFeatureDefinitionProvider {
-    #map: Map<string, FeatureManagement>;
-
-    constructor(map: Map<string, FeatureManagement>) {
-        this.#map = map;
-    }
-
-    getFeatureDefinitions(): FeatureDefinition[] {
-        return this.#map.get(FEATURE_MANAGEMENT_KEY)?.[FEATURE_FLAGS_KEY] ?? [];
-    }
-}
-
-export class JsonBasedFeatureDefinitionProvider implements IFeatureDefinitionProvider {
-    #featureFlags: FeatureDefinition[];
-
-    constructor(private json: string) {
-        const featureManagement = JSON.parse(this.json) as FeatureManagement;
-
-        if (featureManagement?.[FEATURE_MANAGEMENT_KEY]?.[FEATURE_FLAGS_KEY] === undefined) {
-            throw new Error("Invalid input data");
-        }
-
-        this.#featureFlags = featureManagement[FEATURE_MANAGEMENT_KEY][FEATURE_FLAGS_KEY];
-    }
-
-    getFeatureDefinitions(): FeatureDefinition[] {
-        return this.#featureFlags;
-    }
 }
 
 interface FeatureManagerOptions {

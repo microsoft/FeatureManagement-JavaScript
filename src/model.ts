@@ -61,6 +61,6 @@ export interface ClientFilter {
 // Feature Management Section fed into feature manager.
 export const FEATURE_MANAGEMENT_KEY = "FeatureManagement"
 export const FEATURE_FLAGS_KEY = "FeatureFlags"
-export interface FeatureManagement {
+export interface FeatureConfiguration {
   [FEATURE_FLAGS_KEY]: FeatureDefinition[]
 }

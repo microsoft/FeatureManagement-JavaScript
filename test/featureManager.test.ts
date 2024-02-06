@@ -2,22 +2,25 @@
 // Licensed under the MIT license.
 
 import * as chai from "chai";
+import * as chaiAsPromised from "chai-as-promised";
+chai.use(chaiAsPromised);
 const expect = chai.expect;
 
-import { FeatureManager } from "./exportedApi";
+import { FeatureManager, ConfigurationFeatureProvider } from "./exportedApi";
 
 describe("feature manager", () => {
     it("should load from json string", () => {
-        const json = `{
+        const jsonObject = {
             "FeatureManagement": {
                 "FeatureFlags": [
                     { "id": "Alpha", "description": "", "enabled": true}
                 ]
             }
-        }`;
+        };
 
-        const featureManager = new FeatureManager(json);
-        expect(featureManager.isEnabled("Alpha")).eq(true);
+        const provider = new ConfigurationFeatureProvider(jsonObject);
+        const featureManager = new FeatureManager(provider);
+        return expect(featureManager.isEnabled("Alpha")).eventually.eq(true);
     });
 
     it("should load from map", () => {
@@ -28,8 +31,9 @@ describe("feature manager", () => {
             ],
         });
 
-        const featureManager = new FeatureManager(dataSource);
-        expect(featureManager.isEnabled("Alpha")).eq(true);
+        const provider = new ConfigurationFeatureProvider(dataSource);
+        const featureManager = new FeatureManager(provider);
+        return expect(featureManager.isEnabled("Alpha")).eventually.eq(true);
     });
 
     it("shoud evaluate features without conditions", () => {
@@ -41,9 +45,12 @@ describe("feature manager", () => {
             ],
         });
 
-        const featureManager = new FeatureManager(dataSource);
-        expect(featureManager.isEnabled("Alpha")).eq(true);
-        expect(featureManager.isEnabled("Beta")).eq(false);
+        const provider = new ConfigurationFeatureProvider(dataSource);
+        const featureManager = new FeatureManager(provider);
+        return Promise.all([
+            expect(featureManager.isEnabled("Alpha")).eventually.eq(true),
+            expect(featureManager.isEnabled("Beta")).eventually.eq(false)
+        ]);
     });
 
     it("shoud evaluate features with conditions");
