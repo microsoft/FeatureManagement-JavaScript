@@ -1,13 +1,16 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import { TimewindowFilter } from "./filter/TimeWindowFilter";
 import { IFeatureFilter } from "./filter/FeatureFilter";
-import { FeatureDefinition, RequirementType } from "./model";
-import { IFeatureProvider } from "./featureProvider";
+import { RequirementType } from "./model";
+import { IFeatureFlagProvider } from "./featureProvider";
 
 export class FeatureManager {
-    #provider: IFeatureProvider;
+    #provider: IFeatureFlagProvider;
     #featureFilters: Map<string, IFeatureFilter> = new Map();
 
-    constructor(provider: IFeatureProvider, options?: FeatureManagerOptions) {
+    constructor(provider: IFeatureFlagProvider, options?: FeatureManagerOptions) {
         this.#provider = provider;
 
         const defaultFilters = [new TimewindowFilter()];
@@ -17,15 +20,14 @@ export class FeatureManager {
     }
 
     async listFeatureNames(): Promise<string[]> {
-        const features = await this.#features();
+        const features = await this.#provider.getFeatureFlags();
         const featureNameSet = new Set(features.map((feature) => feature.id));
         return Array.from(featureNameSet);
     }
 
     // If multiple feature flags are found, the first one takes precedence.
-    async isEnabled(featureId: string, context?: unknown): Promise<boolean> {
-        const features = await this.#features();
-        const featureFlag = features.find((flag) => flag.id === featureId);
+    async isEnabled(featureName: string, context?: unknown): Promise<boolean> {
+        const featureFlag = await this.#provider.getFeatureFlag(featureName);
         if (featureFlag === undefined) {
             // If the feature is not found, then it is disabled.
             return false;
@@ -62,11 +64,6 @@ export class FeatureManager {
                 return true;
             }
         }
-    }
-
-    async #features(): Promise<FeatureDefinition[]> {
-        const features = await this.#provider.getFeatureFlags();
-        return features;
     }
 
 }

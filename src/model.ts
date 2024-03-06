@@ -3,7 +3,7 @@
 
 // Converted from https://github.com/Azure/AppConfiguration/blob/main/docs/FeatureManagement/FeatureFlag.v1.1.0.schema.json
 
-export interface FeatureDefinition {
+export interface FeatureFlag {
   /**
    * An ID used to uniquely identify and reference the feature.
    */
@@ -59,8 +59,18 @@ export interface ClientFilter {
 }
 
 // Feature Management Section fed into feature manager.
-export const FEATURE_MANAGEMENT_KEY = "FeatureManagement"
-export const FEATURE_FLAGS_KEY = "FeatureFlags"
-export interface FeatureConfiguration {
-  [FEATURE_FLAGS_KEY]: FeatureDefinition[]
+// Converted from https://github.com/Azure/AppConfiguration/blob/main/docs/FeatureManagement/FeatureManagement.v1.0.0.schema.json
+
+export const FEATURE_MANAGEMENT_KEY = "feature_management"
+export const FEATURE_FLAGS_KEY = "feature_flags"
+
+export interface FeatureManagementConfiguration {
+  feature_management: FeatureManagement
+}
+
+/**
+ * Declares feature management configuration.
+ */
+export interface FeatureManagement {
+  feature_flags: FeatureFlag[];
 }

@@ -1,26 +1,58 @@
-import { IGettable, isGettable } from "./gettable";
-import { FeatureDefinition, FeatureConfiguration, FEATURE_MANAGEMENT_KEY, FEATURE_FLAGS_KEY } from "./model";
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
 
-export interface IFeatureProvider {
-    getFeatureFlags(): Promise<FeatureDefinition[]>;
+import { IGettable } from "./gettable";
+import { FeatureFlag, FeatureManagementConfiguration, FEATURE_MANAGEMENT_KEY, FEATURE_FLAGS_KEY } from "./model";
+
+export interface IFeatureFlagProvider {
+    /**
+     * Get all feature flags.
+     */
+    getFeatureFlags(): Promise<FeatureFlag[]>;
+
+    /**
+     * Get a feature flag by name.
+     * @param featureName The name of the feature flag.
+     */
+    getFeatureFlag(featureName: string): Promise<FeatureFlag | undefined>;
 }
 
-export class ConfigurationFeatureProvider implements IFeatureProvider {
-    #configuration: IGettable | Record<string, unknown>;
+/**
+ * A feature flag provider that uses a map-like configuration to provide feature flags.
+ */
+export class ConfigurationMapFeatureFlagProvider implements IFeatureFlagProvider {
+    #configuration: IGettable;
 
-    constructor(configuration: Record<string, unknown> | IGettable) {
-        if (typeof configuration !== "object") {
-            throw new Error("Configuration must be an object.");
-        }
+    constructor(configuration: IGettable) {
+        this.#configuration = configuration;
+    }
+    async getFeatureFlag(featureName: string): Promise<FeatureFlag | undefined> {
+        const featureConfig = this.#configuration.get<FeatureManagementConfiguration>(FEATURE_MANAGEMENT_KEY);
+        return featureConfig?.[FEATURE_FLAGS_KEY]?.find((feature) => feature.id === featureName);
+    }
+
+    async getFeatureFlags(): Promise<FeatureFlag[]> {
+        const featureConfig = this.#configuration.get<FeatureManagementConfiguration>(FEATURE_MANAGEMENT_KEY);
+        return featureConfig?.[FEATURE_FLAGS_KEY] ?? [];
+    }
+}
+
+/**
+ * A feature flag provider that uses an object-like configuration to provide feature flags.
+ */
+export class ConfigurationObjectFeatureFlagProvider implements IFeatureFlagProvider {
+    #configuration: Record<string, unknown>;
+
+    constructor(configuration: Record<string, unknown>) {
         this.#configuration = configuration;
     }
 
-    async getFeatureFlags(): Promise<FeatureDefinition[]> {
-        if (isGettable(this.#configuration)) {
-            const featureConfig = this.#configuration.get<FeatureConfiguration>(FEATURE_MANAGEMENT_KEY);
-            return featureConfig?.[FEATURE_FLAGS_KEY] ?? [];
-        } else {
-            return this.#configuration[FEATURE_MANAGEMENT_KEY]?.[FEATURE_FLAGS_KEY] ?? [];
-        }
+    async getFeatureFlag(featureName: string): Promise<FeatureFlag | undefined> {
+        const featureFlags = this.#configuration[FEATURE_MANAGEMENT_KEY]?.[FEATURE_FLAGS_KEY];
+        return featureFlags?.find((feature: FeatureFlag) => feature.id === featureName);
+    }
+
+    async getFeatureFlags(): Promise<FeatureFlag[]> {
+        return this.#configuration[FEATURE_MANAGEMENT_KEY]?.[FEATURE_FLAGS_KEY] ?? [];
     }
 }

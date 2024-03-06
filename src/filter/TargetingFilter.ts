@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
 
 interface TargetingParameters {
     // TODO: add targeting parameters.

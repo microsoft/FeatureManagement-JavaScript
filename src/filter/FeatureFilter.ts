@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
 
 export interface IFeatureFilter {
     name: string; //e.g. Microsoft.TimeWindow

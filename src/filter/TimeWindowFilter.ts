@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import { IFeatureFilter } from "./FeatureFilter";
 
 // [Start, End)
