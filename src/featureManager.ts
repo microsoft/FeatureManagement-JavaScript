@@ -40,7 +40,7 @@ export class FeatureManager {
 
         const clientFilters = featureFlag.conditions?.client_filters;
         if (clientFilters !== undefined) {
-            const requirementType = featureFlag.conditions?.requirement_type ?? RequirementType.All; // default to all.
+            const requirementType = featureFlag.conditions?.requirement_type ?? RequirementType.Any; // default to any.
             for (const clientFilter of clientFilters) {
                 const matchedFeatureFilter = this.#featureFilters.get(clientFilter.name);
                 if (matchedFeatureFilter !== undefined) {
