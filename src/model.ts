@@ -37,7 +37,7 @@ export enum RequirementType {
 
 export interface FeatureEnablementConditions {
   /**
-   * Determines whether any or all registered client filters must be enabled for the feature to be considered enabled.
+   * Determines whether any or all registered client filters must be evaluated as true for the feature to be considered enabled.
    */
   requirement_type?: RequirementType
 

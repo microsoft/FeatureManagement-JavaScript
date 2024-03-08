@@ -39,10 +39,7 @@ export class FeatureManager {
         }
 
         const clientFilters = featureFlag.conditions?.client_filters;
-        if (clientFilters === undefined) {
-            // If there are no client filters, then the feature is enabled.
-            return true;
-        } else {
+        if (clientFilters !== undefined) {
             const requirementType = featureFlag.conditions?.requirement_type ?? RequirementType.All; // default to all.
             for (const clientFilter of clientFilters) {
                 const matchedFeatureFilter = this.#featureFilters.get(clientFilter.name);
@@ -63,6 +60,9 @@ export class FeatureManager {
             } else {
                 return true;
             }
+        } else {
+           // If there are no client filters, then the feature is enabled.
+           return true;
         }
     }
 
