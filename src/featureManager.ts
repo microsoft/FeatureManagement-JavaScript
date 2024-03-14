@@ -13,7 +13,7 @@ export class FeatureManager {
     constructor(provider: IFeatureFlagProvider, options?: FeatureManagerOptions) {
         this.#provider = provider;
 
-        const builtinFilters = [new TimewindowFilter()];
+        const builtinFilters = [new TimewindowFilter()]; // TODO: add TargetFilter as built-in filter.
 
         // If a custom filter shares a name with an existing filter, the custom filter overrides the existing one.
         for (const filter of [...builtinFilters, ...(options?.customFilters ?? [])]) {
