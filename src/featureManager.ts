@@ -45,14 +45,16 @@ export class FeatureManager {
             const requirementType = featureFlag.conditions?.requirement_type ?? RequirementType.Any; // default to any.
             for (const clientFilter of clientFilters) {
                 const matchedFeatureFilter = this.#featureFilters.get(clientFilter.name);
+                const contextWithFeatureName = { featureName, parameters: clientFilter.parameters };
                 if (matchedFeatureFilter !== undefined) {
-                    if (requirementType === RequirementType.Any && await matchedFeatureFilter.evaluate(clientFilter.parameters, context)) {
+                    if (requirementType === RequirementType.Any && await matchedFeatureFilter.evaluate(contextWithFeatureName, context)) {
                         return true;
-                    } else if (requirementType === RequirementType.All && !await matchedFeatureFilter.evaluate(clientFilter.parameters, context)) {
+                    } else if (requirementType === RequirementType.All && !await matchedFeatureFilter.evaluate(contextWithFeatureName, context)) {
                         return false;
                     }
                 } else {
                     console.warn(`Feature filter ${clientFilter.name} is not found.`);
+                    return false;
                 }
             }
 
@@ -63,8 +65,8 @@ export class FeatureManager {
                 return true;
             }
         } else {
-           // If there are no client filters, then the feature is enabled.
-           return true;
+            // If there are no client filters, then the feature is enabled.
+            return true;
         }
     }
 

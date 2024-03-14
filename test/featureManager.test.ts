@@ -55,7 +55,7 @@ describe("feature manager", () => {
         return expect(featureManager.isEnabled("Alpha")).eventually.eq(false);
     });
 
-    it("shoud evaluate features without conditions", () => {
+    it("should evaluate features without conditions", () => {
         const dataSource = new Map();
         dataSource.set("feature_management", {
             feature_flags: [

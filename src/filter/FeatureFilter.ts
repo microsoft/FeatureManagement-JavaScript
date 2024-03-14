@@ -3,6 +3,10 @@
 
 export interface IFeatureFilter {
     name: string; // e.g. Microsoft.TimeWindow
-    evaluate(parameters?: unknown, appContext?: unknown): Promise<boolean> | boolean;
+    evaluate(context?: IFeatureFilterEvaluationContext, appContext?: unknown): Promise<boolean> | boolean;
 }
 
+export interface IFeatureFilterEvaluationContext {
+    featureName: string;
+    parameters?: unknown;
+}
