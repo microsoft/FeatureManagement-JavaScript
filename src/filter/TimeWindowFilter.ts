@@ -18,6 +18,7 @@ export class TimewindowFilter implements IFeatureFilter {
 
         if (startTime === undefined && endTime === undefined) {
             // If neither start nor end time is specified, then the filter is not applicable.
+            console.warn(`The ${this.name} feature filter is not valid. It must specify either 'Start', 'End', or both.`);
             return false;
         }
         const now = new Date();

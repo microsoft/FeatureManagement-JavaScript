@@ -52,7 +52,7 @@ export class FeatureManager {
                         return false;
                     }
                 } else {
-                    // TODO: log warning that the client filter is not found.
+                    console.warn(`Feature filter ${clientFilter.name} is not found.`);
                 }
             }
 
