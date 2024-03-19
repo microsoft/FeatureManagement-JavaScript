@@ -41,33 +41,34 @@ export class FeatureManager {
         }
 
         const clientFilters = featureFlag.conditions?.client_filters;
-        if (clientFilters !== undefined && clientFilters.length > 0) {
-            const requirementType = featureFlag.conditions?.requirement_type ?? RequirementType.Any; // default to any.
-            for (const clientFilter of clientFilters) {
-                const matchedFeatureFilter = this.#featureFilters.get(clientFilter.name);
-                const contextWithFeatureName = { featureName, parameters: clientFilter.parameters };
-                if (matchedFeatureFilter !== undefined) {
-                    if (requirementType === RequirementType.Any && await matchedFeatureFilter.evaluate(contextWithFeatureName, context)) {
-                        return true;
-                    } else if (requirementType === RequirementType.All && !await matchedFeatureFilter.evaluate(contextWithFeatureName, context)) {
-                        return false;
-                    }
-                } else {
-                    console.warn(`Feature filter ${clientFilter.name} is not found.`);
-                    return false;
-                }
-            }
-
-            // If we get here, then we have not found a client filter that matches the requirement type.
-            if (requirementType === RequirementType.Any) {
-                return false;
-            } else {
-                return true;
-            }
-        } else {
+        if (clientFilters === undefined || clientFilters.length <= 0) {
             // If there are no client filters, then the feature is enabled.
             return true;
         }
+
+        const requirementType = featureFlag.conditions?.requirement_type ?? RequirementType.Any; // default to any.
+
+        /**
+         * While iterating through the client filters, we short-circuit the evaluation based on the requirement type.
+         * - When requirement type is "All", the feature is enabled if all client filters are matched. If any client filter is not matched, the feature is disabled, otherwise it is enabled. `shortCircuitEvaluationResult` is false.
+         * - When requirement type is "Any", the feature is enabled if any client filter is matched. If any client filter is matched, the feature is enabled, otherwise it is disabled. `shortCircuitEvaluationResult` is true.
+         */
+        const shortCircuitEvaluationResult: boolean = requirementType === RequirementType.Any;
+
+        for (const clientFilter of clientFilters) {
+            const matchedFeatureFilter = this.#featureFilters.get(clientFilter.name);
+            const contextWithFeatureName = { featureName, parameters: clientFilter.parameters };
+            if (matchedFeatureFilter === undefined) {
+                console.warn(`Feature filter ${clientFilter.name} is not found.`);
+                return false;
+            }
+            if (await matchedFeatureFilter.evaluate(contextWithFeatureName, context) === shortCircuitEvaluationResult) {
+                return shortCircuitEvaluationResult;
+            }
+        }
+
+        // If we get here, then we have not found a client filter that matches the requirement type.
+        return !shortCircuitEvaluationResult;
     }
 
 }
