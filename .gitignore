@@ -396,3 +396,18 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# bundled folder
+dist/
+dist-esm/
+out/
+types/
+
+# dotenv
+.env
+
+# npm pack
+*.tgz
+
+# examples
+examples/package-lock.json
