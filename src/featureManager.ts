@@ -5,6 +5,7 @@ import { TimewindowFilter } from "./filter/TimeWindowFilter";
 import { IFeatureFilter } from "./filter/FeatureFilter";
 import { RequirementType } from "./model";
 import { IFeatureFlagProvider } from "./featureProvider";
+import { TargetingFilter } from "./filter/TargetingFilter";
 
 export class FeatureManager {
     #provider: IFeatureFlagProvider;
@@ -13,7 +14,7 @@ export class FeatureManager {
     constructor(provider: IFeatureFlagProvider, options?: FeatureManagerOptions) {
         this.#provider = provider;
 
-        const builtinFilters = [new TimewindowFilter()]; // TODO: add TargetFilter as built-in filter.
+        const builtinFilters = [new TimewindowFilter(), new TargetingFilter()];
 
         // If a custom filter shares a name with an existing filter, the custom filter overrides the existing one.
         for (const filter of [...builtinFilters, ...(options?.customFilters ?? [])]) {
