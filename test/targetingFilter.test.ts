@@ -57,6 +57,7 @@ describe("targeting filter", () => {
             // default rollout 25%
             // - "Aiden\nComplexTargeting": ~62.9%
             expect(featureManager.isEnabled("ComplexTargeting", { userId: "Aiden" })).eventually.eq(false, "Aiden is not in the 25% default rollout"),
+
             // - "Blossom\nComplexTargeting": ~20.2%
             expect(featureManager.isEnabled("ComplexTargeting", { userId: "Blossom" })).eventually.eq(true, "Blossom is in the 25% default rollout"),
             expect(featureManager.isEnabled("ComplexTargeting", { userId: "Alice" })).eventually.eq(true, "Alice is directly targeted"),
@@ -65,15 +66,16 @@ describe("targeting filter", () => {
             expect(featureManager.isEnabled("ComplexTargeting", { userId: "Aiden", groups: ["Stage1"] })).eventually.eq(true, "Aiden is in because Stage1 is 100% rollout"),
 
             // Stage2 group is 50% rollout
-            // - "\nComplexTargeting\nStage2": ~78.7%
-            expect(featureManager.isEnabled("ComplexTargeting", { groups: ["Stage2"] })).eventually.eq(false, "Empty user will hit the 50% rollout of group Stage2"),
+            // - "\nComplexTargeting\nStage2": ~78.7% >= 50% (Stage2 is 50% rollout)
+            // - "\nComplexTargeting": ~38.9% >= 25% (default rollout percentage)
+            expect(featureManager.isEnabled("ComplexTargeting", { groups: ["Stage2"] })).eventually.eq(false, "Empty user is not in the 50% rollout of group Stage2"),
+
             // - "Aiden\nComplexTargeting\nStage2": ~15.6%
-            expect(featureManager.isEnabled("ComplexTargeting", { userId: "Aiden", groups: ["Stage2"] })).eventually.eq(true, "Aiden is in the 50% rollout"),
-            // TODO:
-            // In the centralized test cases it is Chad here, but "Chad\nComplexTargeting\nStage2": ~33.8%, is in the 50% rollout.
-            // Need to investigate whether the case or implementation is wrong.
-            // - "Cad\nComplexTargeting\nStage2": ~80.3%
-            expect(featureManager.isEnabled("ComplexTargeting", { userId: "Cad", groups: ["Stage2"] })).eventually.eq(false, "Cad is not in the 50% rollout"),
+            expect(featureManager.isEnabled("ComplexTargeting", { userId: "Aiden", groups: ["Stage2"] })).eventually.eq(true, "Aiden is in the 50% rollout of group Stage2"),
+
+            // - "Chris\nComplexTargeting\nStage2": 55.3% >= 50% (Stage2 is 50% rollout)
+            // - "Chris\nComplexTargeting": 72.3% >= 25% (default rollout percentage)
+            expect(featureManager.isEnabled("ComplexTargeting", { userId: "Chris", groups: ["Stage2"] })).eventually.eq(false, "Chris is not in the 50% rollout of group Stage2"),
 
             // exclusions
             expect(featureManager.isEnabled("ComplexTargeting", { groups: ["Stage3"] })).eventually.eq(false, "Stage3 group is excluded"),
