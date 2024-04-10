@@ -38,6 +38,7 @@ export class TargetingFilter implements IFeatureFilter {
         }
 
         const { featureName, parameters } = context;
+        TargetingFilter.#validateParameters(parameters);
 
         if (parameters.Audience.Exclusion !== undefined) {
             // check if the user is in the exclusion list
@@ -91,6 +92,20 @@ export class TargetingFilter implements IFeatureFilter {
         const contextMarker = stringToUint32(audienceContextId);
         const contextPercentage = (contextMarker / 0xFFFFFFFF) * 100;
         return contextPercentage < rolloutPercentage;
+    }
+
+    static #validateParameters(parameters: TargetingFilterParameters): void {
+        if (parameters.Audience.DefaultRolloutPercentage < 0 || parameters.Audience.DefaultRolloutPercentage > 100) {
+            throw new Error("Audience.DefaultRolloutPercentage must be a number between 0 and 100.");
+        }
+        // validate RolloutPercentage for each group
+        if (parameters.Audience.Groups !== undefined) {
+            for (const group of parameters.Audience.Groups) {
+                if (group.RolloutPercentage < 0 || group.RolloutPercentage > 100) {
+                    throw new Error(`RolloutPercentage of group ${group.Name} must be a number between 0 and 100.`);
+                }
+            }
+        }
     }
 }
 

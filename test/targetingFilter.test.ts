@@ -43,7 +43,54 @@ const complexTargetingFeature = {
     }
 };
 
+const createTargetingFeatureWithRolloutPercentage = (name: string, defaultRolloutPercentage: number, groups?: { Name: string, RolloutPercentage: number }[]) => {
+    const featureFlag = {
+        "id": name,
+        "description": "A feature flag using a targeting filter with invalid parameters.",
+        "enabled": true,
+        "conditions": {
+            "client_filters": [
+                {
+                    "name": "Microsoft.Targeting",
+                    "parameters": {
+                        "Audience": {
+                            "DefaultRolloutPercentage": defaultRolloutPercentage
+                        }
+                    }
+                }
+            ]
+        }
+    };
+    if (groups && groups.length > 0) {
+        (featureFlag.conditions.client_filters[0].parameters.Audience as any).Groups = groups;
+    }
+    return featureFlag;
+};
+
 describe("targeting filter", () => {
+    it("should validate parameters", () => {
+        const dataSource = new Map();
+        dataSource.set("feature_management", {
+            feature_flags: [
+                createTargetingFeatureWithRolloutPercentage("InvalidTargeting1", -1),
+                createTargetingFeatureWithRolloutPercentage("InvalidTargeting2", 101),
+                // invalid group rollout percentage
+                createTargetingFeatureWithRolloutPercentage("InvalidTargeting3", 25, [{ Name: "Stage1", RolloutPercentage: -1 }]),
+                createTargetingFeatureWithRolloutPercentage("InvalidTargeting4", 25, [{ Name: "Stage1", RolloutPercentage: 101 }]),
+            ]
+        });
+
+        const provider = new ConfigurationMapFeatureFlagProvider(dataSource);
+        const featureManager = new FeatureManager(provider);
+
+        return Promise.all([
+            expect(featureManager.isEnabled("InvalidTargeting1")).eventually.rejectedWith("Audience.DefaultRolloutPercentage must be a number between 0 and 100."),
+            expect(featureManager.isEnabled("InvalidTargeting2")).eventually.rejectedWith("Audience.DefaultRolloutPercentage must be a number between 0 and 100."),
+            expect(featureManager.isEnabled("InvalidTargeting3")).eventually.rejectedWith("RolloutPercentage of group Stage1 must be a number between 0 and 100."),
+            expect(featureManager.isEnabled("InvalidTargeting4")).eventually.rejectedWith("RolloutPercentage of group Stage1 must be a number between 0 and 100."),
+        ]);
+    });
+
     it("should evaluate feature with targeting filter", () => {
         const dataSource = new Map();
         dataSource.set("feature_management", {
