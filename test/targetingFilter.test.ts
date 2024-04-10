@@ -8,7 +8,7 @@ const expect = chai.expect;
 
 import { FeatureManager, ConfigurationMapFeatureFlagProvider } from "./exportedApi";
 
-const complextTargetingFeature = {
+const complexTargetingFeature = {
     "id": "ComplexTargeting",
     "description": "A feature flag using a targeting filter, that will return true for Alice, Stage1, and 50% of Stage2. Dave and Stage3 are excluded. The default rollout percentage is 25%.",
     "enabled": true,
@@ -47,7 +47,7 @@ describe("targeting filter", () => {
     it("should evaluate feature with targeting filter", () => {
         const dataSource = new Map();
         dataSource.set("feature_management", {
-            feature_flags: [complextTargetingFeature]
+            feature_flags: [complexTargetingFeature]
         });
 
         const provider = new ConfigurationMapFeatureFlagProvider(dataSource);

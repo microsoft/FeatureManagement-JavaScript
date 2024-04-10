@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { TimewindowFilter } from "./filter/TimeWindowFilter";
+import { TimeWindowFilter } from "./filter/TimeWindowFilter";
 import { IFeatureFilter } from "./filter/FeatureFilter";
 import { RequirementType } from "./model";
 import { IFeatureFlagProvider } from "./featureProvider";
@@ -14,7 +14,7 @@ export class FeatureManager {
     constructor(provider: IFeatureFlagProvider, options?: FeatureManagerOptions) {
         this.#provider = provider;
 
-        const builtinFilters = [new TimewindowFilter(), new TargetingFilter()];
+        const builtinFilters = [new TimeWindowFilter(), new TargetingFilter()];
 
         // If a custom filter shares a name with an existing filter, the custom filter overrides the existing one.
         for (const filter of [...builtinFilters, ...(options?.customFilters ?? [])]) {
