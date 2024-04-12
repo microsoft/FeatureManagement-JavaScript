@@ -32,13 +32,13 @@ type TargetingFilterAppContext = {
 export class TargetingFilter implements IFeatureFilter {
     name: string = "Microsoft.Targeting";
 
-    evaluate(context?: TargetingFilterEvaluationContext, appContext?: TargetingFilterAppContext): boolean | Promise<boolean> {
-        if (context === undefined) {
-            throw new Error("The context is required.");
-        }
-
+    evaluate(context: TargetingFilterEvaluationContext, appContext?: TargetingFilterAppContext): boolean | Promise<boolean> {
         const { featureName, parameters } = context;
         TargetingFilter.#validateParameters(parameters);
+
+        if (appContext === undefined) {
+            throw new Error("The app context is required for targeting filter.");
+        }
 
         if (parameters.Audience.Exclusion !== undefined) {
             // check if the user is in the exclusion list

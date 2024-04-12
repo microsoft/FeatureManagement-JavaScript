@@ -84,10 +84,10 @@ describe("targeting filter", () => {
         const featureManager = new FeatureManager(provider);
 
         return Promise.all([
-            expect(featureManager.isEnabled("InvalidTargeting1")).eventually.rejectedWith("Audience.DefaultRolloutPercentage must be a number between 0 and 100."),
-            expect(featureManager.isEnabled("InvalidTargeting2")).eventually.rejectedWith("Audience.DefaultRolloutPercentage must be a number between 0 and 100."),
-            expect(featureManager.isEnabled("InvalidTargeting3")).eventually.rejectedWith("RolloutPercentage of group Stage1 must be a number between 0 and 100."),
-            expect(featureManager.isEnabled("InvalidTargeting4")).eventually.rejectedWith("RolloutPercentage of group Stage1 must be a number between 0 and 100."),
+            expect(featureManager.isEnabled("InvalidTargeting1", {})).eventually.rejectedWith("Audience.DefaultRolloutPercentage must be a number between 0 and 100."),
+            expect(featureManager.isEnabled("InvalidTargeting2", {})).eventually.rejectedWith("Audience.DefaultRolloutPercentage must be a number between 0 and 100."),
+            expect(featureManager.isEnabled("InvalidTargeting3", {})).eventually.rejectedWith("RolloutPercentage of group Stage1 must be a number between 0 and 100."),
+            expect(featureManager.isEnabled("InvalidTargeting4", {})).eventually.rejectedWith("RolloutPercentage of group Stage1 must be a number between 0 and 100."),
         ]);
     });
 
@@ -130,5 +130,17 @@ describe("targeting filter", () => {
             expect(featureManager.isEnabled("ComplexTargeting", { userId: "Blossom", groups: ["Stage3"] })).eventually.eq(false, "Blossom is excluded because she is part of Stage3 group"),
             expect(featureManager.isEnabled("ComplexTargeting", { userId: "Dave", groups: ["Stage1"] })).eventually.eq(false, "Dave is excluded because he is in the exclusion list"),
         ]);
+    });
+
+    it("should throw error if app context is not provided", () => {
+        const dataSource = new Map();
+        dataSource.set("feature_management", {
+            feature_flags: [complexTargetingFeature]
+        });
+
+        const provider = new ConfigurationMapFeatureFlagProvider(dataSource);
+        const featureManager = new FeatureManager(provider);
+
+        return expect(featureManager.isEnabled("ComplexTargeting")).eventually.rejectedWith("The app context is required for targeting filter.");
     });
 });
