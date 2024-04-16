@@ -44,6 +44,7 @@
         "eol-last": [
             "error",
             "always"
-        ]
+        ],
+        "no-trailing-spaces": "warn"
     }
 }

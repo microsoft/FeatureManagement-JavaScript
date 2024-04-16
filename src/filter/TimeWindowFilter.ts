@@ -14,7 +14,7 @@ type TimeWindowFilterEvaluationContext = {
     parameters: TimeWindowParameters;
 }
 
-export class TimewindowFilter implements IFeatureFilter {
+export class TimeWindowFilter implements IFeatureFilter {
     name: string = "Microsoft.TimeWindow";
 
     evaluate(context: TimeWindowFilterEvaluationContext): boolean {
