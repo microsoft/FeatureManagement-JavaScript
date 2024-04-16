@@ -2,7 +2,20 @@
   "name": "@microsoft/feature-management",
   "version": "1.0.0-preview",
   "description": "Feature Management is a library for enabling/disabling features at runtime. Developers can use feature flags in simple use cases like conditional statement to more advanced scenarios like conditionally adding routes.",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "module": "./dist-esm/index.js",
+  "types": "types/index.d.ts",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.map",
+    "dist/**/*.d.ts",
+    "dist-esm/**/*.js",
+    "dist-esm/**/*.map",
+    "dist-esm/**/*.d.ts",
+    "types/**/*.d.ts",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
     "build": "npm run clean && npm run build-cjs && npm run build-esm && npm run build-test",
     "build-cjs": "rollup --config",
