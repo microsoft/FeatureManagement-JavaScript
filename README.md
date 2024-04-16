@@ -1,14 +1,63 @@
-# Project
+# Microsoft Feature Management for JavaScript
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+Feature Management is a library for enabling/disabling features at runtime.
+Developers can use feature flags in simple use cases like conditional statement to more advanced scenarios like conditionally adding routes.
 
-As the maintainer of this project, please make a few updates:
+## Getting Started
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+### Prerequisites
+
+- Node.js LTS version
+
+### Usage
+
+You can use feature flags from the Azure App Configuration service, local files or any other sources.
+
+#### Use feature flags from Azure App Configuration
+
+The App Configuration JavaScript provider provides feature flags in as a `Map` object.
+A builtin `ConfigurationMapFeatureFlagProvider` helps to load feature flags in this case.
+
+```js
+const appConfig = load(connectionString, {featureFlagOptions}); // load feature flags from Azure App Configuration service
+const featureProvider = new ConfigurationMapFeatureFlagProvider(appConfig);
+const featureManager = new FeatureManager(featureProvider);
+const isAlphaEnabled = await featureManager.isEnabled("Alpha");
+console.log("Feature Alpha is:", isAlphaEnabled);
+```
+
+#### Use feature flags from a json file
+
+A sample JSON file with the following format can be used to load feature flags.
+The JSON file can be read and parsed as an object as a whole.
+A builtin `ConfigurationObjectFeatureFlagProvider` helps to load feature flags in this case.
+
+Content of `sample.json`:
+```json
+{
+    "feature_management": {
+        "feature_flags": [
+            {
+                "id": "Alpha",
+                "description": "",
+                "enabled": "true",
+                "conditions": {
+                    "client_filters": []
+                }
+            }
+        ]
+    }
+}
+```
+
+Load feature flags from `sample.json` file.
+```js
+const config = JSON.parse(await fs.readFile("path/to/sample.json"));
+const featureProvider = new ConfigurationObjectFeatureFlagProvider(config);
+const featureManager = new FeatureManager(featureProvider);
+const isAlphaEnabled = await featureManager.isEnabled("Alpha");
+console.log("Feature Alpha is:", isAlphaEnabled);
+```
 
 ## Contributing
 
