@@ -32,7 +32,7 @@ type TargetingFilterAppContext = {
 export class TargetingFilter implements IFeatureFilter {
     name: string = "Microsoft.Targeting";
 
-    evaluate(context: TargetingFilterEvaluationContext, appContext?: TargetingFilterAppContext): boolean | Promise<boolean> {
+    evaluate(context: TargetingFilterEvaluationContext, appContext?: TargetingFilterAppContext): boolean {
         const { featureName, parameters } = context;
         TargetingFilter.#validateParameters(parameters);
 
