@@ -36,8 +36,8 @@ export class FeatureManager {
             return false;
         }
 
-        if (featureFlag.enabled === false) {
-            // If the feature is explicitly disabled, then it is disabled.
+        if (featureFlag.enabled !== true) {
+            // If the feature is not explicitly enabled, then it is disabled by default.
             return false;
         }
 
