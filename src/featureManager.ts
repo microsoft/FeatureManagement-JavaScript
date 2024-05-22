@@ -36,6 +36,9 @@ export class FeatureManager {
             return false;
         }
 
+        // Ensure that the feature flag is in the correct format. Feature providers should validate the feature flags, but we do it here as a safeguard.
+        validateFeatureFlagFormat(featureFlag);
+
         if (featureFlag.enabled !== true) {
             // If the feature is not explicitly enabled, then it is disabled by default.
             return false;
@@ -76,4 +79,10 @@ export class FeatureManager {
 
 interface FeatureManagerOptions {
     customFilters?: IFeatureFilter[];
+}
+
+function validateFeatureFlagFormat(featureFlag: any): void {
+    if (featureFlag.enabled !== undefined && typeof featureFlag.enabled !== "boolean") {
+        throw new Error(`Feature flag ${featureFlag.id} has an invalid 'enabled' value.`);
+    }
 }

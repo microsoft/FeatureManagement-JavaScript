@@ -29,7 +29,7 @@ const featureFlagsDataObject = {
             },
             {
                 "id": "InvalidEnabled",
-                "description": "A feature flag with an invalid 'enabled' value, that returns false.",
+                "description": "A feature flag with an invalid 'enabled' value, that throws an exception.",
                 "enabled": "invalid",
                 "conditions": {
                     "client_filters": []
@@ -61,7 +61,7 @@ describe("feature flags with no filters", () => {
         return Promise.all([
             expect(featureManager.isEnabled("BooleanTrue")).eventually.eq(true),
             expect(featureManager.isEnabled("BooleanFalse")).eventually.eq(false),
-            expect(featureManager.isEnabled("InvalidEnabled")).eventually.eq(false),
+            expect(featureManager.isEnabled("InvalidEnabled")).eventually.rejectedWith("Feature flag InvalidEnabled has an invalid 'enabled' value."),
             expect(featureManager.isEnabled("Minimal")).eventually.eq(true),
             expect(featureManager.isEnabled("NoEnabled")).eventually.eq(false),
             expect(featureManager.isEnabled("EmptyConditions")).eventually.eq(true)
