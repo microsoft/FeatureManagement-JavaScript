@@ -3,11 +3,16 @@
 
 import { TimeWindowFilter } from "./filter/TimeWindowFilter";
 import { IFeatureFilter } from "./filter/FeatureFilter";
-import { RequirementType } from "./model";
+import { FeatureFlag, RequirementType, VariantDefinition } from "./model";
 import { IFeatureFlagProvider } from "./featureProvider";
 import { TargetingFilter } from "./filter/TargetingFilter";
+import { Variant } from "./variant/Variant";
+import { IFeatureManager } from "./IFeatureManager";
+import { IVariantFeatureManager } from "./variant/IVariantFeatureManager";
+import { ITargetingContext } from "./common/ITargetingContext";
+import { isTargetedGroup, isTargetedPercentile, isTargetedUser } from "./common/targetingEvaluator";
 
-export class FeatureManager {
+export class FeatureManager implements IFeatureManager, IVariantFeatureManager {
     #provider: IFeatureFlagProvider;
     #featureFilters: Map<string, IFeatureFilter> = new Map();
 
@@ -39,6 +44,116 @@ export class FeatureManager {
         // Ensure that the feature flag is in the correct format. Feature providers should validate the feature flags, but we do it here as a safeguard.
         validateFeatureFlagFormat(featureFlag);
 
+        // TODO: status override if specified in allocated variant. Should extract the common logic between isEnabled and getVariant.
+        return this.#isEnabled(featureFlag, context);
+    }
+
+    async getVariant(featureName: string, context?: ITargetingContext): Promise<Variant | undefined> {
+        const featureFlag = await this.#provider.getFeatureFlag(featureName);
+        if (featureFlag === undefined) {
+            return undefined;
+        }
+
+        const enabled = await this.#isEnabled(featureFlag);
+
+        // Determine Variant
+        let variantDef: VariantDefinition | undefined;
+        let reason: VariantAssignmentReason = VariantAssignmentReason.None;
+
+        // featureFlag.variant not empty
+        if (featureFlag.variants !== undefined && featureFlag.variants.length > 0) {
+            if (!enabled) {
+                // not enabled, assign default if specified
+                if (featureFlag.allocation?.default_when_disabled !== undefined) {
+                    variantDef = featureFlag.variants.find(v => v.name == featureFlag.allocation?.default_when_disabled);
+                    reason = VariantAssignmentReason.DefaultWhenDisabled;
+                } else {
+                    // no default specified
+                    variantDef = undefined;
+                    reason = VariantAssignmentReason.DefaultWhenDisabled;
+                }
+            } else {
+                // enabled, assign based on allocation
+                if (context !== undefined && featureFlag.allocation !== undefined) {
+                    const result = await this.#assignVariant(featureFlag, context);
+                    variantDef = result.variant;
+                    reason = result.reason;
+                }
+
+                // allocation failed, assign default if specified
+                if (variantDef === undefined && reason === VariantAssignmentReason.None) {
+                    if (featureFlag.allocation?.default_when_enabled !== undefined) {
+                        variantDef = featureFlag.variants.find(v => v.name == featureFlag.allocation?.default_when_enabled);
+                        reason = VariantAssignmentReason.DefaultWhenEnabled;
+                    }
+                }
+            }
+        }
+
+        // TODO: send telemetry for variant assignment reason in the future.
+        console.log(`Variant assignment for feature ${featureName}: ${variantDef?.name ?? "default"} (${reason})`);
+
+        if (variantDef?.configuration_reference !== undefined) {
+            console.warn("Configuration reference is not supported yet.");
+        }
+
+        return variantDef !== undefined ? new Variant(variantDef.name, variantDef.configuration_value) : undefined;
+    }
+
+    async #assignVariant(featureFlag: FeatureFlag, context: ITargetingContext): Promise<{
+        variant: VariantDefinition | undefined;
+        reason: VariantAssignmentReason;
+    }> {
+        // user allocation
+        if (featureFlag.allocation?.user !== undefined) {
+            for (const userAllocation of featureFlag.allocation.user) {
+                if (isTargetedUser(context.userId, userAllocation.users)) {
+                    const variant = featureFlag.variants?.find(v => v.name == userAllocation.variant);
+                    if (variant !== undefined) {
+                        return { variant, reason: VariantAssignmentReason.User };
+                    } else {
+                        console.warn(`Variant ${userAllocation.variant} not found for feature ${featureFlag.id}.`);
+                    }
+                }
+            }
+        }
+
+        // group allocation
+        if (featureFlag.allocation?.group !== undefined) {
+            for (const groupAllocation of featureFlag.allocation.group) {
+                if (isTargetedGroup(context.groups, groupAllocation.groups)) {
+                    const variant = featureFlag.variants?.find(v => v.name == groupAllocation.variant);
+                    if (variant !== undefined) {
+                        return { variant, reason: VariantAssignmentReason.Group };
+                    } else {
+                        console.warn(`Variant ${groupAllocation.variant} not found for feature ${featureFlag.id}.`);
+                        return { variant: undefined, reason: VariantAssignmentReason.None };
+                    }
+                }
+            }
+        }
+
+        // percentile allocation
+        if (featureFlag.allocation?.percentile !== undefined) {
+            for (const percentileAllocation of featureFlag.allocation.percentile) {
+                const hint = featureFlag.allocation.seed ?? `allocation\n${featureFlag.id}`;
+                if (isTargetedPercentile(context.userId, hint, percentileAllocation.from, percentileAllocation.to)) {
+                    const variant = featureFlag.variants?.find(v => v.name == percentileAllocation.variant);
+                    if (variant !== undefined) {
+                        return { variant, reason: VariantAssignmentReason.Percentile };
+                    } else {
+                        console.warn(`Variant ${percentileAllocation.variant} not found for feature ${featureFlag.id}.`);
+                        return { variant: undefined, reason: VariantAssignmentReason.None };
+                    }
+                }
+            }
+        }
+
+        return { variant: undefined, reason: VariantAssignmentReason.None };
+    }
+
+
+    async #isEnabled(featureFlag: FeatureFlag, context?: unknown): Promise<boolean> {
         if (featureFlag.enabled !== true) {
             // If the feature is not explicitly enabled, then it is disabled by default.
             return false;
@@ -61,7 +176,7 @@ export class FeatureManager {
 
         for (const clientFilter of clientFilters) {
             const matchedFeatureFilter = this.#featureFilters.get(clientFilter.name);
-            const contextWithFeatureName = { featureName, parameters: clientFilter.parameters };
+            const contextWithFeatureName = { featureName: featureFlag.id, parameters: clientFilter.parameters };
             if (matchedFeatureFilter === undefined) {
                 console.warn(`Feature filter ${clientFilter.name} is not found.`);
                 return false;
@@ -85,4 +200,36 @@ function validateFeatureFlagFormat(featureFlag: any): void {
     if (featureFlag.enabled !== undefined && typeof featureFlag.enabled !== "boolean") {
         throw new Error(`Feature flag ${featureFlag.id} has an invalid 'enabled' value.`);
     }
+}
+
+enum VariantAssignmentReason {
+    /**
+     * Variant allocation did not happen. No variant is assigned.
+     */
+    None,
+
+    /**
+     * The default variant is assigned when a feature flag is disabled.
+     */
+    DefaultWhenDisabled,
+
+    /**
+     * The default variant is assigned because of no applicable user/group/percentile allocation when a feature flag is enabled.
+     */
+    DefaultWhenEnabled,
+
+    /**
+     * The variant is assigned because of the user allocation when a feature flag is enabled.
+     */
+    User,
+
+    /**
+     * The variant is assigned because of the group allocation when a feature flag is enabled.
+     */
+    Group,
+
+    /**
+     * The variant is assigned because of the percentile allocation when a feature flag is enabled.
+     */
+    Percentile
 }
