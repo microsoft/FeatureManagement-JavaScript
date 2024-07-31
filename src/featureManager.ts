@@ -196,10 +196,20 @@ interface FeatureManagerOptions {
     customFilters?: IFeatureFilter[];
 }
 
+/**
+ * Validates the format of the feature flag definition.
+ *
+ * FeatureFlag data objects are from IFeatureFlagProvider, depending on the implementation.
+ * Thus the properties are not guaranteed to have the expected types.
+ *
+ * @param featureFlag The feature flag definition to validate.
+ */
 function validateFeatureFlagFormat(featureFlag: any): void {
     if (featureFlag.enabled !== undefined && typeof featureFlag.enabled !== "boolean") {
         throw new Error(`Feature flag ${featureFlag.id} has an invalid 'enabled' value.`);
     }
+    // TODO: add more validations.
+    // TODO: should be moved to the feature flag provider.
 }
 
 enum VariantAssignmentReason {

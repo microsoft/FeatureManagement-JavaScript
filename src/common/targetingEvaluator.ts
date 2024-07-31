@@ -13,6 +13,16 @@ import { createHash } from "crypto";
  * @returns true if the user is part of the audience, false otherwise
  */
 export function isTargetedPercentile(userId: string | undefined, hint: string, from: number, to: number): boolean {
+    if (from < 0 || from > 100) {
+        throw new Error("The 'from' value must be between 0 and 100.");
+    }
+    if (to <= 0 || to > 100) {
+        throw new Error("The 'to' value must be between 0 and 100.");
+    }
+    if (from > to) {
+        throw new Error("The 'from' value cannot be larger than the 'to' value.");
+    }
+
     const audienceContextId = constructAudienceContextId(userId, hint);
 
     // Cryptographic hashing algorithms ensure adequate entropy across hash values.
