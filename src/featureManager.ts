@@ -35,69 +35,13 @@ export class FeatureManager implements IFeatureManager, IVariantFeatureManager {
 
     // If multiple feature flags are found, the first one takes precedence.
     async isEnabled(featureName: string, context?: unknown): Promise<boolean> {
-        const featureFlag = await this.#provider.getFeatureFlag(featureName);
-        if (featureFlag === undefined) {
-            // If the feature is not found, then it is disabled.
-            return false;
-        }
-
-        // Ensure that the feature flag is in the correct format. Feature providers should validate the feature flags, but we do it here as a safeguard.
-        validateFeatureFlagFormat(featureFlag);
-
-        // TODO: status override if specified in allocated variant. Should extract the common logic between isEnabled and getVariant.
-        return this.#isEnabled(featureFlag, context);
+        const result = await this.#evaluateFeature(featureName, context);
+        return result.enabled;
     }
 
     async getVariant(featureName: string, context?: ITargetingContext): Promise<Variant | undefined> {
-        const featureFlag = await this.#provider.getFeatureFlag(featureName);
-        if (featureFlag === undefined) {
-            return undefined;
-        }
-
-        const enabled = await this.#isEnabled(featureFlag);
-
-        // Determine Variant
-        let variantDef: VariantDefinition | undefined;
-        let reason: VariantAssignmentReason = VariantAssignmentReason.None;
-
-        // featureFlag.variant not empty
-        if (featureFlag.variants !== undefined && featureFlag.variants.length > 0) {
-            if (!enabled) {
-                // not enabled, assign default if specified
-                if (featureFlag.allocation?.default_when_disabled !== undefined) {
-                    variantDef = featureFlag.variants.find(v => v.name == featureFlag.allocation?.default_when_disabled);
-                    reason = VariantAssignmentReason.DefaultWhenDisabled;
-                } else {
-                    // no default specified
-                    variantDef = undefined;
-                    reason = VariantAssignmentReason.DefaultWhenDisabled;
-                }
-            } else {
-                // enabled, assign based on allocation
-                if (context !== undefined && featureFlag.allocation !== undefined) {
-                    const result = await this.#assignVariant(featureFlag, context);
-                    variantDef = result.variant;
-                    reason = result.reason;
-                }
-
-                // allocation failed, assign default if specified
-                if (variantDef === undefined && reason === VariantAssignmentReason.None) {
-                    if (featureFlag.allocation?.default_when_enabled !== undefined) {
-                        variantDef = featureFlag.variants.find(v => v.name == featureFlag.allocation?.default_when_enabled);
-                        reason = VariantAssignmentReason.DefaultWhenEnabled;
-                    }
-                }
-            }
-        }
-
-        // TODO: send telemetry for variant assignment reason in the future.
-        console.log(`Variant assignment for feature ${featureName}: ${variantDef?.name ?? "default"} (${reason})`);
-
-        if (variantDef?.configuration_reference !== undefined) {
-            console.warn("Configuration reference is not supported yet.");
-        }
-
-        return variantDef !== undefined ? new Variant(variantDef.name, variantDef.configuration_value) : undefined;
+        const result = await this.#evaluateFeature(featureName, context);
+        return result.variant;
     }
 
     async #assignVariant(featureFlag: FeatureFlag, context: ITargetingContext): Promise<{
@@ -152,7 +96,6 @@ export class FeatureManager implements IFeatureManager, IVariantFeatureManager {
         return { variant: undefined, reason: VariantAssignmentReason.None };
     }
 
-
     async #isEnabled(featureFlag: FeatureFlag, context?: unknown): Promise<boolean> {
         if (featureFlag.enabled !== true) {
             // If the feature is not explicitly enabled, then it is disabled by default.
@@ -190,6 +133,76 @@ export class FeatureManager implements IFeatureManager, IVariantFeatureManager {
         return !shortCircuitEvaluationResult;
     }
 
+    async #evaluateFeature(featureName: string, context: unknown): Promise<EvaluationResult> {
+        const featureFlag = await this.#provider.getFeatureFlag(featureName);
+        const result = new EvaluationResult(featureFlag);
+
+        if (featureFlag === undefined) {
+            return result;
+        }
+
+        // Ensure that the feature flag is in the correct format. Feature providers should validate the feature flags, but we do it here as a safeguard.
+        // TODO: move to the feature flag provider implementation.
+        validateFeatureFlagFormat(featureFlag);
+
+        // Evaluate if the feature is enabled.
+        result.enabled = await this.#isEnabled(featureFlag, context);
+
+        // Determine Variant
+        let variantDef: VariantDefinition | undefined;
+        let reason: VariantAssignmentReason = VariantAssignmentReason.None;
+
+        // featureFlag.variant not empty
+        if (featureFlag.variants !== undefined && featureFlag.variants.length > 0) {
+            if (!result.enabled) {
+                // not enabled, assign default if specified
+                if (featureFlag.allocation?.default_when_disabled !== undefined) {
+                    variantDef = featureFlag.variants.find(v => v.name == featureFlag.allocation?.default_when_disabled);
+                    reason = VariantAssignmentReason.DefaultWhenDisabled;
+                } else {
+                    // no default specified
+                    variantDef = undefined;
+                    reason = VariantAssignmentReason.DefaultWhenDisabled;
+                }
+            } else {
+                // enabled, assign based on allocation
+                if (context !== undefined && featureFlag.allocation !== undefined) {
+                    const variantAndReason = await this.#assignVariant(featureFlag, context as ITargetingContext);
+                    variantDef = variantAndReason.variant;
+                    reason = variantAndReason.reason;
+                }
+
+                // allocation failed, assign default if specified
+                if (variantDef === undefined && reason === VariantAssignmentReason.None) {
+                    if (featureFlag.allocation?.default_when_enabled !== undefined) {
+                        variantDef = featureFlag.variants.find(v => v.name == featureFlag.allocation?.default_when_enabled);
+                        reason = VariantAssignmentReason.DefaultWhenEnabled;
+                    }
+                }
+            }
+        }
+
+        // TODO: send telemetry for variant assignment reason in the future.
+        console.log(`Variant assignment for feature ${featureName}: ${variantDef?.name ?? "default"} (${reason})`);
+
+        if (variantDef?.configuration_reference !== undefined) {
+            console.warn("Configuration reference is not supported yet.");
+        }
+
+        result.variant = variantDef !== undefined ? new Variant(variantDef.name, variantDef.configuration_value) : undefined;
+        result.variantAssignmentReason = reason;
+
+        // Status override for isEnabled
+        if (variantDef !== undefined && featureFlag.enabled) {
+            if (variantDef.status_override === "Enabled") {
+                result.enabled = true;
+            } else if (variantDef.status_override === "Disabled") {
+                result.enabled = false;
+            }
+        }
+
+        return result;
+    }
 }
 
 interface FeatureManagerOptions {
@@ -242,4 +255,18 @@ enum VariantAssignmentReason {
      * The variant is assigned because of the percentile allocation when a feature flag is enabled.
      */
     Percentile
+}
+
+class EvaluationResult {
+    constructor(
+        // feature flag definition
+        public readonly feature: FeatureFlag | undefined,
+
+        // enabled state
+        public enabled: boolean = false,
+
+        // variant assignment
+        public variant: Variant | undefined = undefined,
+        public variantAssignmentReason: VariantAssignmentReason = VariantAssignmentReason.None
+    ) { }
 }

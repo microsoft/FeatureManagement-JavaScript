@@ -22,8 +22,6 @@ describe("feature variant", () => {
     describe("valid scenarios", () => {
         const context = { userId: "Marsha", groups: ["Group1"] };
 
-        it("Test StatusOverride and Percentile with Seed", async () => { });
-
         it("default allocation with disabled feature", async () => {
             const variant = await featureManager.getVariant(Features.VariantFeatureDefaultDisabled, context);
             expect(variant).not.to.be.undefined;
@@ -51,6 +49,20 @@ describe("feature variant", () => {
             expect(variant).not.to.be.undefined;
             expect(variant?.name).eq("Small");
             expect(variant?.configuration).eq("300px");
+        });
+
+        it("percentile allocation with seed", async () => {
+            const variant = await featureManager.getVariant(Features.VariantFeaturePercentileOn, context);
+            expect(variant).not.to.be.undefined;
+            expect(variant?.name).eq("Big");
+
+            const variant2 = await featureManager.getVariant(Features.VariantFeaturePercentileOff, context);
+            expect(variant2).to.be.undefined;
+        });
+
+        it("overwrite enabled status", async () => {
+            const enabledStatus = await featureManager.isEnabled(Features.VariantFeaturePercentileOn, context);
+            expect(enabledStatus).to.be.false; // featureFlag.enabled = true, overridden to false by variant `Big`.
         });
 
     });
