@@ -57,6 +57,7 @@ export class FeatureManager implements IFeatureManager, IVariantFeatureManager {
                         return { variant, reason: VariantAssignmentReason.User };
                     } else {
                         console.warn(`Variant ${userAllocation.variant} not found for feature ${featureFlag.id}.`);
+                        return { variant: undefined, reason: VariantAssignmentReason.None };
                     }
                 }
             }
