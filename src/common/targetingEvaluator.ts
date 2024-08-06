@@ -16,7 +16,7 @@ export function isTargetedPercentile(userId: string | undefined, hint: string, f
     if (from < 0 || from > 100) {
         throw new Error("The 'from' value must be between 0 and 100.");
     }
-    if (to <= 0 || to > 100) {
+    if (to < 0 || to > 100) {
         throw new Error("The 'to' value must be between 0 and 100.");
     }
     if (from > to) {
