@@ -49,13 +49,7 @@ export function isTargetedGroup(sourceGroups: string[] | undefined, targetedGrou
         return false;
     }
 
-    for (const group of sourceGroups) {
-        if (targetedGroups.includes(group)) {
-            return true;
-        }
-    }
-
-    return false;
+    return sourceGroups.some(group => targetedGroups.includes(group));
 }
 
 /**
