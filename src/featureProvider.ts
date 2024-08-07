@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 import { IGettable } from "./gettable.js";
-import { FeatureFlag, FeatureManagementConfiguration, FEATURE_MANAGEMENT_KEY, FEATURE_FLAGS_KEY } from "./model.js";
+import { FeatureFlag, FeatureManagementConfiguration, FEATURE_MANAGEMENT_KEY, FEATURE_FLAGS_KEY } from "./schema/model.js";
 
 export interface IFeatureFlagProvider {
     /**
