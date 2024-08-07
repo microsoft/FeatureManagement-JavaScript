@@ -8,11 +8,10 @@ import { IFeatureFlagProvider } from "./featureProvider";
 import { TargetingFilter } from "./filter/TargetingFilter";
 import { Variant } from "./variant/Variant";
 import { IFeatureManager } from "./IFeatureManager";
-import { IVariantFeatureManager } from "./variant/IVariantFeatureManager";
 import { ITargetingContext } from "./common/ITargetingContext";
 import { isTargetedGroup, isTargetedPercentile, isTargetedUser } from "./common/targetingEvaluator";
 
-export class FeatureManager implements IFeatureManager, IVariantFeatureManager {
+export class FeatureManager implements IFeatureManager {
     #provider: IFeatureFlagProvider;
     #featureFilters: Map<string, IFeatureFilter> = new Map();
 
