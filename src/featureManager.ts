@@ -43,21 +43,12 @@ export class FeatureManager implements IFeatureManager {
         return result.variant;
     }
 
-    async #assignVariant(featureFlag: FeatureFlag, context: ITargetingContext): Promise<{
-        variant: VariantDefinition | undefined;
-        reason: VariantAssignmentReason;
-    }> {
+    async #assignVariant(featureFlag: FeatureFlag, context: ITargetingContext): Promise<VariantAssignment> {
         // user allocation
         if (featureFlag.allocation?.user !== undefined) {
             for (const userAllocation of featureFlag.allocation.user) {
                 if (isTargetedUser(context.userId, userAllocation.users)) {
-                    const variant = featureFlag.variants?.find(v => v.name == userAllocation.variant);
-                    if (variant !== undefined) {
-                        return { variant, reason: VariantAssignmentReason.User };
-                    } else {
-                        console.warn(`Variant ${userAllocation.variant} not found for feature ${featureFlag.id}.`);
-                        return { variant: undefined, reason: VariantAssignmentReason.None };
-                    }
+                    return getVariantAssignment(featureFlag, userAllocation.variant, VariantAssignmentReason.User);
                 }
             }
         }
@@ -66,13 +57,7 @@ export class FeatureManager implements IFeatureManager {
         if (featureFlag.allocation?.group !== undefined) {
             for (const groupAllocation of featureFlag.allocation.group) {
                 if (isTargetedGroup(context.groups, groupAllocation.groups)) {
-                    const variant = featureFlag.variants?.find(v => v.name == groupAllocation.variant);
-                    if (variant !== undefined) {
-                        return { variant, reason: VariantAssignmentReason.Group };
-                    } else {
-                        console.warn(`Variant ${groupAllocation.variant} not found for feature ${featureFlag.id}.`);
-                        return { variant: undefined, reason: VariantAssignmentReason.None };
-                    }
+                    return getVariantAssignment(featureFlag, groupAllocation.variant, VariantAssignmentReason.Group);
                 }
             }
         }
@@ -82,13 +67,7 @@ export class FeatureManager implements IFeatureManager {
             for (const percentileAllocation of featureFlag.allocation.percentile) {
                 const hint = featureFlag.allocation.seed ?? `allocation\n${featureFlag.id}`;
                 if (isTargetedPercentile(context.userId, hint, percentileAllocation.from, percentileAllocation.to)) {
-                    const variant = featureFlag.variants?.find(v => v.name == percentileAllocation.variant);
-                    if (variant !== undefined) {
-                        return { variant, reason: VariantAssignmentReason.Percentile };
-                    } else {
-                        console.warn(`Variant ${percentileAllocation.variant} not found for feature ${featureFlag.id}.`);
-                        return { variant: undefined, reason: VariantAssignmentReason.None };
-                    }
+                    return getVariantAssignment(featureFlag, percentileAllocation.variant, VariantAssignmentReason.Percentile);
                 }
             }
         }
@@ -224,6 +203,29 @@ function validateFeatureFlagFormat(featureFlag: any): void {
     // TODO: add more validations.
     // TODO: should be moved to the feature flag provider.
 }
+
+/**
+ * Try to get the variant assignment for the given variant name. If the variant is not found, override the reason with VariantAssignmentReason.None.
+ *
+ * @param featureFlag feature flag definition
+ * @param variantName variant name
+ * @param reason variant assignment reason
+ * @returns variant assignment containing the variant definition and the reason
+ */
+function getVariantAssignment(featureFlag: FeatureFlag, variantName: string, reason: VariantAssignmentReason): VariantAssignment {
+    const variant = featureFlag.variants?.find(v => v.name == variantName);
+    if (variant !== undefined) {
+        return { variant, reason };
+    } else {
+        console.warn(`Variant ${variantName} not found for feature ${featureFlag.id}.`);
+        return { variant: undefined, reason: VariantAssignmentReason.None };
+    }
+}
+
+type VariantAssignment = {
+    variant: VariantDefinition | undefined;
+    reason: VariantAssignmentReason;
+};
 
 enum VariantAssignmentReason {
     /**
