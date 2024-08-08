@@ -31,7 +31,7 @@ export interface FeatureFlag {
   /**
    * The list of variants defined for this feature. A variant represents a configuration value of a feature flag that can be a string, a number, a boolean, or a JSON object.
    */
-  variants?: Variant[];
+  variants?: VariantDefinition[];
   /**
    * Determines how variants should be allocated for the feature to various users.
    */
@@ -69,7 +69,7 @@ interface ClientFilter {
   parameters?: Record<string, unknown>;
 }
 
-interface Variant {
+export interface VariantDefinition {
   /**
    * The name used to refer to a feature variant.
    */
