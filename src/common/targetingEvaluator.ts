@@ -80,8 +80,8 @@ function constructAudienceContextId(userId: string | undefined, hint: string): s
 
 /**
  * Converts a string to a uint32 in little-endian encoding.
- * @param str The string to convert.
- * @returns The uint32 value.
+ * @param str the string to convert.
+ * @returns a uint32 value.
  */
 function stringToUint32(str: string): number {
     // Create a SHA-256 hash of the string

@@ -156,6 +156,9 @@ export class FeatureManager implements IFeatureManager {
                     if (featureFlag.allocation?.default_when_enabled !== undefined) {
                         variantDef = featureFlag.variants.find(v => v.name == featureFlag.allocation?.default_when_enabled);
                         reason = VariantAssignmentReason.DefaultWhenEnabled;
+                    } else {
+                        variantDef = undefined;
+                        reason = VariantAssignmentReason.DefaultWhenEnabled;
                     }
                 }
             }
