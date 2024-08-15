@@ -1,0 +1,33 @@
+name: FeatureManagement-JavaScriptProvider CI
+
+on:
+  push:
+    branches:
+      - main
+      - preview
+      - release/*
+  pull_request:
+    branches:
+      - main
+      - preview
+      - release/*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run lint
+    - run: npm run build
+    - run: npm test
