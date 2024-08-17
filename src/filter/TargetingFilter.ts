@@ -132,7 +132,7 @@ function constructAudienceContextId(featureName: string, userId: string | undefi
 async function stringToUint32(str: string): Promise<number> {
     const bytes = new TextEncoder().encode(str);
 
-    const hashBuffer = await crypto.subtle.digest('SHA-256', bytes);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", bytes);
 
     const dataView = new DataView(hashBuffer);
 
