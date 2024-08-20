@@ -130,13 +130,33 @@ function constructAudienceContextId(featureName: string, userId: string | undefi
 }
 
 async function stringToUint32(str: string): Promise<number> {
-    const bytes = new TextEncoder().encode(str);
+    let crypto;
 
-    const hashBuffer = await crypto.subtle.digest("SHA-256", bytes);
+    // Check for browser environment
+    if (typeof window !== 'undefined' && window.crypto && window.crypto.subtle) {
+        crypto = window.crypto;
+    } 
+    // Check for Node.js environment
+    else if (typeof global !== 'undefined' && global.crypto) {
+        crypto = global.crypto;
+    } 
+    // Fallback to native Node.js crypto module
+    else {
+        crypto = require('crypto'); // maybe wrap with try-catch in case of uncovered runtimes... or you maybe want to fail the program because there's no way to calc hash then
+    }
 
-    const dataView = new DataView(hashBuffer);
-
-    // Convert the first 4 bytes to a uint32 with little-endian encoding
-    const uint32 = dataView.getUint32(0, true);
-    return uint32;
+    // In the browser, use crypto.subtle.digest
+    if (crypto.subtle) {
+        const data = new TextEncoder().encode(str);
+        const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+        const dataView = new DataView(hashBuffer);
+        const uint32 = dataView.getUint32(0, true);
+        return uint32;
+    } 
+    // In Node.js, use the crypto module's hash function
+    else {
+        const hash = crypto.createHash("sha256").update(str).digest();
+        const uint32 = hash.readUInt32LE(0);
+        return uint32;
+    }
 }
