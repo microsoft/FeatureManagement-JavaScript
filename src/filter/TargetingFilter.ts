@@ -133,16 +133,16 @@ async function stringToUint32(str: string): Promise<number> {
     let crypto;
 
     // Check for browser environment
-    if (typeof window !== 'undefined' && window.crypto && window.crypto.subtle) {
+    if (typeof window !== "undefined" && window.crypto && window.crypto.subtle) {
         crypto = window.crypto;
-    } 
+    }
     // Check for Node.js environment
-    else if (typeof global !== 'undefined' && global.crypto) {
+    else if (typeof global !== "undefined" && global.crypto) {
         crypto = global.crypto;
-    } 
+    }
     // Fallback to native Node.js crypto module
     else {
-        crypto = require('crypto'); // maybe wrap with try-catch in case of uncovered runtimes... or you maybe want to fail the program because there's no way to calc hash then
+        crypto = require("crypto"); // maybe wrap with try-catch in case of uncovered runtimes... or you maybe want to fail the program because there's no way to calc hash then
     }
 
     // In the browser, use crypto.subtle.digest
@@ -152,7 +152,7 @@ async function stringToUint32(str: string): Promise<number> {
         const dataView = new DataView(hashBuffer);
         const uint32 = dataView.getUint32(0, true);
         return uint32;
-    } 
+    }
     // In Node.js, use the crypto module's hash function
     else {
         const hash = crypto.createHash("sha256").update(str).digest();
