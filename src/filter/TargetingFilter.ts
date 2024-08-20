@@ -142,7 +142,12 @@ async function stringToUint32(str: string): Promise<number> {
     }
     // Fallback to native Node.js crypto module
     else {
-        crypto = require("crypto"); // maybe wrap with try-catch in case of uncovered runtimes... or you maybe want to fail the program because there's no way to calc hash then
+        try {
+            crypto = require('crypto');
+        } catch (error) {
+            console.error('Failed to load the crypto module:', error.message);
+            throw error;
+        }
     }
 
     // In the browser, use crypto.subtle.digest
