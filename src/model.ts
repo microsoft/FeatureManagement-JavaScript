@@ -172,8 +172,8 @@ interface TelemetryOptions {
 // Feature Management Section fed into feature manager.
 // Converted from https://github.com/Azure/AppConfiguration/blob/main/docs/FeatureManagement/FeatureManagement.v1.0.0.schema.json
 
-export const FEATURE_MANAGEMENT_KEY = "feature_management"
-export const FEATURE_FLAGS_KEY = "feature_flags"
+export const FEATURE_MANAGEMENT_KEY = "feature_management";
+export const FEATURE_FLAGS_KEY = "feature_flags";
 
 export interface FeatureManagementConfiguration {
   feature_management: FeatureManagement
