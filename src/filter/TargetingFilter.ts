@@ -127,7 +127,7 @@ function constructAudienceContextId(featureName: string, userId: string | undefi
     if (groupName !== undefined) {
         contextId += `\n${groupName}`;
     }
-    return contextId
+    return contextId;
 }
 
 function stringToUint32(str: string): number {
