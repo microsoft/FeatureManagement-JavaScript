@@ -72,6 +72,6 @@ describe("feature manager", () => {
         ]);
     });
 
-    it("shoud evaluate features with conditions");
-    it("shoud override default filters with custom filters");
+    it("should evaluate features with conditions");
+    it("should override default filters with custom filters");
 });

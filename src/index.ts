@@ -3,3 +3,4 @@
 
 export { FeatureManager } from "./featureManager";
 export { ConfigurationMapFeatureFlagProvider, ConfigurationObjectFeatureFlagProvider, IFeatureFlagProvider } from "./featureProvider";
+export { IFeatureFilter } from "./filter/FeatureFilter";
