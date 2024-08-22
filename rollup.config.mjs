@@ -7,10 +7,23 @@ export default [
     input: "src/index.ts",
     output: [
       {
-        file: "dist/index.js",
+        dir: "dist/commonjs/",
         format: "cjs",
-        sourcemap: true
+        sourcemap: true,
+        preserveModules: true,
       },
+      {
+        dir: "dist/esm/",
+        format: "esm",
+        sourcemap: true,
+        preserveModules: true,
+      },
+      {
+        file: "dist/umd/index.js",
+        format: "umd",
+        name: 'FeatureManagement',
+        sourcemap: true
+      }
     ],
     plugins: [
       typescript({
@@ -28,13 +41,16 @@ export default [
           "strictFunctionTypes": true,
           "sourceMap": true,
           "inlineSources": true
-        }
+        },
+        "exclude": [
+            "test/**/*"
+        ]
       })
     ],
   },
   {
     input: "src/index.ts",
-    output: [{ file: "types/index.d.ts", format: "es" }],
+    output: [{ file: "types/index.d.ts", format: "esm" }],
     plugins: [dts()],
   },
 ];
