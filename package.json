@@ -19,7 +19,7 @@
     "lint": "eslint src/ test/ --ignore-pattern test/browser/testcases.js",
     "fix-lint": "eslint src/ test/ --fix --ignore-pattern test/browser/testcases.js",
     "test": "mocha out/test/*.test.{js,cjs,mjs} --parallel",
-    "test-browser": "npx playwright install && npx playwright test"
+    "test-browser": "npx playwright install chromium && npx playwright test"
   },
   "repository": {
     "type": "git",
