@@ -143,7 +143,12 @@ async function stringToUint32(str: string): Promise<number> {
     // Fallback to native Node.js crypto module
     else {
         try {
-            crypto = require("crypto");
+            if (typeof module !== 'undefined' && module.exports) {
+                crypto = require('crypto');
+            }
+            else {
+                crypto = await import('crypto');
+            }
         } catch (error) {
             console.error("Failed to load the crypto module:", error.message);
             throw error;
