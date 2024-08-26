@@ -2,7 +2,6 @@
 // Licensed under the MIT license.
 
 import { IFeatureFilter } from "./FeatureFilter.js";
-import { createHash } from "crypto";
 
 type TargetingFilterParameters = {
     Audience: {
@@ -32,7 +31,7 @@ type TargetingFilterAppContext = {
 export class TargetingFilter implements IFeatureFilter {
     name: string = "Microsoft.Targeting";
 
-    evaluate(context: TargetingFilterEvaluationContext, appContext?: TargetingFilterAppContext): boolean {
+    async evaluate(context: TargetingFilterEvaluationContext, appContext?: TargetingFilterAppContext): Promise<boolean> {
         const { featureName, parameters } = context;
         TargetingFilter.#validateParameters(parameters);
 
@@ -72,7 +71,7 @@ export class TargetingFilter implements IFeatureFilter {
                 if (appContext.groups.includes(group.Name)) {
                     const audienceContextId = constructAudienceContextId(featureName, appContext.userId, group.Name);
                     const rolloutPercentage = group.RolloutPercentage;
-                    if (TargetingFilter.#isTargeted(audienceContextId, rolloutPercentage)) {
+                    if (await TargetingFilter.#isTargeted(audienceContextId, rolloutPercentage)) {
                         return true;
                     }
                 }
@@ -84,12 +83,12 @@ export class TargetingFilter implements IFeatureFilter {
         return TargetingFilter.#isTargeted(defaultContextId, parameters.Audience.DefaultRolloutPercentage);
     }
 
-    static #isTargeted(audienceContextId: string, rolloutPercentage: number): boolean {
+    static async #isTargeted(audienceContextId: string, rolloutPercentage: number): Promise<boolean> {
         if (rolloutPercentage === 100) {
             return true;
         }
         // Cryptographic hashing algorithms ensure adequate entropy across hash values.
-        const contextMarker = stringToUint32(audienceContextId);
+        const contextMarker = await stringToUint32(audienceContextId);
         const contextPercentage = (contextMarker / 0xFFFFFFFF) * 100;
         return contextPercentage < rolloutPercentage;
     }
@@ -130,14 +129,44 @@ function constructAudienceContextId(featureName: string, userId: string | undefi
     return contextId;
 }
 
-function stringToUint32(str: string): number {
-    // Create a SHA-256 hash of the string
-    const hash = createHash("sha256").update(str).digest();
+async function stringToUint32(str: string): Promise<number> {
+    let crypto;
 
-    // Get the first 4 bytes of the hash
-    const first4Bytes = hash.subarray(0, 4);
+    // Check for browser environment
+    if (typeof window !== "undefined" && window.crypto && window.crypto.subtle) {
+        crypto = window.crypto;
+    }
+    // Check for Node.js environment
+    else if (typeof global !== "undefined" && global.crypto) {
+        crypto = global.crypto;
+    }
+    // Fallback to native Node.js crypto module
+    else {
+        try {
+            if (typeof module !== "undefined" && module.exports) {
+                crypto = require("crypto");
+            }
+            else {
+                crypto = await import("crypto");
+            }
+        } catch (error) {
+            console.error("Failed to load the crypto module:", error.message);
+            throw error;
+        }
+    }
 
-    // Convert the 4 bytes to a uint32 with little-endian encoding
-    const uint32 = first4Bytes.readUInt32LE(0);
-    return uint32;
+    // In the browser, use crypto.subtle.digest
+    if (crypto.subtle) {
+        const data = new TextEncoder().encode(str);
+        const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+        const dataView = new DataView(hashBuffer);
+        const uint32 = dataView.getUint32(0, true);
+        return uint32;
+    }
+    // In Node.js, use the crypto module's hash function
+    else {
+        const hash = crypto.createHash("sha256").update(str).digest();
+        const uint32 = hash.readUInt32LE(0);
+        return uint32;
+    }
 }
