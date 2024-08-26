@@ -6,7 +6,7 @@ import * as chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
-import { FeatureManager, ConfigurationObjectFeatureFlagProvider } from "./exportedApi";
+import { FeatureManager, ConfigurationObjectFeatureFlagProvider } from "./exportedApi.js";
 
 const featureFlagsDataObject = {
     "feature_management": {

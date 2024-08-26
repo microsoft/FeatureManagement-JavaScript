@@ -6,7 +6,7 @@ import * as chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
-import { FeatureManager, ConfigurationObjectFeatureFlagProvider, ConfigurationMapFeatureFlagProvider } from "./exportedApi";
+import { FeatureManager, ConfigurationObjectFeatureFlagProvider, ConfigurationMapFeatureFlagProvider } from "./exportedApi.js";
 
 describe("feature manager", () => {
     it("should load from json string", () => {
@@ -72,6 +72,6 @@ describe("feature manager", () => {
         ]);
     });
 
-    it("shoud evaluate features with conditions");
-    it("shoud override default filters with custom filters");
+    it("should evaluate features with conditions");
+    it("should override default filters with custom filters");
 });

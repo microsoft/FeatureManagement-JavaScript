@@ -2,30 +2,24 @@
   "name": "@microsoft/feature-management",
   "version": "1.0.0-preview",
   "description": "Feature Management is a library for enabling/disabling features at runtime. Developers can use feature flags in simple use cases like conditional statement to more advanced scenarios like conditionally adding routes.",
-  "main": "dist/index.js",
-  "module": "./dist-esm/index.js",
+  "main": "./dist/commonjs/index.js",
+  "module": "./dist/esm/index.js",
   "types": "types/index.d.ts",
   "files": [
-    "dist/**/*.js",
-    "dist/**/*.map",
-    "dist/**/*.d.ts",
-    "dist-esm/**/*.js",
-    "dist-esm/**/*.map",
-    "dist-esm/**/*.d.ts",
-    "types/**/*.d.ts",
+    "dist/",
+    "types/",
     "LICENSE",
     "README.md"
   ],
   "scripts": {
-    "build": "npm run clean && npm run build-cjs && npm run build-esm && npm run build-test",
-    "build-cjs": "rollup --config",
-    "build-esm": "tsc -p ./tsconfig.json",
+    "build": "npm run clean && rollup --config && npm run build-test",
     "build-test": "tsc -p ./tsconfig.test.json",
-    "clean": "rimraf dist dist-esm out types",
+    "clean": "rimraf dist out types",
     "dev": "rollup --config --watch",
-    "lint": "eslint src/ test/",
-    "fix-lint": "eslint src/ test/ --fix",
-    "test": "mocha out/test/*.test.{js,cjs,mjs} --parallel"
+    "lint": "eslint src/ test/ --ignore-pattern test/browser/testcases.js",
+    "fix-lint": "eslint src/ test/ --fix --ignore-pattern test/browser/testcases.js",
+    "test": "mocha out/test/*.test.{js,cjs,mjs} --parallel",
+    "test-browser": "npx playwright install chromium && npx playwright test"
   },
   "repository": {
     "type": "git",
@@ -42,7 +36,9 @@
     "@types/node": "^20.10.7",
     "@typescript-eslint/eslint-plugin": "^6.18.1",
     "@typescript-eslint/parser": "^6.18.1",
+    "@playwright/test": "^1.46.1",
     "chai": "^4.4.0",
+    "chai-as-promised": "^7.1.1",
     "eslint": "^8.56.0",
     "mocha": "^10.2.0",
     "rimraf": "^5.0.5",
@@ -52,6 +48,5 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "chai-as-promised": "^7.1.1"
   }
 }
