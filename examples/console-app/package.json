@@ -1,8 +1,7 @@
 {
   "dependencies": {
     "@azure/app-configuration-provider": "latest",
-    "@microsoft/feature-management": "../",
-    "dotenv": "^16.3.1",
+    "@microsoft/feature-management": "../../",
     "express": "^4.19.2"
   }
 }

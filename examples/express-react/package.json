@@ -1,0 +1,11 @@
+{
+    "name": "feature-management-react-example",
+    "scripts": {
+      "server-install": "cd server && npm install",
+      "client-install": "cd client && npm install",
+      "install": "npm run server-install && npm run client-install",
+      "build": "npm run install && cd client && npm run build",
+      "start-server": "cd server && npm run start",
+      "start-client": "cd client && npm run build && npm run preview"
+    }
+  }
