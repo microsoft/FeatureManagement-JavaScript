@@ -1,10 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+import { load } from "@azure/app-configuration-provider";
 import express from "express";
 import cors from "cors";
-import { load } from "@azure/app-configuration-provider";
-import { ConfigurationMapFeatureFlagProvider, FeatureManager } from "@microsoft/feature-management";
+import * as dotenv from "dotenv";
+dotenv.config()
+const connectionString = process.env.APPCONFIG_CONNECTION_STRING;
 
 const app = express();
 const port = 5000;
@@ -14,12 +16,14 @@ const corsOptions = {
 }
 app.use(cors(corsOptions))
 
-const connectionString = "<your-connection-string>";
 const appConfig = await load(connectionString, {
+    selectors: [{
+        keyFilter: "app.*"
+    }],
     refreshOptions: {
         enabled: true,
         refreshIntervalInMs: 10_000,
-        watchedSettings: [{ key: "fontColor" }] // Watch for changes to the key "sentinel" and refreshes the configuration when it changes
+        watchedSettings: [{ key: "sentinel" }]
     },
     featureFlagOptions: {
         enabled: true,
@@ -33,23 +37,10 @@ const appConfig = await load(connectionString, {
     }
 });
 
-const featureProvider = new ConfigurationMapFeatureFlagProvider(appConfig);
-const featureManager = new FeatureManager(featureProvider);
-
-app.get('/beta', async (req, res) => {
-    appConfig.refresh();
-    if (await featureManager.isEnabled("Beta")) {
-        res.send('Welcome to the new Beta feature!');
-    } else {
-        res.status(404).send();
-    }
-});
-
 app.get("/config", (req, res) => {
     appConfig.refresh();
     res.json(appConfig.constructConfigurationObject());
 })
-
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);

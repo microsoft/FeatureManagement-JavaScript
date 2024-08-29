@@ -1,26 +1,25 @@
 import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import reactLogo from '/react.svg'
 import './App.css'
 import { ConfigurationObjectFeatureFlagProvider, FeatureManager } from "@microsoft/feature-management"
 
 function App() {
   const [betaEnabled, setBetaEnabled] = useState(false);
   const [targeted, setTargeted] = useState(false);
-  const [fontColor, setFontColor] = useState("black");
+  const [appSettings, setAppSettings] = useState(undefined);
   
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const userid = queryParams.get("userid");
-    const groups = queryParams.get("group") ? queryParams.get("group").split(",") : [];
+    const groups = queryParams.get("groups") ? queryParams.get("groups").split(",") : [];
 
-    const fetchFeatureFlags = async () => {
+    const fetchConfiguration = async () => {
       try {
         const response = await fetch("http://localhost:5000/config");
         const data = await response.json();
 
-        if (data.fontColor !== undefined) {
-          setFontColor(data.fontColor);
+        if (data.app?.settings !== undefined) {
+          setAppSettings(data.app.settings);
         }
         
         const provider = new ConfigurationObjectFeatureFlagProvider(data);
@@ -37,45 +36,29 @@ function App() {
       }
     };
 
-    fetchFeatureFlags();
+    fetchConfiguration();
   }, []);
 
   return (
     <>
-      <div>
-        {betaEnabled ? (
-          <div>
-            <a href="https://vitejs.dev" target="_blank">
-              <img src={viteLogo} className="logo" alt="Vite logo" />
-            </a>
-            <a href="https://react.dev" target="_blank">
-              <img src={reactLogo} className="logo react" alt="React logo" />
-            </a>
-          </div>
-        ) : (
-          <div>
-            <a href="https://react.dev" target="_blank">
-              <img src={reactLogo} className="logo react" alt="React logo" />
-            </a>
-          </div>
-        )}
-      </div>
-      {targeted ? (
+      {betaEnabled ?
         <div>
-          {betaEnabled ? (
-            <div style={{ color: fontColor }}>
-              <h1>Vite + React</h1>
-            </div>
-          ) : (
-            <div style={{ color: fontColor }}>
-              <h1>React</h1>
-            </div>
-          )}
+          <a href="https://react.dev" target="_blank">
+            <img src={reactLogo} className="logo react" alt="React logo" />
+          </a>
         </div>
-      ) : (
+        : null}
+      {appSettings ?
+        <div style={{ color: appSettings.fontColor, fontSize: appSettings.fontSize }}>
+          Welcome to your React app!
+        </div> : null
+      }
+      {targeted ?
         <div>
+          <h1>User is targeted.</h1>
         </div>
-      )}
+      : null
+      }
     </>
   )
 }
