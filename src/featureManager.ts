@@ -1,15 +1,15 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { TimeWindowFilter } from "./filter/TimeWindowFilter";
-import { IFeatureFilter } from "./filter/FeatureFilter";
-import { FeatureFlag, RequirementType, VariantDefinition } from "./model";
-import { IFeatureFlagProvider } from "./featureProvider";
-import { TargetingFilter } from "./filter/TargetingFilter";
-import { Variant } from "./variant/Variant";
-import { IFeatureManager } from "./IFeatureManager";
-import { ITargetingContext } from "./common/ITargetingContext";
-import { isTargetedGroup, isTargetedPercentile, isTargetedUser } from "./common/targetingEvaluator";
+import { TimeWindowFilter } from "./filter/TimeWindowFilter.js";
+import { IFeatureFilter } from "./filter/FeatureFilter.js";
+import { FeatureFlag, RequirementType, VariantDefinition } from "./model.js";
+import { IFeatureFlagProvider } from "./featureProvider.js";
+import { TargetingFilter } from "./filter/TargetingFilter.js";
+import { Variant } from "./variant/Variant.js";
+import { IFeatureManager } from "./IFeatureManager.js";
+import { ITargetingContext } from "./common/ITargetingContext.js";
+import { isTargetedGroup, isTargetedPercentile, isTargetedUser } from "./common/targetingEvaluator.js";
 
 export class FeatureManager implements IFeatureManager {
     #provider: IFeatureFlagProvider;
@@ -66,7 +66,7 @@ export class FeatureManager implements IFeatureManager {
         if (featureFlag.allocation?.percentile !== undefined) {
             for (const percentileAllocation of featureFlag.allocation.percentile) {
                 const hint = featureFlag.allocation.seed ?? `allocation\n${featureFlag.id}`;
-                if (isTargetedPercentile(context.userId, hint, percentileAllocation.from, percentileAllocation.to)) {
+                if (await isTargetedPercentile(context.userId, hint, percentileAllocation.from, percentileAllocation.to)) {
                     return getVariantAssignment(featureFlag, percentileAllocation.variant, VariantAssignmentReason.Percentile);
                 }
             }

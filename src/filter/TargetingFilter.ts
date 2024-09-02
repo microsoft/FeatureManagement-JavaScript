@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { IFeatureFilter } from "./FeatureFilter";
-import { isTargetedPercentile } from "../common/targetingEvaluator";
-import { ITargetingContext } from "../common/ITargetingContext";
+import { IFeatureFilter } from "./FeatureFilter.js";
+import { isTargetedPercentile } from "../common/targetingEvaluator.js";
+import { ITargetingContext } from "../common/ITargetingContext.js";
 
 type TargetingFilterParameters = {
     Audience: {
@@ -28,7 +28,7 @@ type TargetingFilterEvaluationContext = {
 export class TargetingFilter implements IFeatureFilter {
     name: string = "Microsoft.Targeting";
 
-    evaluate(context: TargetingFilterEvaluationContext, appContext?: ITargetingContext): boolean {
+    async evaluate(context: TargetingFilterEvaluationContext, appContext?: ITargetingContext): Promise<boolean> {
         const { featureName, parameters } = context;
         TargetingFilter.#validateParameters(parameters);
 
@@ -67,7 +67,7 @@ export class TargetingFilter implements IFeatureFilter {
             for (const group of parameters.Audience.Groups) {
                 if (appContext.groups.includes(group.Name)) {
                     const hint = `${featureName}\n${group.Name}`;
-                    if (isTargetedPercentile(appContext.userId, hint, 0, group.RolloutPercentage)) {
+                    if (await isTargetedPercentile(appContext.userId, hint, 0, group.RolloutPercentage)) {
                         return true;
                     }
                 }
