@@ -167,10 +167,6 @@ export class FeatureManager implements IFeatureManager {
         // TODO: send telemetry for variant assignment reason in the future.
         console.log(`Variant assignment for feature ${featureName}: ${variantDef?.name ?? "default"} (${reason})`);
 
-        if (variantDef?.configuration_reference !== undefined) {
-            console.warn("Configuration reference is not supported yet.");
-        }
-
         result.variant = variantDef !== undefined ? new Variant(variantDef.name, variantDef.configuration_value) : undefined;
         result.variantAssignmentReason = reason;
 
