@@ -208,7 +208,6 @@ export const featureFlagsConfigurationObject = {
                 "variants": [
                     {
                         "name": "Big",
-                        "configuration_reference": "ShoppingCart:Big",
                         "status_override": "Disabled"
                     }
                 ],
@@ -231,8 +230,7 @@ export const featureFlagsConfigurationObject = {
                 "enabled": true,
                 "variants": [
                     {
-                        "name": "Big",
-                        "configuration_reference": "ShoppingCart:Big"
+                        "name": "Big"
                     }
                 ],
                 "allocation": {
@@ -254,8 +252,7 @@ export const featureFlagsConfigurationObject = {
                 "enabled": false,
                 "variants": [
                     {
-                        "name": "Big",
-                        "configuration_reference": "ShoppingCart:Big"
+                        "name": "Big"
                     }
                 ],
                 "allocation": {
@@ -415,8 +412,7 @@ export const featureFlagsConfigurationObject = {
                 "variants": [
                     {
                         "name": "Small",
-                        "configuration_value": "600px",
-                        "configuration_reference": "ShoppingCart:Small"
+                        "configuration_value": "600px"
                     }
                 ],
                 "allocation": {
