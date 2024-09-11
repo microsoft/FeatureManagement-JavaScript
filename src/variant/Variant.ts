@@ -5,5 +5,5 @@ export class Variant {
     constructor(
         public name: string,
         public configuration: unknown
-    ){}
+    ) {}
 }

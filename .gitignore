@@ -399,7 +399,6 @@ FodyWeavers.xsd
 
 # bundled folder
 dist/
-dist-esm/
 out/
 types/
 
@@ -411,3 +410,6 @@ types/
 
 # examples
 examples/package-lock.json
+
+# playwright test result
+test-results

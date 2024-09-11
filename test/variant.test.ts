@@ -6,9 +6,8 @@ import * as chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
-import { FeatureManager, ConfigurationObjectFeatureFlagProvider } from "./exportedApi";
-import { Features, featureFlagsConfigurationObject } from "./sampleFeatureFlags";
-
+import { FeatureManager, ConfigurationObjectFeatureFlagProvider } from "../";
+import { Features, featureFlagsConfigurationObject } from "./sampleFeatureFlags.js";
 
 describe("feature variant", () => {
 
@@ -35,7 +34,6 @@ describe("feature variant", () => {
             expect(variant?.name).eq("Medium");
             expect(variant?.configuration).deep.eq({ Size: "450px", Color: "Purple" });
         });
-
 
         it("user allocation", async () => {
             const variant = await featureManager.getVariant(Features.VariantFeatureUser, context);

@@ -1,5 +1,7 @@
 # Microsoft Feature Management for JavaScript
 
+[![feature-management](https://img.shields.io/npm/v/@microsoft/feature-management?label=@microsoft/feature-management)](https://www.npmjs.com/package/@microsoft/feature-management)
+
 Feature Management is a library for enabling/disabling features at runtime.
 Developers can use feature flags in simple use cases like conditional statement to more advanced scenarios like conditionally adding routes.
 
