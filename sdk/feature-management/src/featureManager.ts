@@ -181,7 +181,7 @@ export class FeatureManager implements IFeatureManager {
                 result.enabled = false;
             }
         }
-        
+
         // The callback will only be executed if telemetry is enabled for the feature flag
         if (featureFlag.telemetry?.enabled && this.#onFeatureEvaluated !== undefined) {
             this.#onFeatureEvaluated(result);
