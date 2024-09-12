@@ -9,19 +9,38 @@ SCRIPT_DIR=$(dirname $(readlink -f $0))
 # Get the directory of the project.
 PROJECT_BASE_DIR=$(dirname $SCRIPT_DIR)
 
-# Change to the project directory.
-cd $PROJECT_BASE_DIR
+# Define the SDK directory.
+SDK_DIR="$PROJECT_BASE_DIR/sdk"
 
-# Install dependencies, build, and test.
-echo "npm clean install"
-npm ci
+# Check if a package directory argument is provided.
+if [ -z "$1" ]; then
+  echo "Please specify a package directory."
+  exit 1
+fi
 
-echo "npm run build"
-npm run build
+# The directory of the package to build.
+PACKAGE_DIR="$SDK_DIR/$1"
 
-echo "npm run test"
-npm run test
+if [ -d "$PACKAGE_DIR" ]; then
+  echo "Building package in $PACKAGE_DIR"
+  
+  # Change to the package directory.
+  cd "$PACKAGE_DIR"
+  
+  # Install dependencies, build, and test.
+  echo "npm clean install in $PACKAGE_DIR"
+  npm ci
 
-# Create a tarball.
-echo "npm pack"
-npm pack
+  echo "npm run build in $PACKAGE_DIR"
+  npm run build
+
+  echo "npm run test in $PACKAGE_DIR"
+  npm run test
+
+  # Create a tarball.
+  echo "npm pack in $PACKAGE_DIR"
+  npm pack
+else
+  echo "The specified package directory does not exist."
+  exit 1
+fi

@@ -20,6 +20,10 @@ jobs:
       matrix:
         node-version: [18.x, 20.x]
 
+    defaults:
+      run:
+        working-directory: sdk/feature-management
+
     steps:
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
@@ -27,8 +31,19 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci
-    - run: npm run lint
-    - run: npm run build
-    - run: npm run test
-    - run: npm run test-browser
+        cache-dependency-path: sdk/feature-management/package-lock.json
+    
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run lint check
+      run: npm run lint
+
+    - name: Run build
+      run: npm run build
+
+    - name: Run tests
+      run: npm run test
+
+    - name: Run browser tests
+      run: npm run test-browser
