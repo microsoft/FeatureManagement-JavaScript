@@ -60,7 +60,7 @@ describe("feature evaluation", () => {
         await featureManager.isEnabled("TestFeature");
         expect(evaluationResult?.feature?.id).to.eq("TestFeature");
         expect(evaluationResult?.enabled).to.eq(true);
-        expect(evaluationResult?.userId).to.eq(undefined);
+        expect(evaluationResult?.targetingId).to.eq(undefined);
         expect(evaluationResult?.variant).to.eq(undefined);
         expect(evaluationResult?.variantAssignmentReason).to.eq(VariantAssignmentReason.None);
     });
@@ -95,14 +95,14 @@ describe("feature evaluation", () => {
         await featureManager.getVariant("TestFeature1", { userId: "Jim" });
         expect(evaluationResult?.feature?.id).to.eq("TestFeature1");
         expect(evaluationResult?.enabled).to.eq(false); // status override
-        expect(evaluationResult?.userId).to.eq("Jim");
+        expect(evaluationResult?.targetingId).to.eq("Jim");
         expect(evaluationResult?.variant?.name).to.eq("Big");
         expect(evaluationResult?.variantAssignmentReason).to.eq(VariantAssignmentReason.DefaultWhenEnabled);
 
         await featureManager.getVariant("TestFeature2", { userId: "Jim" });
         expect(evaluationResult?.feature?.id).to.eq("TestFeature2");
         expect(evaluationResult?.enabled).to.eq(true);
-        expect(evaluationResult?.userId).to.eq("Jim");
+        expect(evaluationResult?.targetingId).to.eq("Jim");
         expect(evaluationResult?.variant).to.eq(undefined);
         expect(evaluationResult?.variantAssignmentReason).to.eq(VariantAssignmentReason.DefaultWhenEnabled);
     });
@@ -137,14 +137,14 @@ describe("feature evaluation", () => {
         await featureManager.getVariant("TestFeature1", { userId: "Jeff" });
         expect(evaluationResult?.feature?.id).to.eq("TestFeature1");
         expect(evaluationResult?.enabled).to.eq(false); // status oveerride won't work when feature's enabled is false
-        expect(evaluationResult?.userId).to.eq("Jeff");
+        expect(evaluationResult?.targetingId).to.eq("Jeff");
         expect(evaluationResult?.variant?.name).to.eq("Small");
         expect(evaluationResult?.variantAssignmentReason).to.eq(VariantAssignmentReason.DefaultWhenDisabled);
 
         await featureManager.getVariant("TestFeature2", { userId: "Jeff" });
         expect(evaluationResult?.feature?.id).to.eq("TestFeature2");
         expect(evaluationResult?.enabled).to.eq(false);
-        expect(evaluationResult?.userId).to.eq("Jeff");
+        expect(evaluationResult?.targetingId).to.eq("Jeff");
         expect(evaluationResult?.variant).to.eq(undefined);
         expect(evaluationResult?.variantAssignmentReason).to.eq(VariantAssignmentReason.DefaultWhenDisabled);
     });
@@ -170,7 +170,7 @@ describe("feature evaluation", () => {
         await featureManager.getVariant("TestFeature", { userId: "Jeff" });
         expect(evaluationResult?.feature?.id).to.eq("TestFeature");
         expect(evaluationResult?.enabled).to.eq(true);
-        expect(evaluationResult?.userId).to.eq("Jeff");
+        expect(evaluationResult?.targetingId).to.eq("Jeff");
         expect(evaluationResult?.variant?.name).to.eq("Big");
         expect(evaluationResult?.variantAssignmentReason).to.eq(VariantAssignmentReason.User);
     });
@@ -196,7 +196,7 @@ describe("feature evaluation", () => {
         await featureManager.getVariant("TestFeature", { userId: "Jeff", groups: ["admin"] });
         expect(evaluationResult?.feature?.id).to.eq("TestFeature");
         expect(evaluationResult?.enabled).to.eq(true);
-        expect(evaluationResult?.userId).to.eq("Jeff");
+        expect(evaluationResult?.targetingId).to.eq("Jeff");
         expect(evaluationResult?.variant?.name).to.eq("Big");
         expect(evaluationResult?.variantAssignmentReason).to.eq(VariantAssignmentReason.Group);
     });
@@ -222,7 +222,7 @@ describe("feature evaluation", () => {
         await featureManager.getVariant("TestFeature", { userId: "Marsha" });
         expect(evaluationResult?.feature?.id).to.eq("TestFeature");
         expect(evaluationResult?.enabled).to.eq(false); // status override
-        expect(evaluationResult?.userId).to.eq("Marsha");
+        expect(evaluationResult?.targetingId).to.eq("Marsha");
         expect(evaluationResult?.variant?.name).to.eq("Big");
         expect(evaluationResult?.variantAssignmentReason).to.eq(VariantAssignmentReason.Percentile);
     });
