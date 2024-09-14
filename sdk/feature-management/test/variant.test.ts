@@ -3,11 +3,10 @@
 
 import * as chai from "chai";
 import * as chaiAsPromised from "chai-as-promised";
-chai.use(chaiAsPromised);
-const expect = chai.expect;
-
 import { FeatureManager, ConfigurationObjectFeatureFlagProvider } from "../";
 import { Features, featureFlagsConfigurationObject } from "./sampleFeatureFlags.js";
+chai.use(chaiAsPromised);
+const expect = chai.expect;
 
 describe("feature variant", () => {
 

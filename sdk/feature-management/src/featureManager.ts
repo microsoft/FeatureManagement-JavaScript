@@ -14,6 +14,7 @@ import { isTargetedGroup, isTargetedPercentile, isTargetedUser } from "./common/
 export class FeatureManager implements IFeatureManager {
     #provider: IFeatureFlagProvider;
     #featureFilters: Map<string, IFeatureFilter> = new Map();
+    #onFeatureEvaluated?: (event: EvaluationResult) => void;
 
     constructor(provider: IFeatureFlagProvider, options?: FeatureManagerOptions) {
         this.#provider = provider;
@@ -24,6 +25,8 @@ export class FeatureManager implements IFeatureManager {
         for (const filter of [...builtinFilters, ...(options?.customFilters ?? [])]) {
             this.#featureFilters.set(filter.name, filter);
         }
+
+        this.#onFeatureEvaluated = options?.onFeatureEvaluated;
     }
 
     async listFeatureNames(): Promise<string[]> {
@@ -127,6 +130,9 @@ export class FeatureManager implements IFeatureManager {
         // Evaluate if the feature is enabled.
         result.enabled = await this.#isEnabled(featureFlag, context);
 
+        const targetingContext = context as ITargetingContext;
+        result.userId = targetingContext?.userId;
+
         // Determine Variant
         let variantDef: VariantDefinition | undefined;
         let reason: VariantAssignmentReason = VariantAssignmentReason.None;
@@ -146,7 +152,7 @@ export class FeatureManager implements IFeatureManager {
             } else {
                 // enabled, assign based on allocation
                 if (context !== undefined && featureFlag.allocation !== undefined) {
-                    const variantAndReason = await this.#assignVariant(featureFlag, context as ITargetingContext);
+                    const variantAndReason = await this.#assignVariant(featureFlag, targetingContext);
                     variantDef = variantAndReason.variant;
                     reason = variantAndReason.reason;
                 }
@@ -164,9 +170,6 @@ export class FeatureManager implements IFeatureManager {
             }
         }
 
-        // TODO: send telemetry for variant assignment reason in the future.
-        console.log(`Variant assignment for feature ${featureName}: ${variantDef?.name ?? "default"} (${reason})`);
-
         result.variant = variantDef !== undefined ? new Variant(variantDef.name, variantDef.configuration_value) : undefined;
         result.variantAssignmentReason = reason;
 
@@ -179,12 +182,73 @@ export class FeatureManager implements IFeatureManager {
             }
         }
 
+        // The callback will only be executed if telemetry is enabled for the feature flag
+        if (featureFlag.telemetry?.enabled && this.#onFeatureEvaluated !== undefined) {
+            this.#onFeatureEvaluated(result);
+        }
+
         return result;
     }
 }
 
-interface FeatureManagerOptions {
+export interface FeatureManagerOptions {
+    /**
+     * The custom filters to be used by the feature manager.
+     */
     customFilters?: IFeatureFilter[];
+
+    /**
+     * The callback function that is called when a feature flag is evaluated.
+     * The callback function is called only when telemetry is enabled for the feature flag.
+     */
+    onFeatureEvaluated?: (event: EvaluationResult) => void;
+}
+
+export class EvaluationResult {
+    constructor(
+        // feature flag definition
+        public readonly feature: FeatureFlag | undefined,
+
+        // enabled state
+        public enabled: boolean = false,
+
+        // variant assignment
+        public userId: string | undefined = undefined,
+        public variant: Variant | undefined = undefined,
+        public variantAssignmentReason: VariantAssignmentReason = VariantAssignmentReason.None
+    ) { }
+}
+
+export enum VariantAssignmentReason {
+    /**
+     * Variant allocation did not happen. No variant is assigned.
+     */
+    None = "None",
+
+    /**
+     * The default variant is assigned when a feature flag is disabled.
+     */
+    DefaultWhenDisabled = "DefaultWhenDisabled",
+
+    /**
+     * The default variant is assigned because of no applicable user/group/percentile allocation when a feature flag is enabled.
+     */
+    DefaultWhenEnabled = "DefaultWhenEnabled",
+
+    /**
+     * The variant is assigned because of the user allocation when a feature flag is enabled.
+     */
+    User = "User",
+
+    /**
+     * The variant is assigned because of the group allocation when a feature flag is enabled.
+     */
+    Group = "Group",
+
+    /**
+     * The variant is assigned because of the percentile allocation when a feature flag is enabled.
+     */
+    Percentile = "Percentile"
 }
 
 /**
@@ -225,49 +289,3 @@ type VariantAssignment = {
     variant: VariantDefinition | undefined;
     reason: VariantAssignmentReason;
 };
-
-enum VariantAssignmentReason {
-    /**
-     * Variant allocation did not happen. No variant is assigned.
-     */
-    None,
-
-    /**
-     * The default variant is assigned when a feature flag is disabled.
-     */
-    DefaultWhenDisabled,
-
-    /**
-     * The default variant is assigned because of no applicable user/group/percentile allocation when a feature flag is enabled.
-     */
-    DefaultWhenEnabled,
-
-    /**
-     * The variant is assigned because of the user allocation when a feature flag is enabled.
-     */
-    User,
-
-    /**
-     * The variant is assigned because of the group allocation when a feature flag is enabled.
-     */
-    Group,
-
-    /**
-     * The variant is assigned because of the percentile allocation when a feature flag is enabled.
-     */
-    Percentile
-}
-
-class EvaluationResult {
-    constructor(
-        // feature flag definition
-        public readonly feature: FeatureFlag | undefined,
-
-        // enabled state
-        public enabled: boolean = false,
-
-        // variant assignment
-        public variant: Variant | undefined = undefined,
-        public variantAssignmentReason: VariantAssignmentReason = VariantAssignmentReason.None
-    ) { }
-}
