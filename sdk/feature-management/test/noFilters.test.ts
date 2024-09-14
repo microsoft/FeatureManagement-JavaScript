@@ -3,10 +3,9 @@
 
 import * as chai from "chai";
 import * as chaiAsPromised from "chai-as-promised";
+import { FeatureManager, ConfigurationObjectFeatureFlagProvider } from "../";
 chai.use(chaiAsPromised);
 const expect = chai.expect;
-
-import { FeatureManager, ConfigurationObjectFeatureFlagProvider } from "../";
 
 const featureFlagsDataObject = {
     "feature_management": {

@@ -2,9 +2,8 @@
 // Licensed under the MIT license.
 
 import * as chai from "chai";
-const expect = chai.expect;
-
 import { FeatureManager, ConfigurationObjectFeatureFlagProvider, EvaluationResult, VariantAssignmentReason } from "../";
+const expect = chai.expect;
 
 let called: boolean = false;
 const dummyCallback = () => {

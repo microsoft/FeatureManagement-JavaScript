@@ -3,10 +3,9 @@
 
 import * as chai from "chai";
 import * as chaiAsPromised from "chai-as-promised";
+import { FeatureManager, ConfigurationObjectFeatureFlagProvider, ConfigurationMapFeatureFlagProvider } from "../";
 chai.use(chaiAsPromised);
 const expect = chai.expect;
-
-import { FeatureManager, ConfigurationObjectFeatureFlagProvider, ConfigurationMapFeatureFlagProvider } from "../";
 
 describe("feature manager", () => {
     it("should load from json string", () => {
