@@ -131,7 +131,7 @@ export class FeatureManager implements IFeatureManager {
         result.enabled = await this.#isEnabled(featureFlag, context);
 
         const targetingContext = context as ITargetingContext;
-        result.userId = targetingContext?.userId;
+        result.targetingId = targetingContext?.userId;
 
         // Determine Variant
         let variantDef: VariantDefinition | undefined;
@@ -213,7 +213,7 @@ export class EvaluationResult {
         public enabled: boolean = false,
 
         // variant assignment
-        public userId: string | undefined = undefined,
+        public targetingId: string | undefined = undefined,
         public variant: Variant | undefined = undefined,
         public variantAssignmentReason: VariantAssignmentReason = VariantAssignmentReason.None
     ) { }
