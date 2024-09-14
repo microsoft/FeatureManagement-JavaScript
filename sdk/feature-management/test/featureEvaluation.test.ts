@@ -17,7 +17,7 @@ const setEvaluationResult = (result: EvaluationResult) => {
 };
 
 describe("feature evaluation", () => {
-    beforeEach(function() {
+    beforeEach(() => {
         evaluationResult = undefined;
     });
 
