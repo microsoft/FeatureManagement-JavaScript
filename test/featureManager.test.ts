@@ -84,7 +84,7 @@ describe("feature manager", () => {
 
         const provider1 = new ConfigurationObjectFeatureFlagProvider(jsonObject);
         const featureManager1 = new FeatureManager(provider1);
-        
+
         const dataSource = new Map();
         dataSource.set("feature_management", {
             feature_flags: [
