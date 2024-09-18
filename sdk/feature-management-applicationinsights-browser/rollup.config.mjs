@@ -4,7 +4,6 @@ import dts from "rollup-plugin-dts";
 
 export default [
   {
-    external: ["crypto"],
     input: "src/index.ts",
     output: [
       {
