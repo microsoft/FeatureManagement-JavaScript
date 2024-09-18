@@ -12,7 +12,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "npm run clean && npm run link && rollup --config",
+    "build": "npm run link && npm run clean && rollup --config",
     "clean": "rimraf dist types",
     "link": "npm link ../feature-management",
     "dev": "rollup --config --watch",
