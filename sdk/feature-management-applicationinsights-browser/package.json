@@ -12,13 +12,12 @@
     "README.md"
   ],
   "scripts": {
-    "build": "npm run clean && rollup --config",
+    "build": "npm run clean && npm run link && rollup --config",
     "clean": "rimraf dist types",
     "link": "npm link ../feature-management",
     "dev": "rollup --config --watch",
     "lint": "eslint src/",
-    "fix-lint": "eslint src/ --fix",
-    "test": "echo 'No testcases to run.'"
+    "fix-lint": "eslint src/ --fix"
   },
   "repository": {
     "type": "git",
