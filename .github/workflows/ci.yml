@@ -32,17 +32,13 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
         cache-dependency-path: sdk/feature-management/package-lock.json
-    
-    - name: Run lint check for feature-management
-      run: npm run lint
-      working-directory: sdk/feature-management
-    
-    - name: Run lint check for feature-management-applicationinsights-browser
-      run: npm run lint
-      working-directory: sdk/feature-management-applicationinsights-browser
 
     - name: Install dependencies
       run: npm ci
+      working-directory: sdk/feature-management
+
+    - name: Run lint check for feature-management
+      run: npm run lint
       working-directory: sdk/feature-management
 
     - name: Build feature-management
@@ -61,4 +57,6 @@ jobs:
       run: npm run build
       working-directory: sdk/feature-management-applicationinsights-browser
 
-    
+    - name: Run lint check for feature-management-applicationinsights-browser
+      run: npm run lint
+      working-directory: sdk/feature-management-applicationinsights-browser
