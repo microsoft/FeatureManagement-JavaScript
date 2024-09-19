@@ -12,17 +12,24 @@ import { IEventTelemetry } from "@microsoft/applicationinsights-web";
  */
 export function createTelemetryPublisher(client: ApplicationInsights): (event: EvaluationResult) => void {
     return (event: EvaluationResult) => {
-        client.trackEvent(
-            {
-                name: "FeatureEvaluation"
-            },
-            {
-                "FeatureName": event.feature?.id,
-                "Enabled": event.enabled.toString(),
-                "TargetingId": event.targetingId,
-                "Variant": event.variant?.name,
-                "VariantAssignmentReason": event.variantAssignmentReason,
-            });
+        const eventProperties = {
+            "FeatureName": event.feature?.id,
+            "Enabled": event.enabled.toString(),
+            "TargetingId": event.targetingId,
+            "Variant": event.variant?.name,
+            "VariantAssignmentReason": event.variantAssignmentReason,
+        };
+
+        const metadata = event.feature?.telemetry?.metadata;
+        if (metadata) {
+            for (const key in metadata) {
+                if (!(key in eventProperties)) {
+                    eventProperties[key] = metadata[key];
+                }
+            }
+        }
+
+        client.trackEvent({ name: "FeatureEvaluation" }, eventProperties);
     };
 }
 
