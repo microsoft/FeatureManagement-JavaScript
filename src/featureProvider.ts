@@ -28,7 +28,7 @@ export class ConfigurationMapFeatureFlagProvider implements IFeatureFlagProvider
     }
     async getFeatureFlag(featureName: string): Promise<FeatureFlag | undefined> {
         const featureConfig = this.#configuration.get<FeatureManagementConfiguration>(FEATURE_MANAGEMENT_KEY);
-        return featureConfig?.[FEATURE_FLAGS_KEY]?.find((feature) => feature.id === featureName);
+        return featureConfig?.[FEATURE_FLAGS_KEY]?.findLast((feature) => feature.id === featureName);
     }
 
     async getFeatureFlags(): Promise<FeatureFlag[]> {
@@ -49,7 +49,7 @@ export class ConfigurationObjectFeatureFlagProvider implements IFeatureFlagProvi
 
     async getFeatureFlag(featureName: string): Promise<FeatureFlag | undefined> {
         const featureFlags = this.#configuration[FEATURE_MANAGEMENT_KEY]?.[FEATURE_FLAGS_KEY];
-        return featureFlags?.find((feature: FeatureFlag) => feature.id === featureName);
+        return featureFlags?.findLast((feature: FeatureFlag) => feature.id === featureName);
     }
 
     async getFeatureFlags(): Promise<FeatureFlag[]> {
