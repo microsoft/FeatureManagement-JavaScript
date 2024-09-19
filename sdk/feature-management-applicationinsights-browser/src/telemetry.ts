@@ -36,7 +36,7 @@ export function createTelemetryPublisher(client: ApplicationInsights): (event: E
 /**
  * Tracks a custom event using Application Insights, ensuring that the "TargetingId"
  * is included in the custom properties. If the "TargetingId" already exists in
- * the provided custom properties, it will not be overwritten.
+ * the provided custom properties, it will be overwritten.
  *
  * @param client The Application Insights client instance used to track the event.
  * @param targetingId The unique targeting identifier that will be included in the custom properties.
