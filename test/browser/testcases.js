@@ -96,14 +96,9 @@ describe("feature manager", () => {
 
     it("should not target group Stage3",
         async () => {
-            function sleep(ms) {
-                return new Promise(resolve => setTimeout(resolve, ms));
-            }
-            await sleep(5000);
-
             chai.expect(await featureManager.isEnabled("ComplexTargeting", { groups: ["Stage3"] })).to.eq(false);
             chai.expect(await featureManager.isEnabled("ComplexTargeting", { userId: "Alice", groups: ["Stage3"] })).to.eq(false);
             chai.expect(await featureManager.isEnabled("ComplexTargeting", { userId: "Blossom", groups: ["Stage3"] })).to.eq(false);
         }
-    ).timeout(10000);
+    ).timeout(1000);
 });
