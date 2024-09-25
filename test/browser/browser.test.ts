@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test } from "@playwright/test";
 import chai from "chai";
 import path from "path";
 
@@ -18,11 +18,11 @@ test("Testcase can pass in browser environment", async ({ page }) => {
 
   chai.expect(hasPageError).to.be.false;
 
-  const failures = await page.locator('li.failures em').innerText();
+  const failures = await page.locator("li.failures em").innerText();
 
-  chai.expect(failures).to.equal('0');
+  chai.expect(failures).to.equal("0");
 
-  const passes = await page.locator('li.passes em').innerText();
+  const passes = await page.locator("li.passes em").innerText();
 
-  chai.expect(passes).to.equal('9');
+  chai.expect(passes).to.equal("9");
 });
