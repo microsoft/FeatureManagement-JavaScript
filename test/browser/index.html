@@ -19,7 +19,9 @@
     <script src="../../dist/umd/index.js"></script>
     <script src="./testcases.js"></script>
     <script class="mocha-exec">
-      mocha.run();
+      mocha.run(failures => {
+        window.mochaFailures = failures;
+      });
     </script>
   </body>
 </html>
