@@ -5,6 +5,6 @@
         "outDir": "./out"
     },
     "include": [
-        "test/**/*"
+        "test/*"
     ]
 }

@@ -45,6 +45,18 @@
             "error",
             "always"
         ],
-        "no-trailing-spaces": "warn"
+        "no-trailing-spaces": "error",
+        "space-before-blocks": [
+            "error",
+            "always"
+        ],
+        "no-multi-spaces": "error",
+        "no-multiple-empty-lines": [
+            "error",
+            {
+                "max": 1 
+            }
+        ],
+        "semi": ["error", "always"]
     }
 }

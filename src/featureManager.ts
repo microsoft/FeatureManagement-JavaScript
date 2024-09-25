@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { TimeWindowFilter } from "./filter/TimeWindowFilter";
-import { IFeatureFilter } from "./filter/FeatureFilter";
-import { RequirementType } from "./model";
-import { IFeatureFlagProvider } from "./featureProvider";
-import { TargetingFilter } from "./filter/TargetingFilter";
+import { TimeWindowFilter } from "./filter/TimeWindowFilter.js";
+import { IFeatureFilter } from "./filter/FeatureFilter.js";
+import { RequirementType } from "./model.js";
+import { IFeatureFlagProvider } from "./featureProvider.js";
+import { TargetingFilter } from "./filter/TargetingFilter.js";
 
 export class FeatureManager {
     #provider: IFeatureFlagProvider;
@@ -36,8 +36,11 @@ export class FeatureManager {
             return false;
         }
 
-        if (featureFlag.enabled === false) {
-            // If the feature is explicitly disabled, then it is disabled.
+        // Ensure that the feature flag is in the correct format. Feature providers should validate the feature flags, but we do it here as a safeguard.
+        validateFeatureFlagFormat(featureFlag);
+
+        if (featureFlag.enabled !== true) {
+            // If the feature is not explicitly enabled, then it is disabled by default.
             return false;
         }
 
@@ -47,14 +50,14 @@ export class FeatureManager {
             return true;
         }
 
-        const requirementType = featureFlag.conditions?.requirement_type ?? RequirementType.Any; // default to any.
+        const requirementType: RequirementType = featureFlag.conditions?.requirement_type ?? "Any"; // default to any.
 
         /**
          * While iterating through the client filters, we short-circuit the evaluation based on the requirement type.
          * - When requirement type is "All", the feature is enabled if all client filters are matched. If any client filter is not matched, the feature is disabled, otherwise it is enabled. `shortCircuitEvaluationResult` is false.
          * - When requirement type is "Any", the feature is enabled if any client filter is matched. If any client filter is matched, the feature is enabled, otherwise it is disabled. `shortCircuitEvaluationResult` is true.
          */
-        const shortCircuitEvaluationResult: boolean = requirementType === RequirementType.Any;
+        const shortCircuitEvaluationResult: boolean = requirementType === "Any";
 
         for (const clientFilter of clientFilters) {
             const matchedFeatureFilter = this.#featureFilters.get(clientFilter.name);
@@ -76,4 +79,10 @@ export class FeatureManager {
 
 interface FeatureManagerOptions {
     customFilters?: IFeatureFilter[];
+}
+
+function validateFeatureFlagFormat(featureFlag: any): void {
+    if (featureFlag.enabled !== undefined && typeof featureFlag.enabled !== "boolean") {
+        throw new Error(`Feature flag ${featureFlag.id} has an invalid 'enabled' value.`);
+    }
 }
