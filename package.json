@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/feature-management",
-  "version": "1.0.0-preview",
+  "version": "1.0.0",
   "description": "Feature Management is a library for enabling/disabling features at runtime. Developers can use feature flags in simple use cases like conditional statement to more advanced scenarios like conditionally adding routes.",
   "main": "./dist/commonjs/index.js",
   "module": "./dist/esm/index.js",
@@ -18,7 +18,7 @@
     "dev": "rollup --config --watch",
     "lint": "eslint src/ test/ --ignore-pattern test/browser/testcases.js",
     "fix-lint": "eslint src/ test/ --fix --ignore-pattern test/browser/testcases.js",
-    "test": "mocha out/test/*.test.{js,cjs,mjs} --parallel",
+    "test": "mocha out/*.test.{js,cjs,mjs} --parallel",
     "test-browser": "npx playwright install chromium && npx playwright test"
   },
   "repository": {
@@ -42,7 +42,7 @@
     "eslint": "^8.56.0",
     "mocha": "^10.2.0",
     "rimraf": "^5.0.5",
-    "rollup": "^4.9.4",
+    "rollup": "^4.22.4",
     "rollup-plugin-dts": "^6.1.0",
     "tslib": "^2.6.2",
     "typescript": "^5.3.3"

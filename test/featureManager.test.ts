@@ -6,7 +6,7 @@ import * as chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
-import { FeatureManager, ConfigurationObjectFeatureFlagProvider, ConfigurationMapFeatureFlagProvider } from "./exportedApi.js";
+import { FeatureManager, ConfigurationObjectFeatureFlagProvider, ConfigurationMapFeatureFlagProvider } from "../";
 
 describe("feature manager", () => {
     it("should load from json string", () => {
@@ -69,6 +69,36 @@ describe("feature manager", () => {
         return Promise.all([
             expect(featureManager.isEnabled("Alpha")).eventually.eq(true),
             expect(featureManager.isEnabled("Beta")).eventually.eq(false)
+        ]);
+    });
+
+    it("should let the last feature flag win", () => {
+        const jsonObject = {
+            "feature_management": {
+                "feature_flags": [
+                    { "id": "Alpha", "description": "", "enabled": false, "conditions": { "client_filters": [] } },
+                    { "id": "Alpha", "description": "", "enabled": true, "conditions": { "client_filters": [] } }
+                ]
+            }
+        };
+
+        const provider1 = new ConfigurationObjectFeatureFlagProvider(jsonObject);
+        const featureManager1 = new FeatureManager(provider1);
+
+        const dataSource = new Map();
+        dataSource.set("feature_management", {
+            feature_flags: [
+                { "id": "Alpha", "description": "", "enabled": false, "conditions": { "client_filters": [] } },
+                { "id": "Alpha", "description": "", "enabled": true, "conditions": { "client_filters": [] } }
+            ],
+        });
+
+        const provider2 = new ConfigurationMapFeatureFlagProvider(dataSource);
+        const featureManager2 = new FeatureManager(provider2);
+
+        return Promise.all([
+            expect(featureManager1.isEnabled("Alpha")).eventually.eq(true),
+            expect(featureManager2.isEnabled("Alpha")).eventually.eq(true)
         ]);
     });
 
