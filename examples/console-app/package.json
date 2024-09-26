@@ -1,7 +1,6 @@
 {
   "dependencies": {
     "@azure/app-configuration-provider": "latest",
-    "@microsoft/feature-management": "../../",
-    "express": "^4.19.2"
+    "@microsoft/feature-management": "latest"
   }
 }

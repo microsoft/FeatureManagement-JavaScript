@@ -10,16 +10,7 @@ Some examples use `@azure/app-configuration-provider` to load feature flags from
 
 ## Setup & Run
 
-1. Build the feature management package in the root folder.
-
-    ``` bash
-    npm install
-    npm run build
-    ```
-
-The examples reference the local `@microsoft/feature-management` package implemented in the `src` folder. Before running the example programs, make sure that you have built it. 
-
-1. Go to the folder of the example. Install the dependencies using `npm`:
+1. Install the dependencies using `npm`:
 
     ``` bash
     npm install
