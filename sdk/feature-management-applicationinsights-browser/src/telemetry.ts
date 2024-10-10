@@ -47,6 +47,6 @@ export function createTelemetryPublisher(client: ApplicationInsights): (event: E
 export function trackEvent(client: ApplicationInsights, targetingId: string, event: IEventTelemetry, customProperties?: {[key: string]: any}): void {
     const properties = customProperties ? { ...customProperties } : {};
     // Ensure targetingId is string so that it will be placed in customDimensions
-    properties["TargetingId"] = targetingId.toString();
+    properties["TargetingId"] = targetingId?.toString();
     client.trackEvent(event, properties);
 }
