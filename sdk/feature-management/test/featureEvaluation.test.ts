@@ -5,9 +5,9 @@ import * as chai from "chai";
 import { FeatureManager, ConfigurationObjectFeatureFlagProvider, EvaluationResult, VariantAssignmentReason } from "../";
 const expect = chai.expect;
 
-let called: boolean = false;
+let called: number = 0;
 const dummyCallback = () => {
-    called = true;
+    called += 1;
 };
 
 let evaluationResult: EvaluationResult | undefined;
@@ -17,6 +17,7 @@ const setEvaluationResult = (result: EvaluationResult) => {
 
 describe("feature evaluation", () => {
     beforeEach(() => {
+        called = 0;
         evaluationResult = undefined;
     });
 
@@ -37,7 +38,27 @@ describe("feature evaluation", () => {
         const featureManager = new FeatureManager(provider, { onFeatureEvaluated: dummyCallback});
 
         await featureManager.isEnabled("TestFeature");
-        expect(called).to.eq(false);
+        expect(called).to.eq(0);
+    });
+
+    it("should only call onFeatureEvaluated once", async () => {
+        const jsonObject = {
+            "feature_management": {
+                "feature_flags": [
+                    {
+                        "id": "TestFeature",
+                        "enabled": true,
+                        "telemetry": { "enabled": true }
+                    }
+                ]
+            }
+        };
+
+        const provider = new ConfigurationObjectFeatureFlagProvider(jsonObject);
+        const featureManager = new FeatureManager(provider, { onFeatureEvaluated: dummyCallback});
+
+        await featureManager.isEnabled("TestFeature");
+        expect(called).to.eq(1);
     });
 
     it("should not assign variant when there is no variants", async () => {

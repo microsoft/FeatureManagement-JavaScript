@@ -1,0 +1,62 @@
+{
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es2021": true,
+        "node": true,
+        "mocha": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "ignorePatterns": [
+    ],
+    "overrides": [
+        {
+            "env": {
+                "node": true
+            },
+            "files": [
+                ".eslintrc.{js,cjs}"
+            ],
+            "parserOptions": {
+                "sourceType": "script"
+            }
+        }
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "quotes": [
+            "error",
+            "double",
+            {
+                "avoidEscape": true
+            }
+        ],
+        "@typescript-eslint/no-explicit-any": "off",
+        "eol-last": [
+            "error",
+            "always"
+        ],
+        "no-trailing-spaces": "error",
+        "space-before-blocks": [
+            "error",
+            "always"
+        ],
+        "no-multi-spaces": "error",
+        "no-multiple-empty-lines": [
+            "error",
+            {
+                "max": 1 
+            }
+        ],
+        "semi": ["error", "always"]
+    }
+}
