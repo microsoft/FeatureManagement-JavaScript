@@ -1,0 +1,62 @@
+{
+  "feature_management": {
+    "feature_flags": [
+      {
+        "id": "FeatureX",
+        "enabled": true
+      },
+      {
+        "id": "FeatureY",
+        "enabled": false
+      },
+      {
+        "id": "FeatureFlagWithTimeWindowFilter",
+        "enabled": true,
+        "conditions": {
+          "client_filters": [
+            {
+              "name": "Microsoft.TimeWindow",
+              "parameters": {
+                "Start": "Thu, 15 Aug 2024 00:00:00 GMT",
+                "End": "Mon, 19 Aug 2024 00:00:00 GMT"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "id": "FeatureFlagWithTargetingFilter",
+        "enabled": true,
+        "conditions": {
+          "client_filters": [
+            {
+              "name": "Microsoft.Targeting",
+              "parameters": {
+                "Audience": {
+                  "Users": [
+                    "Jeff"
+                  ],
+                  "Groups": [
+                    {
+                      "Name": "Admin",
+                      "RolloutPercentage": 100
+                    }
+                  ],
+                  "DefaultRolloutPercentage": 40,
+                  "Exclusion": {
+                    "Users": [
+                      "Anne"
+                    ],
+                    "Groups": [
+                      "Guest"
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

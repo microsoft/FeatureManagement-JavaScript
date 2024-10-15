@@ -21,7 +21,7 @@ The App Configuration JavaScript provider provides feature flags in as a `Map` o
 A builtin `ConfigurationMapFeatureFlagProvider` helps to load feature flags in this case.
 
 ```js
-const appConfig = load(connectionString, {featureFlagOptions}); // load feature flags from Azure App Configuration service
+const appConfig = await load(connectionString, {featureFlagOptions}); // load feature flags from Azure App Configuration service
 const featureProvider = new ConfigurationMapFeatureFlagProvider(appConfig);
 const featureManager = new FeatureManager(featureProvider);
 const isAlphaEnabled = await featureManager.isEnabled("Alpha");
@@ -42,7 +42,7 @@ Content of `sample.json`:
             {
                 "id": "Alpha",
                 "description": "",
-                "enabled": "true",
+                "enabled": true,
                 "conditions": {
                     "client_filters": []
                 }

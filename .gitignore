@@ -409,7 +409,7 @@ types/
 *.tgz
 
 # examples
-examples/package-lock.json
+examples/**/**/package-lock.json
 
 # playwright test result
 test-results
