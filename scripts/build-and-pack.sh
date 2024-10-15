@@ -25,6 +25,9 @@ npm run test
 echo "npm pack in $PACKAGE_DIR"
 npm pack
 
+echo "copy $PACKAGE package to $PROJECT_BASE_DIR"
+cp "$PACKAGE_DIR"/*.tgz "$PROJECT_BASE_DIR"
+
 PACKAGE="feature-management-applicationinsights-browser"
 PACKAGE_DIR="$SDK_DIR/$PACKAGE"
 
@@ -36,3 +39,6 @@ npm run build
 
 echo "npm pack in $PACKAGE_DIR"
 npm pack
+
+echo "copy $PACKAGE package to $PROJECT_BASE_DIR"
+cp "$PACKAGE_DIR"/*.tgz "$PROJECT_BASE_DIR"
