@@ -42,7 +42,7 @@ Content of `sample.json`:
             {
                 "id": "Alpha",
                 "description": "",
-                "enabled": "true",
+                "enabled": true,
                 "conditions": {
                     "client_filters": []
                 }
