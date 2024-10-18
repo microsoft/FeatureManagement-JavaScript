@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { EvaluationResult } from "@microsoft/feature-management";
-import { ApplicationInsights } from "@microsoft/applicationinsights-web";
-import { IEventTelemetry } from "@microsoft/applicationinsights-web";
+import { EvaluationResult, VariantAssignmentReason } from "@microsoft/feature-management";
+import { ApplicationInsights, IEventTelemetry } from "@microsoft/applicationinsights-web";
+import { EVALUATION_EVENT_VERSION } from "./version.js";
 
 /**
  * Creates a telemetry publisher that sends feature evaluation events to Application Insights.
@@ -12,8 +12,13 @@ import { IEventTelemetry } from "@microsoft/applicationinsights-web";
  */
 export function createTelemetryPublisher(client: ApplicationInsights): (event: EvaluationResult) => void {
     return (event: EvaluationResult) => {
+        if (event.feature === undefined) {
+            return;
+        }
+
         const eventProperties = {
-            "FeatureName": event.feature?.id,
+            "Version": EVALUATION_EVENT_VERSION,
+            "FeatureName": event.feature.id,
             "Enabled": event.enabled.toString(),
             // Ensure targetingId is string so that it will be placed in customDimensions
             "TargetingId": event.targetingId?.toString(),
@@ -21,7 +26,34 @@ export function createTelemetryPublisher(client: ApplicationInsights): (event: E
             "VariantAssignmentReason": event.variantAssignmentReason,
         };
 
-        const metadata = event.feature?.telemetry?.metadata;
+        if (event.feature.allocation?.default_when_enabled) {
+            eventProperties["DefaultWhenEnabled"] = event.feature.allocation.default_when_enabled;
+        }
+
+        if (event.variantAssignmentReason === VariantAssignmentReason.DefaultWhenEnabled) {
+            let percentileAllocationPercentage = 0;
+            if (event.variant !== undefined && event.feature.allocation !== undefined && event.feature.allocation.percentile !== undefined) {
+                for (const percentile of event.feature.allocation.percentile) {
+                    if (percentile.variant === event.variant.name) {
+                        percentileAllocationPercentage += percentile.to - percentile.from;
+                    }
+                }
+            }
+            eventProperties["PercentileAllocationPercentage"] = (100 - percentileAllocationPercentage).toString();
+        }
+        else if (event.variantAssignmentReason === VariantAssignmentReason.Percentile) {
+            let percentileAllocationPercentage = 0;
+            if (event.variant !== undefined && event.feature.allocation !== undefined && event.feature.allocation.percentile !== undefined) {
+                for (const percentile of event.feature.allocation.percentile) {
+                    if (percentile.variant === event.variant.name) {
+                        percentileAllocationPercentage += percentile.to - percentile.from;
+                    }
+                }
+            }
+            eventProperties["PercentileAllocationPercentage"] = percentileAllocationPercentage.toString();
+        }
+
+        const metadata = event.feature.telemetry?.metadata;
         if (metadata) {
             for (const key in metadata) {
                 if (!(key in eventProperties)) {
