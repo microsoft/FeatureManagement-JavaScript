@@ -13,11 +13,11 @@ import { IEventTelemetry } from "@microsoft/applicationinsights-web";
 export function createTelemetryPublisher(client: ApplicationInsights): (event: EvaluationResult) => void {
     return (event: EvaluationResult) => {
         const eventProperties = {
-            "FeatureName": event.feature?.id,
+            "FeatureName": event.feature ? event.feature.id : "",
             "Enabled": event.enabled.toString(),
             // Ensure targetingId is string so that it will be placed in customDimensions
-            "TargetingId": event.targetingId?.toString(),
-            "Variant": event.variant?.name,
+            "TargetingId": event.targetingId ? event.targetingId.toString() : "",
+            "Variant": event.variant ? event.variant.name : "",
             "VariantAssignmentReason": event.variantAssignmentReason,
         };
 
