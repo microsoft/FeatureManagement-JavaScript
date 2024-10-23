@@ -50,10 +50,13 @@ function validateFeatureEnablementConditions(conditions: any) {
 
 function validateClientFilters(client_filters: any) {
     if (!Array.isArray(client_filters)) {
-        throw new TypeError("Client filters must be an array.");
+        throw new TypeError("Client filter Collection must be an array.");
     }
 
     for (const filter of client_filters) {
+        if (typeof filter.type !== "object") {
+            throw new TypeError("Client filter must be an object.");
+        }
         if (typeof filter.name !== "string") {
             throw new TypeError("Client filter name must be a string.");
         }
@@ -70,17 +73,16 @@ function validateVariants(variants: any) {
     }
 
     for (const variant of variants) {
+        if (typeof variant !== "object") {
+            throw new TypeError("Variant must be an object.");
+        }
         if (typeof variant.name !== "string") {
             throw new TypeError("Variant name must be a string.");
         }
-
         // skip configuration_value validation as it accepts any type
-
-        // Although configuration_reference is not supported in the current implementation, we validate it here for future compatibility.
-        if (variant.configuration_reference !== undefined && typeof variant.configuration_reference !== "string") {
-            throw new TypeError("Variant configuration reference must be a string.");
+        if (variant.status_override !== undefined && typeof variant.status_override !== "string") {
+            throw new TypeError("Variant status override must be a string.");
         }
-
         if (variant.status_override !== undefined && variant.status_override !== "None" && variant.status_override !== "Enabled" && variant.status_override !== "Disabled") {
             throw new TypeError("Variant status override must be 'None', 'Enabled', or 'Disabled'.");
         }
@@ -119,6 +121,9 @@ function validateUserVariantAllocation(UserAllocations: any) {
     }
 
     for (const allocation of UserAllocations) {
+        if (typeof allocation !== "object") {
+            throw new TypeError("User allocation must be an object.");
+        }
         if (typeof allocation.variant !== "string") {
             throw new TypeError("User allocation variant must be a string.");
         }
@@ -139,6 +144,9 @@ function validateGroupVariantAllocation(groupAllocations: any) {
     }
 
     for (const allocation of groupAllocations) {
+        if (typeof allocation !== "object") {
+            throw new TypeError("Group allocation must be an object.");
+        }
         if (typeof allocation.variant !== "string") {
             throw new TypeError("Group allocation variant must be a string.");
         }
@@ -159,14 +167,17 @@ function validatePercentileVariantAllocation(percentileAllocations: any) {
     }
 
     for (const allocation of percentileAllocations) {
+        if (typeof allocation !== "object") {
+            throw new TypeError("Percentile allocation must be an object.");
+        }
         if (typeof allocation.variant !== "string") {
             throw new TypeError("Percentile allocation variant must be a string.");
         }
-        if (typeof allocation.from !== "number") {
-            throw new TypeError("Percentile allocation from must be a number.");
+        if (typeof allocation.from !== "number" || allocation.from < 0 || allocation.from > 100) {
+            throw new TypeError("Percentile allocation from must be a number between 0 and 100.");
         }
-        if (typeof allocation.to !== "number") {
-            throw new TypeError("Percentile allocation to must be a number.");
+        if (typeof allocation.to !== "number" || allocation.to < 0 || allocation.to > 100) {
+            throw new TypeError("Percentile allocation to must be a number between 0 and 100.");
         }
     }
 }
