@@ -34,9 +34,7 @@ export function createTelemetryPublisher(client: ApplicationInsights): (event: E
             let percentileAllocationPercentage = 0;
             if (event.variant !== undefined && event.feature.allocation !== undefined && event.feature.allocation.percentile !== undefined) {
                 for (const percentile of event.feature.allocation.percentile) {
-                    if (percentile.variant === event.variant.name) {
-                        percentileAllocationPercentage += percentile.to - percentile.from;
-                    }
+                    percentileAllocationPercentage += percentile.to - percentile.from;
                 }
             }
             eventProperties["PercentileAllocationPercentage"] = (100 - percentileAllocationPercentage).toString();
