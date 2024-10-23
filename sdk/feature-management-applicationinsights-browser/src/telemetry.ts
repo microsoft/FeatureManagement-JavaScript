@@ -37,7 +37,7 @@ export function createTelemetryPublisher(client: ApplicationInsights): (event: E
                     percentileAllocationPercentage += percentile.to - percentile.from;
                 }
             }
-            eventProperties["PercentileAllocationPercentage"] = (100 - percentileAllocationPercentage).toString();
+            eventProperties["VariantAssignmentPercentage"] = (100 - percentileAllocationPercentage).toString();
         }
         else if (event.variantAssignmentReason === VariantAssignmentReason.Percentile) {
             let percentileAllocationPercentage = 0;
@@ -48,7 +48,7 @@ export function createTelemetryPublisher(client: ApplicationInsights): (event: E
                     }
                 }
             }
-            eventProperties["PercentileAllocationPercentage"] = percentileAllocationPercentage.toString();
+            eventProperties["VariantAssignmentPercentage"] = percentileAllocationPercentage.toString();
         }
 
         const metadata = event.feature.telemetry?.metadata;
