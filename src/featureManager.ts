@@ -3,10 +3,10 @@
 
 import { TimeWindowFilter } from "./filter/TimeWindowFilter.js";
 import { IFeatureFilter } from "./filter/FeatureFilter.js";
-import { RequirementType } from "./schema/model.ts";
+import { RequirementType } from "./schema/model.js";
 import { IFeatureFlagProvider } from "./featureProvider.js";
 import { TargetingFilter } from "./filter/TargetingFilter.js";
-import { validateFeatureFlag } from "./schema/validator.ts";
+import { validateFeatureFlag } from "./schema/validator.js";
 
 export class FeatureManager {
     #provider: IFeatureFlagProvider;
