@@ -1,4 +1,4 @@
-name: FeatureManagement-JavaScriptProvider CI
+name: FeatureManagement-JavaScript CI
 
 on:
   push:
