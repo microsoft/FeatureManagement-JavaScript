@@ -79,10 +79,6 @@ interface Variant {
    */
   configuration_value?: unknown;
   /**
-   * The path to a configuration section used as the configuration value for this feature variant.
-   */
-  configuration_reference?: string;
-  /**
    * Overrides the enabled state of the feature if the given variant is assigned. Does not override the state if value is None.
    */
   status_override?: "None" | "Enabled" | "Disabled";
