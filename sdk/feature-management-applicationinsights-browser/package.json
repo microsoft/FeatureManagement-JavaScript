@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@microsoft/applicationinsights-web": "^3.3.2",
-    "@microsoft/feature-management": "1.0.0-preview.1"
+    "@microsoft/feature-management": "2.0.0-preview.2"
   }
 }
   
