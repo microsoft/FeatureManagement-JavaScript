@@ -54,9 +54,6 @@ function validateClientFilters(client_filters: any) {
     }
 
     for (const filter of client_filters) {
-        if (typeof filter.type !== "object") {
-            throw new TypeError("Client filter must be an object.");
-        }
         if (typeof filter.name !== "string") {
             throw new TypeError("Client filter name must be a string.");
         }
