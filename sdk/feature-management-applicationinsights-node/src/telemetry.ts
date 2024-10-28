@@ -43,7 +43,7 @@ export function createTelemetryPublisher(client: TelemetryClient): (event: Evalu
  * @param event The event telemetry object to be tracked, containing event details.
  */
 export function trackEvent(client: TelemetryClient, targetingId: string, event: Contracts.EventTelemetry): void {
-    event.properties = { 
+    event.properties = {
         ...event.properties,
         TargetingId: targetingId ? targetingId.toString() : ""
     };
