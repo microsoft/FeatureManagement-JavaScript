@@ -73,9 +73,6 @@ function validateVariants(variants: any) {
     }
 
     for (const variant of variants) {
-        if (typeof variant !== "object") {
-            throw new TypeError("Variant must be an object.");
-        }
         if (typeof variant.name !== "string") {
             throw new TypeError("Variant name must be a string.");
         }
@@ -121,9 +118,6 @@ function validateUserVariantAllocation(UserAllocations: any) {
     }
 
     for (const allocation of UserAllocations) {
-        if (typeof allocation !== "object") {
-            throw new TypeError("User allocation must be an object.");
-        }
         if (typeof allocation.variant !== "string") {
             throw new TypeError("User allocation variant must be a string.");
         }
@@ -144,9 +138,6 @@ function validateGroupVariantAllocation(groupAllocations: any) {
     }
 
     for (const allocation of groupAllocations) {
-        if (typeof allocation !== "object") {
-            throw new TypeError("Group allocation must be an object.");
-        }
         if (typeof allocation.variant !== "string") {
             throw new TypeError("Group allocation variant must be a string.");
         }
@@ -167,9 +158,6 @@ function validatePercentileVariantAllocation(percentileAllocations: any) {
     }
 
     for (const allocation of percentileAllocations) {
-        if (typeof allocation !== "object") {
-            throw new TypeError("Percentile allocation must be an object.");
-        }
         if (typeof allocation.variant !== "string") {
             throw new TypeError("Percentile allocation variant must be a string.");
         }
