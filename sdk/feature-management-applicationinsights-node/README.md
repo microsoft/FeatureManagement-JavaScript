@@ -11,12 +11,14 @@ Feature Management Application Insights Plugin for Browser provides a solution f
 ### Usage
 
 ``` javascript
-import applicationInsights from "applicationinsights";
+import appInsights from "applicationinsights";
 import { FeatureManager, ConfigurationObjectFeatureFlagProvider } from "@microsoft/feature-management";
 import { trackEvent, publishTelemetry } from "@microsoft/feature-management-applicationinsights-node";
 
-applicationInsights.setup(CONNECTION_STRING).start();
+appInsights.setup(CONNECTION_STRING)
+           .start();
 
+const publishTelemetry = createTelemetryPublisher(appInsights.defaultClient);
 const provider = new ConfigurationObjectFeatureFlagProvider(jsonObject);
 const featureManager = new FeatureManager(provider, {onFeatureEvaluated: publishTelemetry});
 
@@ -24,7 +26,7 @@ const featureManager = new FeatureManager(provider, {onFeatureEvaluated: publish
 featureManager.getVariant("TestFeature", {userId : TARGETING_ID}).then((variant) => { /* do something*/ });
 
 // Emit a custom event with targeting id attached.
-trackEvent(TARGETING_ID, {name: "TestEvent"});
+trackEvent(appInsights.defaultClient, TARGETING_ID, {name: "TestEvent"});
 ```
 
 ## Contributing

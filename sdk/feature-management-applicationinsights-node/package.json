@@ -1,7 +1,7 @@
 {
   "name": "@microsoft/feature-management-applicationinsights-node",
   "version": "2.0.0-preview.2",
-  "description": "Feature Management Application Insights Plugin for Browser provides a solution for sending feature flag evaluation events produced by the Feature Management library.",
+  "description": "Feature Management Application Insights Plugin for Node.js provides a solution for sending feature flag evaluation events produced by the Feature Management library.",
   "main": "./dist/commonjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "types/index.d.ts",
