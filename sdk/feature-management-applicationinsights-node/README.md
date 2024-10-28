@@ -4,19 +4,19 @@ Feature Management Application Insights Plugin for Browser provides a solution f
 
 ## Getting Started
 
+### Prerequisites
+
+- Node.js LTS version
+
 ### Usage
 
 ``` javascript
-import { ApplicationInsights } from "@microsoft/applicationinsights-web"
+import applicationInsights from "applicationinsights";
 import { FeatureManager, ConfigurationObjectFeatureFlagProvider } from "@microsoft/feature-management";
-import { trackEvent, createTelemetryPublisher } from "@microsoft/feature-management-applicationinsights-browser";
+import { trackEvent, publishTelemetry } from "@microsoft/feature-management-applicationinsights-node";
 
-const appInsights = new ApplicationInsights({ config: {
-    connectionString: CONNECTION_STRING
-}});
-appInsights.loadAppInsights();
+applicationInsights.setup(CONNECTION_STRING).start();
 
-const publishTelemetry = createTelemetryPublisher(appInsights);
 const provider = new ConfigurationObjectFeatureFlagProvider(jsonObject);
 const featureManager = new FeatureManager(provider, {onFeatureEvaluated: publishTelemetry});
 
@@ -24,7 +24,7 @@ const featureManager = new FeatureManager(provider, {onFeatureEvaluated: publish
 featureManager.getVariant("TestFeature", {userId : TARGETING_ID}).then((variant) => { /* do something*/ });
 
 // Emit a custom event with targeting id attached.
-trackEvent(appInsights, TARGETING_ID, {name: "TestEvent"}, {"Tag": "Some Value"});
+trackEvent(TARGETING_ID, {name: "TestEvent"});
 ```
 
 ## Contributing
