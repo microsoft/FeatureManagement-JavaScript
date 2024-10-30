@@ -13,14 +13,6 @@ export interface FeatureFlag {
    */
   id: string;
   /**
-   * A description of the feature.
-   */
-  description?: string;
-  /**
-   * A display name for the feature to use for display rather than the ID.
-   */
-  display_name?: string;
-  /**
    * A feature is OFF if enabled is false. If enabled is true, then the feature is ON if there are no conditions (null or empty) or if the conditions are satisfied.
    */
   enabled?: boolean;
