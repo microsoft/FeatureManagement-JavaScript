@@ -72,6 +72,43 @@ describe("feature manager", () => {
         ]);
     });
 
+    it("should evaluate features with conditions", () => {
+        const dataSource = new Map();
+        dataSource.set("feature_management", {
+            feature_flags: [
+                {
+                    "id": "Gamma",
+                    "description": "",
+                    "enabled": true,
+                    "conditions": {
+                        "requirement_type": "invalid type",
+                        "client_filters": [
+                            { "name": "Microsoft.Targeting", "parameters": { "Audience": { "DefaultRolloutPercentage": 50 } } }
+                        ]
+                    }
+                },
+                {
+                    "id": "Delta",
+                    "description": "",
+                    "enabled": true,
+                    "conditions": {
+                        "requirement_type": "Any",
+                        "client_filters": [
+                            { "name": "Microsoft.Targeting", "parameters": "invalid parameter" }
+                        ]
+                    }
+                }
+            ],
+        });
+
+        const provider = new ConfigurationMapFeatureFlagProvider(dataSource);
+        const featureManager = new FeatureManager(provider);
+        return Promise.all([
+            expect(featureManager.isEnabled("Gamma")).eventually.rejectedWith("'requirement_type' must be 'Any' or 'All'."),
+            expect(featureManager.isEnabled("Delta")).eventually.rejectedWith("Client filter 'parameters' must be an object.")
+        ]);
+    });
+
     it("should let the last feature flag win", () => {
         const jsonObject = {
             "feature_management": {
