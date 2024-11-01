@@ -1,18 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { EvaluationResult, VariantAssignmentReason } from "@microsoft/feature-management";
+import { EvaluationResult, createFeatureEvaluationEventProperties } from "@microsoft/feature-management";
 import { TelemetryClient, Contracts } from "applicationinsights";
-import { EVALUATION_EVENT_VERSION } from "./version.js";
 
-const VERSION = "Version";
-const FEATURE_NAME = "FeatureName";
-const ENABLED = "Enabled";
 const TARGETING_ID = "TargetingId";
-const VARIANT = "Variant";
-const VARIANT_ASSIGNMENT_REASON = "VariantAssignmentReason";
-const DEFAULT_WHEN_ENABLED = "DefaultWhenEnabled";
-const VARIANT_ASSIGNMENT_PERCENTAGE = "VariantAssignmentPercentage";
 const FEATURE_EVALUATION_EVENT_NAME = "FeatureEvaluation";
 
 /**
@@ -20,48 +12,15 @@ const FEATURE_EVALUATION_EVENT_NAME = "FeatureEvaluation";
  * @param client The Application Insights telemetry client.
  * @returns A callback function that takes an evaluation result and tracks an event with the evaluation details.
  */
-export function createTelemetryPublisher(client: TelemetryClient): (event: EvaluationResult) => void {
-    return (event: EvaluationResult) => {
-        if (event.feature === undefined) {
+export function createTelemetryPublisher(client: TelemetryClient): (result: EvaluationResult) => void {
+    return (result: EvaluationResult) => {
+        if (result.feature === undefined) {
             return;
         }
 
-        const eventProperties = {
-            [VERSION]: EVALUATION_EVENT_VERSION,
-            [FEATURE_NAME]: event.feature ? event.feature.id : "",
-            [ENABLED]: event.enabled.toString(),
-            // Ensure targetingId is string so that it will be placed in customDimensions
-            [TARGETING_ID]: event.targetingId ? event.targetingId.toString() : "",
-            [VARIANT]: event.variant ? event.variant.name : "",
-            [VARIANT_ASSIGNMENT_REASON]: event.variantAssignmentReason,
-        };
+        const eventProperties = createFeatureEvaluationEventProperties(result);
 
-        if (event.feature.allocation?.default_when_enabled) {
-            eventProperties[DEFAULT_WHEN_ENABLED] = event.feature.allocation.default_when_enabled;
-        }
-
-        if (event.variantAssignmentReason === VariantAssignmentReason.DefaultWhenEnabled) {
-            let percentileAllocationPercentage = 0;
-            if (event.variant !== undefined && event.feature.allocation !== undefined && event.feature.allocation.percentile !== undefined) {
-                for (const percentile of event.feature.allocation.percentile) {
-                    percentileAllocationPercentage += percentile.to - percentile.from;
-                }
-            }
-            eventProperties[VARIANT_ASSIGNMENT_PERCENTAGE] = (100 - percentileAllocationPercentage).toString();
-        }
-        else if (event.variantAssignmentReason === VariantAssignmentReason.Percentile) {
-            let percentileAllocationPercentage = 0;
-            if (event.variant !== undefined && event.feature.allocation !== undefined && event.feature.allocation.percentile !== undefined) {
-                for (const percentile of event.feature.allocation.percentile) {
-                    if (percentile.variant === event.variant.name) {
-                        percentileAllocationPercentage += percentile.to - percentile.from;
-                    }
-                }
-            }
-            eventProperties[VARIANT_ASSIGNMENT_PERCENTAGE] = percentileAllocationPercentage.toString();
-        }
-
-        const metadata = event.feature.telemetry?.metadata;
+        const metadata = result.feature.telemetry?.metadata;
         if (metadata) {
             for (const key in metadata) {
                 if (!(key in eventProperties)) {
