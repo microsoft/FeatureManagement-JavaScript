@@ -3,7 +3,7 @@
 
 import { TimeWindowFilter } from "./filter/TimeWindowFilter.js";
 import { IFeatureFilter } from "./filter/FeatureFilter.js";
-import { RequirementType } from "./model.js";
+import { RequirementType } from "./schema/model.js";
 import { IFeatureFlagProvider } from "./featureProvider.js";
 import { TargetingFilter } from "./filter/TargetingFilter.js";
 
@@ -30,14 +30,11 @@ export class FeatureManager {
 
     // If multiple feature flags are found, the first one takes precedence.
     async isEnabled(featureName: string, context?: unknown): Promise<boolean> {
-        const featureFlag = await this.#provider.getFeatureFlag(featureName);
+        const featureFlag = await this.#getFeatureFlag(featureName);
         if (featureFlag === undefined) {
             // If the feature is not found, then it is disabled.
             return false;
         }
-
-        // Ensure that the feature flag is in the correct format. Feature providers should validate the feature flags, but we do it here as a safeguard.
-        validateFeatureFlagFormat(featureFlag);
 
         if (featureFlag.enabled !== true) {
             // If the feature is not explicitly enabled, then it is disabled by default.
@@ -75,14 +72,13 @@ export class FeatureManager {
         return !shortCircuitEvaluationResult;
     }
 
+    async #getFeatureFlag(featureName: string): Promise<any> {
+        const featureFlag = await this.#provider.getFeatureFlag(featureName);
+        return featureFlag;
+    }
+
 }
 
 interface FeatureManagerOptions {
     customFilters?: IFeatureFilter[];
-}
-
-function validateFeatureFlagFormat(featureFlag: any): void {
-    if (featureFlag.enabled !== undefined && typeof featureFlag.enabled !== "boolean") {
-        throw new Error(`Feature flag ${featureFlag.id} has an invalid 'enabled' value.`);
-    }
 }
