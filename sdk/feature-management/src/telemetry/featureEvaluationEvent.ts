@@ -52,4 +52,15 @@ export function createFeatureEvaluationEventProperties(result: EvaluationResult)
         }
         eventProperties[VARIANT_ASSIGNMENT_PERCENTAGE] = percentileAllocationPercentage.toString();
     }
+
+    const metadata = result.feature.telemetry?.metadata;
+    if (metadata) {
+        for (const key in metadata) {
+            if (!(key in eventProperties)) {
+                eventProperties[key] = metadata[key];
+            }
+        }
+    }
+
+    return eventProperties;
 }

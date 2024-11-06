@@ -19,16 +19,6 @@ export function createTelemetryPublisher(client: ApplicationInsights): (result: 
         }
 
         const eventProperties = createFeatureEvaluationEventProperties(result);
-
-        const metadata = result.feature.telemetry?.metadata;
-        if (metadata) {
-            for (const key in metadata) {
-                if (!(key in eventProperties)) {
-                    eventProperties[key] = metadata[key];
-                }
-            }
-        }
-
         client.trackEvent({ name: FEATURE_EVALUATION_EVENT_NAME }, eventProperties);
     };
 }
