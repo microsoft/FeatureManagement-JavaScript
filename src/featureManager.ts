@@ -30,7 +30,7 @@ export class FeatureManager {
 
     // If multiple feature flags are found, the first one takes precedence.
     async isEnabled(featureName: string, context?: unknown): Promise<boolean> {
-        const featureFlag = await this.#getFeatureFlag(featureName);
+        const featureFlag = await this.#provider.getFeatureFlag(featureName);
         if (featureFlag === undefined) {
             // If the feature is not found, then it is disabled.
             return false;
@@ -71,12 +71,6 @@ export class FeatureManager {
         // If we get here, then we have not found a client filter that matches the requirement type.
         return !shortCircuitEvaluationResult;
     }
-
-    async #getFeatureFlag(featureName: string): Promise<any> {
-        const featureFlag = await this.#provider.getFeatureFlag(featureName);
-        return featureFlag;
-    }
-
 }
 
 interface FeatureManagerOptions {
