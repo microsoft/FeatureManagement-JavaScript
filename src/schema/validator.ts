@@ -33,6 +33,9 @@ export function validateFeatureFlag(featureFlag: any): void {
 }
 
 function validateFeatureEnablementConditions(conditions: any) {
+    if (typeof conditions !== "object") {
+        throw new TypeError("Feature flag 'conditions' must be an object.");
+    }
     if (conditions.requirement_type !== undefined && conditions.requirement_type !== "Any" && conditions.requirement_type !== "All") {
         throw new TypeError("'requirement_type' must be 'Any' or 'All'.");
     }
@@ -43,7 +46,7 @@ function validateFeatureEnablementConditions(conditions: any) {
 
 function validateClientFilters(client_filters: any) {
     if (!Array.isArray(client_filters)) {
-        throw new TypeError("'client_filters' must be an array.");
+        throw new TypeError("Feature flag conditions 'client_filters' must be an array.");
     }
 
     for (const filter of client_filters) {
@@ -58,7 +61,7 @@ function validateClientFilters(client_filters: any) {
 
 function validateVariants(variants: any) {
     if (!Array.isArray(variants)) {
-        throw new TypeError("'variants' must be an array.");
+        throw new TypeError("Feature flag 'variants' must be an array.");
     }
 
     for (const variant of variants) {
@@ -102,10 +105,13 @@ function validateVariantAllocation(allocation: any) {
 
 function validateUserVariantAllocation(UserAllocations: any) {
     if (!Array.isArray(UserAllocations)) {
-        throw new TypeError("User allocation 'user' must be an array.");
+        throw new TypeError("Variant 'user' allocation must be an array.");
     }
 
     for (const allocation of UserAllocations) {
+        if (typeof allocation !== "object") {
+            throw new TypeError("Elements in 'user' allocation must be an object.");
+        }
         if (typeof allocation.variant !== "string") {
             throw new TypeError("User allocation 'variant' must be a string.");
         }
@@ -114,7 +120,7 @@ function validateUserVariantAllocation(UserAllocations: any) {
         }
         for (const user of allocation.users) {
             if (typeof user !== "string") {
-                throw new TypeError("Elements in User allocation 'users' must be strings.");
+                throw new TypeError("Elements in user allocation 'users' must be strings.");
             }
         }
     }
@@ -122,10 +128,13 @@ function validateUserVariantAllocation(UserAllocations: any) {
 
 function validateGroupVariantAllocation(groupAllocations: any) {
     if (!Array.isArray(groupAllocations)) {
-        throw new TypeError("Group allocation 'group' must be an array.");
+        throw new TypeError("Variant 'group' allocation must be an array.");
     }
 
     for (const allocation of groupAllocations) {
+        if (typeof allocation !== "object") {
+            throw new TypeError("Elements in 'group' allocation must be an object.");
+        }
         if (typeof allocation.variant !== "string") {
             throw new TypeError("Group allocation 'variant' must be a string.");
         }
@@ -134,7 +143,7 @@ function validateGroupVariantAllocation(groupAllocations: any) {
         }
         for (const group of allocation.groups) {
             if (typeof group !== "string") {
-                throw new TypeError("Elements in Group allocation 'groups' must be strings.");
+                throw new TypeError("Elements in group allocation 'groups' must be strings.");
             }
         }
     }
@@ -142,10 +151,13 @@ function validateGroupVariantAllocation(groupAllocations: any) {
 
 function validatePercentileVariantAllocation(percentileAllocations: any) {
     if (!Array.isArray(percentileAllocations)) {
-        throw new TypeError("Percentile allocation 'percentile' must be an array.");
+        throw new TypeError("Variant 'percentile' allocation must be an array.");
     }
 
     for (const allocation of percentileAllocations) {
+        if (typeof allocation !== "object") {
+            throw new TypeError("Elements in 'percentile' allocation must be an object.");
+        }
         if (typeof allocation.variant !== "string") {
             throw new TypeError("Percentile allocation 'variant' must be a string.");
         }
@@ -162,7 +174,7 @@ function validatePercentileVariantAllocation(percentileAllocations: any) {
 // #region Telemetry
 function validateTelemetryOptions(telemetry: any) {
     if (typeof telemetry !== "object") {
-        throw new TypeError("Telemetry option 'telemetry' must be an object.");
+        throw new TypeError("Feature flag 'telemetry' must be an object.");
     }
     if (telemetry.enabled !== undefined && typeof telemetry.enabled !== "boolean") {
         throw new TypeError("Telemetry 'enabled' must be a boolean.");

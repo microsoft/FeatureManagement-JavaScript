@@ -6,7 +6,6 @@ import { IFeatureFilter } from "./filter/FeatureFilter.js";
 import { RequirementType } from "./schema/model.js";
 import { IFeatureFlagProvider } from "./featureProvider.js";
 import { TargetingFilter } from "./filter/TargetingFilter.js";
-import { validateFeatureFlag } from "./schema/validator.js";
 
 export class FeatureManager {
     #provider: IFeatureFlagProvider;
@@ -75,7 +74,6 @@ export class FeatureManager {
 
     async #getFeatureFlag(featureName: string): Promise<any> {
         const featureFlag = await this.#provider.getFeatureFlag(featureName);
-        validateFeatureFlag(featureFlag);
         return featureFlag;
     }
 
