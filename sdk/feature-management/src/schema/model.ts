@@ -33,7 +33,7 @@ export interface FeatureFlag {
      */
     telemetry?: TelemetryOptions
   }
-  
+
   /**
   * The declaration of conditions used to dynamically enable the feature
   */
@@ -47,9 +47,9 @@ export interface FeatureFlag {
      */
     client_filters?: ClientFilter[];
   }
-  
+
   export type RequirementType = "Any" | "All";
-  
+
   interface ClientFilter {
     /**
      * The name used to refer to a client filter.
@@ -60,7 +60,7 @@ export interface FeatureFlag {
      */
     parameters?: Record<string, unknown>;
   }
-  
+
   export interface VariantDefinition {
     /**
      * The name used to refer to a feature variant.
@@ -75,7 +75,7 @@ export interface FeatureFlag {
      */
     status_override?: "None" | "Enabled" | "Disabled";
   }
-  
+
   /**
   * Determines how variants should be allocated for the feature to various users.
   */
@@ -105,7 +105,7 @@ export interface FeatureFlag {
      */
     seed?: string;
   }
-  
+
   interface UserAllocation {
     /**
      * The name of the variant to use if the user allocation matches the current user.
@@ -116,7 +116,7 @@ export interface FeatureFlag {
      */
     users: string[];
   }
-  
+
   interface GroupAllocation {
     /**
      * The name of the variant to use if the group allocation matches a group the current user is in.
@@ -127,7 +127,7 @@ export interface FeatureFlag {
      */
     groups: string[];
   }
-  
+
   interface PercentileAllocation {
     /**
      * The name of the variant to use if the calculated percentile for the current user falls in the provided range.
@@ -142,7 +142,7 @@ export interface FeatureFlag {
      */
     to: number;
   }
-  
+
   /**
   * The declaration of options used to configure telemetry for this feature.
   */
@@ -156,17 +156,17 @@ export interface FeatureFlag {
      */
     metadata?: Record<string, string>;
   }
-  
+
   // Feature Management Section fed into feature manager.
   // Converted from https://github.com/Azure/AppConfiguration/blob/main/docs/FeatureManagement/FeatureManagement.v1.0.0.schema.json
-  
+
   export const FEATURE_MANAGEMENT_KEY = "feature_management";
   export const FEATURE_FLAGS_KEY = "feature_flags";
-  
+
   export interface FeatureManagementConfiguration {
     feature_management: FeatureManagement
   }
-  
+
   /**
    * Declares feature management configuration.
    */
