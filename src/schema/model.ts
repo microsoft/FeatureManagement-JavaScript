@@ -13,14 +13,6 @@ export interface FeatureFlag {
    */
   id: string;
   /**
-   * A description of the feature.
-   */
-  description?: string;
-  /**
-   * A display name for the feature to use for display rather than the ID.
-   */
-  display_name?: string;
-  /**
    * A feature is OFF if enabled is false. If enabled is true, then the feature is ON if there are no conditions (null or empty) or if the conditions are satisfied.
    */
   enabled?: boolean;
@@ -78,10 +70,6 @@ interface Variant {
    * The configuration value for this feature variant.
    */
   configuration_value?: unknown;
-  /**
-   * The path to a configuration section used as the configuration value for this feature variant.
-   */
-  configuration_reference?: string;
   /**
    * Overrides the enabled state of the feature if the given variant is assigned. Does not override the state if value is None.
    */
