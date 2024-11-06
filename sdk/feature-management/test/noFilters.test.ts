@@ -3,9 +3,10 @@
 
 import * as chai from "chai";
 import * as chaiAsPromised from "chai-as-promised";
-import { FeatureManager, ConfigurationObjectFeatureFlagProvider } from "../";
 chai.use(chaiAsPromised);
 const expect = chai.expect;
+
+import { FeatureManager, ConfigurationObjectFeatureFlagProvider } from "../";
 
 const featureFlagsDataObject = {
     "feature_management": {
@@ -60,7 +61,7 @@ describe("feature flags with no filters", () => {
         return Promise.all([
             expect(featureManager.isEnabled("BooleanTrue")).eventually.eq(true),
             expect(featureManager.isEnabled("BooleanFalse")).eventually.eq(false),
-            expect(featureManager.isEnabled("InvalidEnabled")).eventually.rejectedWith("Feature flag InvalidEnabled has an invalid 'enabled' value."),
+            expect(featureManager.isEnabled("InvalidEnabled")).eventually.rejectedWith("Feature flag 'enabled' must be a boolean."),
             expect(featureManager.isEnabled("Minimal")).eventually.eq(true),
             expect(featureManager.isEnabled("NoEnabled")).eventually.eq(false),
             expect(featureManager.isEnabled("EmptyConditions")).eventually.eq(true)
