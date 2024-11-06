@@ -110,7 +110,7 @@ function validateUserVariantAllocation(UserAllocations: any) {
 
     for (const allocation of UserAllocations) {
         if (typeof allocation !== "object") {
-            throw new TypeError("Elements in 'user' allocation must be an object.");
+            throw new TypeError("Elements in variant 'user' allocation must be an object.");
         }
         if (typeof allocation.variant !== "string") {
             throw new TypeError("User allocation 'variant' must be a string.");
@@ -133,7 +133,7 @@ function validateGroupVariantAllocation(groupAllocations: any) {
 
     for (const allocation of groupAllocations) {
         if (typeof allocation !== "object") {
-            throw new TypeError("Elements in 'group' allocation must be an object.");
+            throw new TypeError("Elements in variant 'group' allocation must be an object.");
         }
         if (typeof allocation.variant !== "string") {
             throw new TypeError("Group allocation 'variant' must be a string.");
@@ -156,7 +156,7 @@ function validatePercentileVariantAllocation(percentileAllocations: any) {
 
     for (const allocation of percentileAllocations) {
         if (typeof allocation !== "object") {
-            throw new TypeError("Elements in 'percentile' allocation must be an object.");
+            throw new TypeError("Elements in variant 'percentile' allocation must be an object.");
         }
         if (typeof allocation.variant !== "string") {
             throw new TypeError("Percentile allocation 'variant' must be a string.");
