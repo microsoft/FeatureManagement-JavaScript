@@ -21,7 +21,7 @@ export function createFeatureEvaluationEventProperties(result: EvaluationResult)
     const eventProperties = {
         [VERSION]: EVALUATION_EVENT_VERSION,
         [FEATURE_NAME]: result.feature ? result.feature.id : "",
-        [ENABLED]: result.enabled.toString(),
+        [ENABLED]: result.enabled ? "True" : "False",
         // Ensure targetingId is string so that it will be placed in customDimensions
         [TARGETING_ID]: result.targetingId ? result.targetingId.toString() : "",
         [VARIANT]: result.variant ? result.variant.name : "",
