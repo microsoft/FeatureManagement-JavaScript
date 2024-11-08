@@ -3,7 +3,7 @@
 
 import { TimeWindowFilter } from "./filter/TimeWindowFilter.js";
 import { IFeatureFilter } from "./filter/FeatureFilter.js";
-import { FeatureFlag, RequirementType, VariantDefinition } from "./model.js";
+import { FeatureFlag, RequirementType, VariantDefinition } from "./schema/model.js";
 import { IFeatureFlagProvider } from "./featureProvider.js";
 import { TargetingFilter } from "./filter/TargetingFilter.js";
 import { Variant } from "./variant/Variant.js";

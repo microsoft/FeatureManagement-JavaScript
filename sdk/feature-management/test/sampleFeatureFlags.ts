@@ -219,7 +219,7 @@ export const featureFlagsConfigurationObject = {
                             "to": 50
                         }
                     ],
-                    "seed": 1234
+                    "seed": "1234"
                 },
                 "telemetry": {
                     "enabled": true
@@ -241,7 +241,7 @@ export const featureFlagsConfigurationObject = {
                             "to": 50
                         }
                     ],
-                    "seed": 12345
+                    "seed": "12345"
                 },
                 "telemetry": {
                     "enabled": true
@@ -263,7 +263,7 @@ export const featureFlagsConfigurationObject = {
                             "to": 100
                         }
                     ],
-                    "seed": 12345
+                    "seed": "12345"
                 },
                 "telemetry": {
                     "enabled": true
