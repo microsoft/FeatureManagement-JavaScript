@@ -60,3 +60,11 @@ jobs:
     - name: Run lint check for feature-management-applicationinsights-browser
       run: npm run lint
       working-directory: sdk/feature-management-applicationinsights-browser
+
+    - name: Build feature-management-applicationinsights-node
+      run: npm run build
+      working-directory: sdk/feature-management-applicationinsights-node
+
+    - name: Run lint check for feature-management-applicationinsights-node
+      run: npm run lint
+      working-directory: sdk/feature-management-applicationinsights-node
