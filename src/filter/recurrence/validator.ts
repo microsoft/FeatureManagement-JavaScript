@@ -6,8 +6,18 @@ import { VALUE_OUT_OF_RANGE_ERROR_MESSAGE, UNRECOGNIZABLE_VALUE_ERROR_MESSAGE, R
 import { DayOfWeek, RecurrenceSpec, RecurrencePattern, RecurrenceRange, RecurrencePatternType, RecurrenceRangeType, DAYS_PER_WEEK, ONE_DAY_IN_MILLISECONDS } from "./model.js";
 import { calculateWeeklyDayOffset, sortDaysOfWeek, getDayOfWeek } from "./utils.js";
 
-const START_NOT_MATCHED_ERROR_MESSAGE = "Start date is not a valid first occurrence.";
-const TIME_WINDOW_DURATION_OUT_OF_RANGE_ERROR_MESSAGE = "Time window duration cannot be longer than how frequently it occurs or be longer than 10 years.";
+export const START_NOT_MATCHED_ERROR_MESSAGE = "Start date is not a valid first occurrence.";
+export const TIME_WINDOW_DURATION_OUT_OF_RANGE_ERROR_MESSAGE = "Time window duration cannot be longer than how frequently it occurs or be longer than 10 years.";
+export const PATTERN = "Recurrence.Pattern";
+export const PATTERN_TYPE = "Recurrence.Pattern.Type";
+export const INTERVAL = "Recurrence.Pattern.Interval";
+export const DAYS_OF_WEEK = "Recurrence.Pattern.DaysOfWeek";
+export const FIRST_DAY_OF_WEEK = "Recurrence.Pattern.FirstDayOfWeek";
+export const RANGE = "Recurrence.Range";
+export const RANGE_TYPE = "Recurrence.Range.Type";
+export const END_DATE = "Recurrence.Range.EndDate";
+export const NUMBER_OF_OCCURRENCES = "Recurrence.Range.NumberOfOccurrences";
+
 
 /**
  * Parses @see RecurrenceParameter into a @see RecurrenceSpec object. If the parameter is invalid, an error will be thrown.
@@ -44,21 +54,21 @@ export function parseRecurrenceParameter(startTime: Date | undefined, endTime: D
 function parseRecurrencePattern(startTime: Date, endTime: Date, recurrenceParameter: RecurrenceParameter, timeZoneOffset: number): RecurrencePattern {
     const rawPattern = recurrenceParameter.Pattern;
     if (rawPattern === undefined) {
-        throw new Error(buildInvalidParameterErrorMessage("Pattern", REQUIRED_PARAMETER_MISSING_ERROR_MESSAGE));
+        throw new Error(buildInvalidParameterErrorMessage(PATTERN, REQUIRED_PARAMETER_MISSING_ERROR_MESSAGE));
     }
     if (rawPattern.Type === undefined) {
-        throw new Error(buildInvalidParameterErrorMessage("Pattern.Type", REQUIRED_PARAMETER_MISSING_ERROR_MESSAGE));
+        throw new Error(buildInvalidParameterErrorMessage(PATTERN_TYPE, REQUIRED_PARAMETER_MISSING_ERROR_MESSAGE));
     }
     const patternType = RecurrencePatternType[rawPattern.Type];
     if (patternType === undefined) {
-        throw new Error(buildInvalidParameterErrorMessage("Pattern.Type", UNRECOGNIZABLE_VALUE_ERROR_MESSAGE));
+        throw new Error(buildInvalidParameterErrorMessage(PATTERN_TYPE, UNRECOGNIZABLE_VALUE_ERROR_MESSAGE));
     }
     let interval = rawPattern.Interval;
     if (interval !== undefined) {
         if (typeof interval !== "number") {
-            throw new Error(buildInvalidParameterErrorMessage("Pattern.Interval", UNRECOGNIZABLE_VALUE_ERROR_MESSAGE));
+            throw new Error(buildInvalidParameterErrorMessage(INTERVAL, UNRECOGNIZABLE_VALUE_ERROR_MESSAGE));
         } else if (interval <= 0 || !Number.isInteger(interval)) {
-            throw new Error(buildInvalidParameterErrorMessage("Pattern.Interval", VALUE_OUT_OF_RANGE_ERROR_MESSAGE));
+            throw new Error(buildInvalidParameterErrorMessage(INTERVAL, VALUE_OUT_OF_RANGE_ERROR_MESSAGE));
         }
     } else {
         interval = 1;
@@ -77,7 +87,7 @@ function parseRecurrencePattern(startTime: Date, endTime: Date, recurrenceParame
         if (rawPattern.FirstDayOfWeek !== undefined) {
             firstDayOfWeek = DayOfWeek[rawPattern.FirstDayOfWeek];
             if (firstDayOfWeek === undefined) {
-                throw new Error(buildInvalidParameterErrorMessage("Pattern.FirstDayOfWeek", UNRECOGNIZABLE_VALUE_ERROR_MESSAGE));
+                throw new Error(buildInvalidParameterErrorMessage(FIRST_DAY_OF_WEEK, UNRECOGNIZABLE_VALUE_ERROR_MESSAGE));
             }
         }
         else {
@@ -86,11 +96,14 @@ function parseRecurrencePattern(startTime: Date, endTime: Date, recurrenceParame
         parsedPattern.firstDayOfWeek = firstDayOfWeek;
 
         if (rawPattern.DaysOfWeek === undefined || rawPattern.DaysOfWeek.length === 0) {
-            throw new Error(buildInvalidParameterErrorMessage("Pattern.DaysOfWeek", REQUIRED_PARAMETER_MISSING_ERROR_MESSAGE));
+            throw new Error(buildInvalidParameterErrorMessage(DAYS_OF_WEEK, REQUIRED_PARAMETER_MISSING_ERROR_MESSAGE));
+        }
+        if (!Array.isArray(rawPattern.DaysOfWeek)) {
+            throw new Error(buildInvalidParameterErrorMessage(DAYS_OF_WEEK, UNRECOGNIZABLE_VALUE_ERROR_MESSAGE));
         }
         const daysOfWeek = [...new Set(rawPattern.DaysOfWeek.map(day => DayOfWeek[day]))]; // dedup array
         if (daysOfWeek.some(day => day === undefined)) {
-            throw new Error(buildInvalidParameterErrorMessage("Pattern.DaysOfWeek", UNRECOGNIZABLE_VALUE_ERROR_MESSAGE));
+            throw new Error(buildInvalidParameterErrorMessage(DAYS_OF_WEEK, UNRECOGNIZABLE_VALUE_ERROR_MESSAGE));
         }
         if (timeWindowDuration > interval * DAYS_PER_WEEK * ONE_DAY_IN_MILLISECONDS ||
             !IsDurationCompliantWithDaysOfWeek(timeWindowDuration, interval, daysOfWeek, firstDayOfWeek)) {
@@ -110,14 +123,14 @@ function parseRecurrencePattern(startTime: Date, endTime: Date, recurrenceParame
 function parseRecurrenceRange(startTime: Date, recurrenceParameter: RecurrenceParameter): RecurrenceRange {
     const rawRange = recurrenceParameter.Range;
     if (rawRange === undefined) {
-        throw new Error(buildInvalidParameterErrorMessage("Range", REQUIRED_PARAMETER_MISSING_ERROR_MESSAGE));
+        throw new Error(buildInvalidParameterErrorMessage(RANGE, REQUIRED_PARAMETER_MISSING_ERROR_MESSAGE));
     }
     if (rawRange.Type === undefined) {
-        throw new Error(buildInvalidParameterErrorMessage("Range.Type", REQUIRED_PARAMETER_MISSING_ERROR_MESSAGE));
+        throw new Error(buildInvalidParameterErrorMessage(RANGE_TYPE, REQUIRED_PARAMETER_MISSING_ERROR_MESSAGE));
     }
     const rangeType = RecurrenceRangeType[rawRange.Type];
     if (rangeType === undefined) {
-        throw new Error(buildInvalidParameterErrorMessage("Range.Type", UNRECOGNIZABLE_VALUE_ERROR_MESSAGE));
+        throw new Error(buildInvalidParameterErrorMessage(RANGE_TYPE, UNRECOGNIZABLE_VALUE_ERROR_MESSAGE));
     }
     const parsedRange: RecurrenceRange = { type: rangeType };
     if (rangeType === RecurrenceRangeType.EndDate) {
@@ -125,10 +138,10 @@ function parseRecurrenceRange(startTime: Date, recurrenceParameter: RecurrencePa
         if (rawRange.EndDate !== undefined) {
             endDate = new Date(rawRange.EndDate);
             if (isNaN(endDate.getTime())) {
-                throw new Error(buildInvalidParameterErrorMessage("Range.EndDate", UNRECOGNIZABLE_VALUE_ERROR_MESSAGE));
+                throw new Error(buildInvalidParameterErrorMessage(END_DATE, UNRECOGNIZABLE_VALUE_ERROR_MESSAGE));
             }
             if (endDate < startTime) {
-                throw new Error(buildInvalidParameterErrorMessage("Range.EndDate", VALUE_OUT_OF_RANGE_ERROR_MESSAGE));
+                throw new Error(buildInvalidParameterErrorMessage(END_DATE, VALUE_OUT_OF_RANGE_ERROR_MESSAGE));
             }
         } else {
             endDate = new Date(8.64e15); // the maximum date in ECMAScript: https://262.ecma-international.org/5.1/#sec-15.9.1.1
@@ -138,9 +151,9 @@ function parseRecurrenceRange(startTime: Date, recurrenceParameter: RecurrencePa
         let numberOfOccurrences = rawRange.NumberOfOccurrences;
         if (numberOfOccurrences !== undefined) {
             if (typeof numberOfOccurrences !== "number") {
-                throw new Error(buildInvalidParameterErrorMessage("Range.NumberOfOccurrences", UNRECOGNIZABLE_VALUE_ERROR_MESSAGE));
+                throw new Error(buildInvalidParameterErrorMessage(NUMBER_OF_OCCURRENCES, UNRECOGNIZABLE_VALUE_ERROR_MESSAGE));
             } else if (numberOfOccurrences <= 0 || !Number.isInteger(numberOfOccurrences)) {
-                throw new Error(buildInvalidParameterErrorMessage("Range.NumberOfOccurrences", VALUE_OUT_OF_RANGE_ERROR_MESSAGE));
+                throw new Error(buildInvalidParameterErrorMessage(NUMBER_OF_OCCURRENCES, VALUE_OUT_OF_RANGE_ERROR_MESSAGE));
             }
         } else {
             numberOfOccurrences = Number.MAX_SAFE_INTEGER;

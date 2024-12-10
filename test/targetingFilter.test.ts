@@ -6,7 +6,7 @@ import * as chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
-import { FeatureManager, ConfigurationMapFeatureFlagProvider } from "../";
+import { FeatureManager, ConfigurationMapFeatureFlagProvider } from "../src/index.js";
 
 const complexTargetingFeature = {
     "id": "ComplexTargeting",
