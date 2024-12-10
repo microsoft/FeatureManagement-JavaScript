@@ -24,3 +24,26 @@ export function sortDaysOfWeek(daysOfWeek: DayOfWeek[], firstDayOfWeek: DayOfWee
     sortedDaysOfWeek.sort((x, y) => calculateWeeklyDayOffset(x, firstDayOfWeek) - calculateWeeklyDayOffset(y, firstDayOfWeek));
     return sortedDaysOfWeek;
 }
+
+/**
+ * Gets the day of week of a given date based on the timezone offset.
+ * @param date A UTC date
+ * @param timezoneOffset The timezone offset in milliseconds
+ * @returns The day of week (0 for Sunday, 1 for Monday, ..., 6 for Saturday)
+ */
+export function getDayOfWeek(date: Date, timezoneOffset: number): number {
+    const alignedDate = new Date(date.getTime() + timezoneOffset);
+    return alignedDate.getUTCDay();
+}
+
+/**
+ * Adds a specified number of days to a given date.
+ * @param date The date to add days to
+ * @param days The number of days to add
+ * @returns The new date
+ */
+export function addDays(date: Date, days: number): Date {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+}

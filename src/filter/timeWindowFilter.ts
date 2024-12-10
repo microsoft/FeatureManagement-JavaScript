@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 import { IFeatureFilter } from "./featureFilter.js";
-import { Recurrence } from "./recurrence/model.js";
+import { RecurrenceSpec } from "./recurrence/model.js";
 import { parseRecurrenceParameter } from "./recurrence/validator.js";
 import { matchRecurrence } from "./recurrence/evaluator.js";
 import { UNRECOGNIZABLE_VALUE_ERROR_MESSAGE, buildInvalidParameterErrorMessage } from "./utils.js";
@@ -65,7 +65,7 @@ export class TimeWindowFilter implements IFeatureFilter {
         }
 
         if (parameters.Recurrence !== undefined) {
-            let recurrence: Recurrence;
+            let recurrence: RecurrenceSpec;
             try {
                 recurrence = parseRecurrenceParameter(startTime, endTime, parameters.Recurrence);
             } catch (error) {
