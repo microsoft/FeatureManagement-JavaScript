@@ -25,7 +25,7 @@ const createTimeWindowFeature = (name: string, description: string, parameters: 
     };
 
     return featureFlag;
-}
+};
 
 describe("time window filter", () => {
     it("should evaluate basic time window", async () => {

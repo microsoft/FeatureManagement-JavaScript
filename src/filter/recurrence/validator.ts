@@ -18,7 +18,6 @@ export const RANGE_TYPE = "Recurrence.Range.Type";
 export const END_DATE = "Recurrence.Range.EndDate";
 export const NUMBER_OF_OCCURRENCES = "Recurrence.Range.NumberOfOccurrences";
 
-
 /**
  * Parses @see RecurrenceParameter into a @see RecurrenceSpec object. If the parameter is invalid, an error will be thrown.
  * @param startTime The start time of the base time window
