@@ -28,11 +28,11 @@ export function sortDaysOfWeek(daysOfWeek: DayOfWeek[], firstDayOfWeek: DayOfWee
 /**
  * Gets the day of week of a given date based on the timezone offset.
  * @param date A UTC date
- * @param timezoneOffset The timezone offset in milliseconds
+ * @param timezoneOffsetInMs The timezone offset in milliseconds
  * @returns The day of week (0 for Sunday, 1 for Monday, ..., 6 for Saturday)
  */
-export function getDayOfWeek(date: Date, timezoneOffset: number): number {
-    const alignedDate = new Date(date.getTime() + timezoneOffset);
+export function getDayOfWeek(date: Date, timezoneOffsetInMs: number): number {
+    const alignedDate = new Date(date.getTime() + timezoneOffsetInMs);
     return alignedDate.getUTCDay();
 }
 

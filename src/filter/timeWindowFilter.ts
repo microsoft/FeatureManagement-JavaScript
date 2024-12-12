@@ -15,10 +15,10 @@ type TimeWindowFilterEvaluationContext = {
 type TimeWindowParameters = {
     Start?: string;
     End?: string;
-    Recurrence?: RecurrenceParameter;
+    Recurrence?: RecurrenceParameters;
 };
 
-export type RecurrenceParameter = {
+export type RecurrenceParameters = {
     Pattern: {
         Type: string;
         Interval?: number;

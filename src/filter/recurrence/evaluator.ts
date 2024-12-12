@@ -16,7 +16,7 @@ type RecurrenceState = {
  * @returns True if the given time is within any recurring time window; otherwise, false
  */
 export function matchRecurrence(time: Date, recurrenceSpec: RecurrenceSpec): boolean {
-    const recurrenceState = FindPreviousRecurrence(time, recurrenceSpec);
+    const recurrenceState = findPreviousRecurrence(time, recurrenceSpec);
     if (recurrenceState) {
         return time.getTime() < recurrenceState.previousOccurrence.getTime() + recurrenceSpec.duration;
     }
@@ -29,16 +29,16 @@ export function matchRecurrence(time: Date, recurrenceSpec: RecurrenceSpec): boo
  * @param recurrenceSpec The recurrence specification
  * @returns The recurrence state if any previous occurrence is found; otherwise, undefined
  */
-function FindPreviousRecurrence(time: Date, recurrenceSpec: RecurrenceSpec): RecurrenceState | undefined {
+function findPreviousRecurrence(time: Date, recurrenceSpec: RecurrenceSpec): RecurrenceState | undefined {
     if (time < recurrenceSpec.startTime) {
         return undefined;
     }
     let result: RecurrenceState;
     const pattern = recurrenceSpec.pattern;
     if (pattern.type === RecurrencePatternType.Daily) {
-        result = FindPreviousDailyRecurrence(time, recurrenceSpec);
+        result = findPreviousDailyRecurrence(time, recurrenceSpec);
     } else if (pattern.type === RecurrencePatternType.Weekly) {
-        result = FindPreviousWeeklyRecurrence(time, recurrenceSpec);
+        result = findPreviousWeeklyRecurrence(time, recurrenceSpec);
     } else {
         throw new Error("Unsupported recurrence pattern type.");
     }
@@ -57,7 +57,7 @@ function FindPreviousRecurrence(time: Date, recurrenceSpec: RecurrenceSpec): Rec
     return result;
 }
 
-function FindPreviousDailyRecurrence(time: Date, recurrenceSpec: RecurrenceSpec): RecurrenceState {
+function findPreviousDailyRecurrence(time: Date, recurrenceSpec: RecurrenceSpec): RecurrenceState {
     const startTime = recurrenceSpec.startTime;
     const timeGap = time.getTime() - startTime.getTime();
     const pattern = recurrenceSpec.pattern;
@@ -68,7 +68,7 @@ function FindPreviousDailyRecurrence(time: Date, recurrenceSpec: RecurrenceSpec)
     };
 }
 
-function FindPreviousWeeklyRecurrence(time: Date, recurrenceSpec: RecurrenceSpec): RecurrenceState {
+function findPreviousWeeklyRecurrence(time: Date, recurrenceSpec: RecurrenceSpec): RecurrenceState {
     /*
      * Algorithm:
      * 1. first find day 0 (d0), it's the day representing the start day on the week of `Start`.

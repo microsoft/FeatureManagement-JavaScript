@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { RecurrenceParameter } from "../timeWindowFilter.js";
+import { RecurrenceParameters } from "../timeWindowFilter.js";
 import { VALUE_OUT_OF_RANGE_ERROR_MESSAGE, UNRECOGNIZABLE_VALUE_ERROR_MESSAGE, REQUIRED_PARAMETER_MISSING_ERROR_MESSAGE, buildInvalidParameterErrorMessage } from "../utils.js";
 import { DayOfWeek, RecurrenceSpec, RecurrencePattern, RecurrenceRange, RecurrencePatternType, RecurrenceRangeType, DAYS_PER_WEEK, ONE_DAY_IN_MILLISECONDS } from "./model.js";
 import { calculateWeeklyDayOffset, sortDaysOfWeek, getDayOfWeek } from "./utils.js";
@@ -19,14 +19,14 @@ export const END_DATE = "Recurrence.Range.EndDate";
 export const NUMBER_OF_OCCURRENCES = "Recurrence.Range.NumberOfOccurrences";
 
 /**
- * Parses @see RecurrenceParameter into a @see RecurrenceSpec object. If the parameter is invalid, an error will be thrown.
+ * Parses @see RecurrenceParameters into a @see RecurrenceSpec object. If the parameter is invalid, an error will be thrown.
  * @param startTime The start time of the base time window
  * @param day2 The end time of the base time window
- * @param recurrenceParameter The @see RecurrenceParameter to parse
+ * @param recurrenceParameters The @see RecurrenceParameters to parse
  * @param TimeZoneOffset The time zone offset in milliseconds, by default 0
  * @returns A @see RecurrenceSpec object
  */
-export function parseRecurrenceParameter(startTime: Date | undefined, endTime: Date | undefined, recurrenceParameter: RecurrenceParameter, TimeZoneOffset: number = 0): RecurrenceSpec {
+export function parseRecurrenceParameter(startTime: Date | undefined, endTime: Date | undefined, recurrenceParameters: RecurrenceParameters, TimeZoneOffset: number = 0): RecurrenceSpec {
     if (startTime === undefined) {
         throw new Error(buildInvalidParameterErrorMessage("Start", REQUIRED_PARAMETER_MISSING_ERROR_MESSAGE));
     }
@@ -44,14 +44,14 @@ export function parseRecurrenceParameter(startTime: Date | undefined, endTime: D
     return {
         startTime: startTime,
         duration: timeWindowDuration,
-        pattern: parseRecurrencePattern(startTime, endTime, recurrenceParameter, TimeZoneOffset),
-        range: parseRecurrenceRange(startTime, recurrenceParameter),
+        pattern: parseRecurrencePattern(startTime, endTime, recurrenceParameters, TimeZoneOffset),
+        range: parseRecurrenceRange(startTime, recurrenceParameters),
         timezoneOffset: TimeZoneOffset
     };
 }
 
-function parseRecurrencePattern(startTime: Date, endTime: Date, recurrenceParameter: RecurrenceParameter, timeZoneOffset: number): RecurrencePattern {
-    const rawPattern = recurrenceParameter.Pattern;
+function parseRecurrencePattern(startTime: Date, endTime: Date, recurrenceParameters: RecurrenceParameters, timeZoneOffset: number): RecurrencePattern {
+    const rawPattern = recurrenceParameters.Pattern;
     if (rawPattern === undefined) {
         throw new Error(buildInvalidParameterErrorMessage(PATTERN, REQUIRED_PARAMETER_MISSING_ERROR_MESSAGE));
     }
@@ -105,7 +105,7 @@ function parseRecurrencePattern(startTime: Date, endTime: Date, recurrenceParame
             throw new Error(buildInvalidParameterErrorMessage(DAYS_OF_WEEK, UNRECOGNIZABLE_VALUE_ERROR_MESSAGE));
         }
         if (timeWindowDuration > interval * DAYS_PER_WEEK * ONE_DAY_IN_MILLISECONDS ||
-            !IsDurationCompliantWithDaysOfWeek(timeWindowDuration, interval, daysOfWeek, firstDayOfWeek)) {
+            !isDurationCompliantWithDaysOfWeek(timeWindowDuration, interval, daysOfWeek, firstDayOfWeek)) {
             throw new Error(buildInvalidParameterErrorMessage("End", TIME_WINDOW_DURATION_OUT_OF_RANGE_ERROR_MESSAGE));
         }
         parsedPattern.daysOfWeek = daysOfWeek;
@@ -119,8 +119,8 @@ function parseRecurrencePattern(startTime: Date, endTime: Date, recurrenceParame
     return parsedPattern;
 }
 
-function parseRecurrenceRange(startTime: Date, recurrenceParameter: RecurrenceParameter): RecurrenceRange {
-    const rawRange = recurrenceParameter.Range;
+function parseRecurrenceRange(startTime: Date, recurrenceParameters: RecurrenceParameters): RecurrenceRange {
+    const rawRange = recurrenceParameters.Range;
     if (rawRange === undefined) {
         throw new Error(buildInvalidParameterErrorMessage(RANGE, REQUIRED_PARAMETER_MISSING_ERROR_MESSAGE));
     }
@@ -162,7 +162,7 @@ function parseRecurrenceRange(startTime: Date, recurrenceParameter: RecurrencePa
     return parsedRange;
 }
 
-function IsDurationCompliantWithDaysOfWeek(duration: number, interval: number, daysOfWeek: DayOfWeek[], firstDayOfWeek: DayOfWeek): boolean {
+function isDurationCompliantWithDaysOfWeek(duration: number, interval: number, daysOfWeek: DayOfWeek[], firstDayOfWeek: DayOfWeek): boolean {
     if (daysOfWeek.length === 1) {
         return true;
     }
