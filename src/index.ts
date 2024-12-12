@@ -3,5 +3,5 @@
 
 export { FeatureManager } from "./featureManager.js";
 export { ConfigurationMapFeatureFlagProvider, ConfigurationObjectFeatureFlagProvider, IFeatureFlagProvider } from "./featureProvider.js";
-export { IFeatureFilter } from "./filter/FeatureFilter.js";
+export { IFeatureFilter } from "./filter/featureFilter.js";
 export { VERSION } from "./version.js";

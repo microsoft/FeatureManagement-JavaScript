@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { TimeWindowFilter } from "./filter/TimeWindowFilter.js";
-import { IFeatureFilter } from "./filter/FeatureFilter.js";
+import { TimeWindowFilter } from "./filter/timeWindowFilter.js";
+import { IFeatureFilter } from "./filter/featureFilter.js";
 import { RequirementType } from "./schema/model.js";
 import { IFeatureFlagProvider } from "./featureProvider.js";
-import { TargetingFilter } from "./filter/TargetingFilter.js";
+import { TargetingFilter } from "./filter/targetingFilter.js";
 
 export class FeatureManager {
     #provider: IFeatureFlagProvider;
