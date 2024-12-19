@@ -3,25 +3,57 @@
 # Stop on error.
 set -e
 
-# Get the directory of the script.
 SCRIPT_DIR=$(dirname $(readlink -f $0))
-
-# Get the directory of the project.
 PROJECT_BASE_DIR=$(dirname $SCRIPT_DIR)
+SDK_DIR="$PROJECT_BASE_DIR/sdk"
 
-# Change to the project directory.
-cd $PROJECT_BASE_DIR
+PACKAGE="feature-management"
+PACKAGE_DIR="$SDK_DIR/$PACKAGE"
 
-# Install dependencies, build, and test.
-echo "npm clean install"
+echo "Building package $PACKAGE in $PACKAGE_DIR"
+cd "$PACKAGE_DIR"
+
+echo "npm clean install in $PACKAGE_DIR"
 npm ci
 
-echo "npm run build"
+echo "npm run build in $PACKAGE_DIR"
 npm run build
 
-echo "npm run test"
+echo "npm run test in $PACKAGE_DIR"
 npm run test
 
-# Create a tarball.
-echo "npm pack"
+echo "npm pack in $PACKAGE_DIR"
 npm pack
+
+echo "copy $PACKAGE package to $PROJECT_BASE_DIR"
+cp "$PACKAGE_DIR"/*.tgz "$PROJECT_BASE_DIR"
+
+PACKAGE="feature-management-applicationinsights-browser"
+PACKAGE_DIR="$SDK_DIR/$PACKAGE"
+
+echo "Building package $PACKAGE in $PACKAGE_DIR"
+cd "$PACKAGE_DIR"
+
+echo "npm run build in $PACKAGE_DIR"
+npm run build
+
+echo "npm pack in $PACKAGE_DIR"
+npm pack
+
+echo "copy $PACKAGE package to $PROJECT_BASE_DIR"
+cp "$PACKAGE_DIR"/*.tgz "$PROJECT_BASE_DIR"
+
+PACKAGE="feature-management-applicationinsights-node"
+PACKAGE_DIR="$SDK_DIR/$PACKAGE"
+
+echo "Building package $PACKAGE in $PACKAGE_DIR"
+cd "$PACKAGE_DIR"
+
+echo "npm run build in $PACKAGE_DIR"
+npm run build
+
+echo "npm pack in $PACKAGE_DIR"
+npm pack
+
+echo "copy $PACKAGE package to $PROJECT_BASE_DIR"
+cp "$PACKAGE_DIR"/*.tgz "$PROJECT_BASE_DIR"
