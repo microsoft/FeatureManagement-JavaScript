@@ -26,6 +26,9 @@
     "url": "git+https://github.com/microsoft/FeatureManagement-JavaScript.git"
   },
   "license": "MIT",
+  "publishConfig": {
+    "tag": "preview"
+  },
   "bugs": {
     "url": "https://github.com/microsoft/FeatureManagement-JavaScript/issues"
   },
