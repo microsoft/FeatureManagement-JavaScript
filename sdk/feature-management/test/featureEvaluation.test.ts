@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 import * as chai from "chai";
-import { FeatureManager, ConfigurationObjectFeatureFlagProvider, EvaluationResult, VariantAssignmentReason } from "../";
+import { FeatureManager, ConfigurationObjectFeatureFlagProvider, EvaluationResult, VariantAssignmentReason } from "../src/index.js";
 const expect = chai.expect;
 
 let called: number = 0;

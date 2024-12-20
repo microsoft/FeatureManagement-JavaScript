@@ -3,9 +3,10 @@
 
 import * as chai from "chai";
 import * as chaiAsPromised from "chai-as-promised";
-import { FeatureManager, ConfigurationMapFeatureFlagProvider } from "../";
 chai.use(chaiAsPromised);
 const expect = chai.expect;
+
+import { FeatureManager, ConfigurationMapFeatureFlagProvider } from "../src/index.js";
 
 const complexTargetingFeature = {
     "id": "ComplexTargeting",
