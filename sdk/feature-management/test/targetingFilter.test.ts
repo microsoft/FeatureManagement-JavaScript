@@ -83,10 +83,10 @@ describe("targeting filter", () => {
         const featureManager = new FeatureManager(provider);
 
         return Promise.all([
-            expect(featureManager.isEnabled("InvalidTargeting1", {})).eventually.rejectedWith("Audience.DefaultRolloutPercentage must be a number between 0 and 100."),
-            expect(featureManager.isEnabled("InvalidTargeting2", {})).eventually.rejectedWith("Audience.DefaultRolloutPercentage must be a number between 0 and 100."),
-            expect(featureManager.isEnabled("InvalidTargeting3", {})).eventually.rejectedWith("RolloutPercentage of group Stage1 must be a number between 0 and 100."),
-            expect(featureManager.isEnabled("InvalidTargeting4", {})).eventually.rejectedWith("RolloutPercentage of group Stage1 must be a number between 0 and 100."),
+            expect(featureManager.isEnabled("InvalidTargeting1", {})).eventually.rejectedWith("Invalid feature flag: InvalidTargeting1. Audience.DefaultRolloutPercentage must be a number between 0 and 100."),
+            expect(featureManager.isEnabled("InvalidTargeting2", {})).eventually.rejectedWith("Invalid feature flag: InvalidTargeting2. Audience.DefaultRolloutPercentage must be a number between 0 and 100."),
+            expect(featureManager.isEnabled("InvalidTargeting3", {})).eventually.rejectedWith("Invalid feature flag: InvalidTargeting3. RolloutPercentage of group Stage1 must be a number between 0 and 100."),
+            expect(featureManager.isEnabled("InvalidTargeting4", {})).eventually.rejectedWith("Invalid feature flag: InvalidTargeting4. RolloutPercentage of group Stage1 must be a number between 0 and 100."),
         ]);
     });
 
