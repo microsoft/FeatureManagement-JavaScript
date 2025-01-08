@@ -30,7 +30,7 @@ export class TargetingFilter implements IFeatureFilter {
 
     async evaluate(context: TargetingFilterEvaluationContext, appContext?: ITargetingContext): Promise<boolean> {
         const { featureName, parameters } = context;
-        TargetingFilter.#validateParameters(parameters);
+        TargetingFilter.#validateParameters(featureName, parameters);
 
         if (appContext === undefined) {
             throw new Error("The app context is required for targeting filter.");
@@ -79,15 +79,15 @@ export class TargetingFilter implements IFeatureFilter {
         return isTargetedPercentile(appContext?.userId, hint, 0, parameters.Audience.DefaultRolloutPercentage);
     }
 
-    static #validateParameters(parameters: TargetingFilterParameters): void {
+    static #validateParameters(featureName: string, parameters: TargetingFilterParameters): void {
         if (parameters.Audience.DefaultRolloutPercentage < 0 || parameters.Audience.DefaultRolloutPercentage > 100) {
-            throw new Error("Audience.DefaultRolloutPercentage must be a number between 0 and 100.");
+            throw new Error(`Invalid feature flag: ${featureName}. Audience.DefaultRolloutPercentage must be a number between 0 and 100.`);
         }
         // validate RolloutPercentage for each group
         if (parameters.Audience.Groups !== undefined) {
             for (const group of parameters.Audience.Groups) {
                 if (group.RolloutPercentage < 0 || group.RolloutPercentage > 100) {
-                    throw new Error(`RolloutPercentage of group ${group.Name} must be a number between 0 and 100.`);
+                    throw new Error(`Invalid feature flag: ${featureName}. RolloutPercentage of group ${group.Name} must be a number between 0 and 100.`);
                 }
             }
         }

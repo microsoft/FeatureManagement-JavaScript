@@ -33,6 +33,13 @@
         "@typescript-eslint"
     ],
     "rules": {
+        "keyword-spacing": [
+            "error",
+            {
+                "before": true,
+                "after": true
+            }
+        ],
         "quotes": [
             "error",
             "double",
