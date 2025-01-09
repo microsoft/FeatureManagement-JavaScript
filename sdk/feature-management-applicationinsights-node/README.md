@@ -13,7 +13,7 @@ Feature Management Application Insights Plugin for Browser provides a solution f
 ``` javascript
 import appInsights from "applicationinsights";
 import { FeatureManager, ConfigurationObjectFeatureFlagProvider } from "@microsoft/feature-management";
-import { trackEvent, publishTelemetry } from "@microsoft/feature-management-applicationinsights-node";
+import { createTelemetryPublisher, trackEvent } from "@microsoft/feature-management-applicationinsights-node";
 
 appInsights.setup(CONNECTION_STRING)
            .start();
