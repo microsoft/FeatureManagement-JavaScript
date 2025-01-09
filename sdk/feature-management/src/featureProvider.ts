@@ -36,9 +36,11 @@ export class ConfigurationMapFeatureFlagProvider implements IFeatureFlagProvider
 
     async getFeatureFlags(): Promise<FeatureFlag[]> {
         const featureConfig = this.#configuration.get<FeatureManagementConfiguration>(FEATURE_MANAGEMENT_KEY);
-        const featureFlag = featureConfig?.[FEATURE_FLAGS_KEY] ?? [];
-        validateFeatureFlag(featureFlag);
-        return featureFlag;
+        const featureFlags = featureConfig?.[FEATURE_FLAGS_KEY] ?? [];
+        featureFlags.forEach(featureFlag => {
+            validateFeatureFlag(featureFlag);
+        });
+        return featureFlags;
     }
 }
 
@@ -60,8 +62,10 @@ export class ConfigurationObjectFeatureFlagProvider implements IFeatureFlagProvi
     }
 
     async getFeatureFlags(): Promise<FeatureFlag[]> {
-        const featureFlag = this.#configuration[FEATURE_MANAGEMENT_KEY]?.[FEATURE_FLAGS_KEY] ?? [];
-        validateFeatureFlag(featureFlag);
-        return featureFlag;
+        const featureFlags = this.#configuration[FEATURE_MANAGEMENT_KEY]?.[FEATURE_FLAGS_KEY] ?? [];
+        featureFlags.forEach(featureFlag => {
+            validateFeatureFlag(featureFlag);
+        });
+        return featureFlags;
     }
 }
