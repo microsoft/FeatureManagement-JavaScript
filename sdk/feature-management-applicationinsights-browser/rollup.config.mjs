@@ -4,6 +4,7 @@ import dts from "rollup-plugin-dts";
 
 export default [
   {
+    external: ["@microsoft/feature-management"],
     input: "src/index.ts",
     output: [
       {
@@ -11,12 +12,6 @@ export default [
         format: "esm",
         sourcemap: true,
         preserveModules: true,
-      },
-      {
-        file: "dist/umd/index.js",
-        format: "umd",
-        name: 'FeatureManagementApplicationInsights',
-        sourcemap: true
       }
     ],
     plugins: [

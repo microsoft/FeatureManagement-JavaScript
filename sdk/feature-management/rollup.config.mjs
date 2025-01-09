@@ -22,7 +22,7 @@ export default [
       {
         file: "dist/umd/index.js",
         format: "umd",
-        name: 'FeatureManagement',
+        name: "FeatureManagement",
         sourcemap: true
       }
     ],
