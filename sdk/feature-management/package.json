@@ -27,7 +27,7 @@
   },
   "license": "MIT",
   "publishConfig": {
-    "tag": "stable"
+    "tag": "latest"
   },
   "bugs": {
     "url": "https://github.com/microsoft/FeatureManagement-JavaScript/issues"
