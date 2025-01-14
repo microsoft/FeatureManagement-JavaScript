@@ -6,10 +6,10 @@ set -e
 SCRIPT_DIR=$(dirname $(readlink -f $0))
 PROJECT_BASE_DIR=$(dirname $SCRIPT_DIR)
 NPMRC_FILE="$PROJECT_BASE_DIR/.npmrc"
-SDK_DIR="$PROJECT_BASE_DIR/sdk"
+SRC_DIR="$PROJECT_BASE_DIR/src"
 
 PACKAGE="feature-management"
-PACKAGE_DIR="$SDK_DIR/$PACKAGE"
+PACKAGE_DIR="$SRC_DIR/$PACKAGE"
 
 if [ -f "$NPMRC_FILE" ]; then
     echo "Copy .npmrc file to $PACKAGE_DIR"
@@ -35,7 +35,7 @@ echo "copy $PACKAGE package to $PROJECT_BASE_DIR"
 cp "$PACKAGE_DIR"/*.tgz "$PROJECT_BASE_DIR"
 
 PACKAGE="feature-management-applicationinsights-browser"
-PACKAGE_DIR="$SDK_DIR/$PACKAGE"
+PACKAGE_DIR="$SRC_DIR/$PACKAGE"
 
 if [ -f "$NPMRC_FILE" ]; then
     echo "Copy .npmrc file to $PACKAGE_DIR"
@@ -55,7 +55,7 @@ echo "copy $PACKAGE package to $PROJECT_BASE_DIR"
 cp "$PACKAGE_DIR"/*.tgz "$PROJECT_BASE_DIR"
 
 PACKAGE="feature-management-applicationinsights-node"
-PACKAGE_DIR="$SDK_DIR/$PACKAGE"
+PACKAGE_DIR="$SRC_DIR/$PACKAGE"
 
 if [ -f "$NPMRC_FILE" ]; then
     echo "Copy .npmrc file to $PACKAGE_DIR"
