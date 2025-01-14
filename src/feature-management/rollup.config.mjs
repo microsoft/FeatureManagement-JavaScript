@@ -4,8 +4,15 @@ import dts from "rollup-plugin-dts";
 
 export default [
   {
+    external: ["crypto"],
     input: "src/index.ts",
     output: [
+      {
+        dir: "dist/commonjs/",
+        format: "cjs",
+        sourcemap: true,
+        preserveModules: true,
+      },
       {
         dir: "dist/esm/",
         format: "esm",
@@ -15,7 +22,7 @@ export default [
       {
         file: "dist/umd/index.js",
         format: "umd",
-        name: 'FeatureManagementApplicationInsights',
+        name: "FeatureManagement",
         sourcemap: true
       }
     ],
@@ -35,7 +42,10 @@ export default [
           "strictFunctionTypes": true,
           "sourceMap": true,
           "inlineSources": true
-        }
+        },
+        "exclude": [
+            "test/**/*"
+        ]
       })
     ],
   },
