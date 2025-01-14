@@ -44,5 +44,5 @@ export default [
     input: "src/index.ts",
     output: [{ file: "types/index.d.ts", format: "esm" }],
     plugins: [dts()],
-  },
+  }
 ];
