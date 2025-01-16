@@ -1,0 +1,31 @@
+{
+  "feature_management": {
+    "feature_flags": [
+      {
+        "id": "Beta",
+        "enabled": true,
+        "conditions": {
+          "client_filters": [
+            {
+              "name": "Microsoft.Targeting",
+              "parameters": {
+                "Audience": {
+                  "Users": [
+                    "Jeff"
+                  ],
+                  "Groups": [
+                    {
+                      "Name": "Admin",
+                      "RolloutPercentage": 100
+                    }
+                  ],
+                  "DefaultRolloutPercentage": 40
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
