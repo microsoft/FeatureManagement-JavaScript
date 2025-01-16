@@ -4,7 +4,7 @@ import dts from "rollup-plugin-dts";
 
 export default [
   {
-    external: ["crypto"],
+    external: ["@microsoft/feature-management"],
     input: "src/index.ts",
     output: [
       {
@@ -18,12 +18,6 @@ export default [
         format: "esm",
         sourcemap: true,
         preserveModules: true,
-      },
-      {
-        file: "dist/umd/index.js",
-        format: "umd",
-        name: 'FeatureManagement',
-        sourcemap: true
       }
     ],
     plugins: [
@@ -42,10 +36,7 @@ export default [
           "strictFunctionTypes": true,
           "sourceMap": true,
           "inlineSources": true
-        },
-        "exclude": [
-            "test/**/*"
-        ]
+        }
       })
     ],
   },
@@ -53,5 +44,5 @@ export default [
     input: "src/index.ts",
     output: [{ file: "types/index.d.ts", format: "esm" }],
     plugins: [dts()],
-  },
+  }
 ];

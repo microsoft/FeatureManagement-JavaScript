@@ -22,7 +22,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: sdk/feature-management
+        working-directory: src/feature-management
 
     steps:
     - uses: actions/checkout@v3
@@ -31,40 +31,40 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        cache-dependency-path: sdk/feature-management/package-lock.json
+        cache-dependency-path: src/feature-management/package-lock.json
 
     - name: Install dependencies
       run: npm ci
-      working-directory: sdk/feature-management
+      working-directory: src/feature-management
 
     - name: Run lint check for feature-management
       run: npm run lint
-      working-directory: sdk/feature-management
+      working-directory: src/feature-management
 
     - name: Build feature-management
       run: npm run build
-      working-directory: sdk/feature-management
+      working-directory: src/feature-management
 
     - name: Run tests
       run: npm run test
-      working-directory: sdk/feature-management
+      working-directory: src/feature-management
 
     - name: Run browser tests
       run: npm run test-browser
-      working-directory: sdk/feature-management
+      working-directory: src/feature-management
 
     - name: Build feature-management-applicationinsights-browser
       run: npm run build
-      working-directory: sdk/feature-management-applicationinsights-browser
+      working-directory: src/feature-management-applicationinsights-browser
 
     - name: Run lint check for feature-management-applicationinsights-browser
       run: npm run lint
-      working-directory: sdk/feature-management-applicationinsights-browser
+      working-directory: src/feature-management-applicationinsights-browser
 
     - name: Build feature-management-applicationinsights-node
       run: npm run build
-      working-directory: sdk/feature-management-applicationinsights-node
+      working-directory: src/feature-management-applicationinsights-node
 
     - name: Run lint check for feature-management-applicationinsights-node
       run: npm run lint
-      working-directory: sdk/feature-management-applicationinsights-node
+      working-directory: src/feature-management-applicationinsights-node

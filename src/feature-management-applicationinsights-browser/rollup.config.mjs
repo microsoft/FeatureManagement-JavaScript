@@ -4,14 +4,9 @@ import dts from "rollup-plugin-dts";
 
 export default [
   {
+    external: ["@microsoft/feature-management"],
     input: "src/index.ts",
     output: [
-      {
-        dir: "dist/commonjs/",
-        format: "cjs",
-        sourcemap: true,
-        preserveModules: true,
-      },
       {
         dir: "dist/esm/",
         format: "esm",
@@ -43,5 +38,5 @@ export default [
     input: "src/index.ts",
     output: [{ file: "types/index.d.ts", format: "esm" }],
     plugins: [dts()],
-  },
+  }
 ];
