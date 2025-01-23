@@ -1,0 +1,7 @@
+{
+    "dependencies": {
+        "@azure/app-configuration-provider": "latest",
+        "@microsoft/feature-management": "latest",
+        "express": "^4.21.2"
+    }
+}
