@@ -1,7 +1,5 @@
 import express from "express";
 import path from "path";
-import { fileURLToPath } from "url";
-import fs from 'node:fs/promises';
 
 import { load } from "@azure/app-configuration-provider";
 const connectionString = "<your-connection-string>";;
@@ -33,31 +31,34 @@ We recommend using Azure App Configuration as the source of feature flags.
 const featureProvider = new ConfigurationMapFeatureFlagProvider(appConfig);
 const featureManager = new FeatureManager(featureProvider);
 
-const app = express();
+const server = express();
 const PORT = 3000;
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const pageDir = path.join(__dirname, "pages");
-
-app.get("/", (req, res) => {
+// Use a middleware to achieve request-driven configuration refresh
+server.use((req, res, next) => {
+    // this call s not blocking, the configuration will be updated asynchronously
     appConfig.refresh();
-    res.sendFile(path.join(pageDir, "index.html"));
+    next();
+})
+
+
+server.get("/", (req, res) => {
+    appConfig.refresh();
+    res.send("Hello World!");
 });
 
-app.get("/Beta", async (req, res) => {
+server.get("/Beta", async (req, res) => {
     appConfig.refresh();
     const { userId, groups } = req.query;
 
     if (await featureManager.isEnabled("Beta", { userId: userId, groups: groups ? groups.split(",") : [] })) {
-        res.sendFile(path.join(pageDir, "beta.html"));
+        res.send("Welcome to the Beta page!");
     } else {
         res.status(404).send("Page not found");
     }
 });
 
 // Start the server
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);
 });
