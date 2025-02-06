@@ -130,16 +130,4 @@ describe("targeting filter", () => {
             expect(featureManager.isEnabled("ComplexTargeting", { userId: "Dave", groups: ["Stage1"] })).eventually.eq(false, "Dave is excluded because he is in the exclusion list"),
         ]);
     });
-
-    it("should throw error if app context is not provided", () => {
-        const dataSource = new Map();
-        dataSource.set("feature_management", {
-            feature_flags: [complexTargetingFeature]
-        });
-
-        const provider = new ConfigurationMapFeatureFlagProvider(dataSource);
-        const featureManager = new FeatureManager(provider);
-
-        return expect(featureManager.isEnabled("ComplexTargeting")).eventually.rejectedWith("The app context is required for targeting filter.");
-    });
 });

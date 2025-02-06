@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { ITargetingContext } from "./common/ITargetingContext";
+import { ITargetingContext } from "./common/targetingContext";
 import { Variant } from "./variant/Variant";
 
 export interface IFeatureManager {

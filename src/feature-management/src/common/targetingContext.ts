@@ -6,3 +6,4 @@ export interface ITargetingContext {
     groups?: string[];
 }
 
+export type TargetingContextAccessor = () => ITargetingContext;
