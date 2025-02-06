@@ -130,4 +130,28 @@ describe("targeting filter", () => {
             expect(featureManager.isEnabled("ComplexTargeting", { userId: "Dave", groups: ["Stage1"] })).eventually.eq(false, "Dave is excluded because he is in the exclusion list"),
         ]);
     });
+
+    it("should evaluate feature with targeting filter with targeting context accessor", async () => {
+        const dataSource = new Map();
+        dataSource.set("feature_management", {
+            feature_flags: [complexTargetingFeature]
+        });
+
+        let userId = "";
+        let groups: string[] = [];
+        const testTargetingContextAccessor = () => ({ userId, groups });
+        const provider = new ConfigurationMapFeatureFlagProvider(dataSource);
+        const featureManager = new FeatureManager(provider, {targetingContextAccessor: testTargetingContextAccessor});
+
+        userId = "Aiden";
+        expect(await featureManager.isEnabled("ComplexTargeting")).to.eq(false);
+        userId = "Blossom";
+        expect(await featureManager.isEnabled("ComplexTargeting")).to.eq(true);
+        expect(await featureManager.isEnabled("ComplexTargeting", {userId: "Aiden"})).to.eq(true); // targeting id will be overridden by the context accessor
+        userId = "Aiden";
+        groups = ["Stage2"];
+        expect(await featureManager.isEnabled("ComplexTargeting")).to.eq(true);
+        userId = "Chris";
+        expect(await featureManager.isEnabled("ComplexTargeting")).to.eq(false);
+    });
 });
