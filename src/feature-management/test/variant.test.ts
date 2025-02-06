@@ -95,7 +95,7 @@ describe("feature variant", () => {
 describe("variant assignment with targeting context accessor", () => {
     it("should assign variant based on targeting context accessor", async () => {
         let userId = "";
-        let groups: string[] = [];
+        const groups: string[] = [];
         const testTargetingContextAccessor = () => ({ userId, groups });
         const provider = new ConfigurationObjectFeatureFlagProvider(featureFlagsConfigurationObject);
         const featureManager = new FeatureManager(provider, {targetingContextAccessor: testTargetingContextAccessor});

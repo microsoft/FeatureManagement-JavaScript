@@ -114,7 +114,7 @@ export class FeatureManager implements IFeatureManager {
                 if (clientFilter.name === "Microsoft.Targeting" && this.#targetingContextAccessor !== undefined) {
                     appContext = this.#targetingContextAccessor();
                 }
-                clientFilterEvaluationResult = await matchedFeatureFilter.evaluate(contextWithFeatureName, appContext);   
+                clientFilterEvaluationResult = await matchedFeatureFilter.evaluate(contextWithFeatureName, appContext);
             }
             if (clientFilterEvaluationResult === shortCircuitEvaluationResult) {
                 return shortCircuitEvaluationResult;
