@@ -7,6 +7,7 @@ Feature Management Application Insights Plugin for Node provides a solution for 
 ### Prerequisites
 
 - Node.js LTS version
+- `applicationinsights` SDK v2(classic)
 
 ### Usage
 
