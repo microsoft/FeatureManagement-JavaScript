@@ -26,7 +26,7 @@ const featureManager = new FeatureManager(provider, {onFeatureEvaluated: publish
 featureManager.getVariant("TestFeature", {userId : "<TARGETING_ID>"}).then((variant) => { /* do something*/ });
 
 // Emit a custom event with targeting id attached.
-trackEvent(appInsights.defaultClient, "<TARGETING_ID>", {name: "TestEvent"});
+trackEvent(appInsights.defaultClient, "<TARGETING_ID>", {name: "TestEvent",  properties: {"Tag": "Some Value"}});
 ```
 
 ## Contributing
