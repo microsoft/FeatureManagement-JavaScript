@@ -7,26 +7,26 @@ Feature Management Application Insights Plugin for Node provides a solution for 
 ### Prerequisites
 
 - Node.js LTS version
+- `applicationinsights` SDK v2(classic)
 
 ### Usage
 
 ``` javascript
-import appInsights from "applicationinsights";
-import { FeatureManager, ConfigurationObjectFeatureFlagProvider } from "@microsoft/feature-management";
-import { createTelemetryPublisher, trackEvent } from "@microsoft/feature-management-applicationinsights-node";
+const appInsights = require("applicationinsights");
+appInsights.setup(process.env.APPINSIGHTS_CONNECTION_STRING).start();
 
-appInsights.setup(CONNECTION_STRING)
-           .start();
+const { FeatureManager, ConfigurationObjectFeatureFlagProvider } = require("@microsoft/feature-management");
+const { createTelemetryPublisher, trackEvent } = require("@microsoft/feature-management-applicationinsights-node");
 
 const publishTelemetry = createTelemetryPublisher(appInsights.defaultClient);
 const provider = new ConfigurationObjectFeatureFlagProvider(jsonObject);
 const featureManager = new FeatureManager(provider, {onFeatureEvaluated: publishTelemetry});
 
 // FeatureEvaluation event will be emitted when a feature flag is evaluated
-featureManager.getVariant("TestFeature", {userId : TARGETING_ID}).then((variant) => { /* do something*/ });
+featureManager.getVariant("TestFeature", {userId : "<TARGETING_ID>"}).then((variant) => { /* do something*/ });
 
 // Emit a custom event with targeting id attached.
-trackEvent(appInsights.defaultClient, TARGETING_ID, {name: "TestEvent"});
+trackEvent(appInsights.defaultClient, "<TARGETING_ID>", {name: "TestEvent"});
 ```
 
 ## Contributing
