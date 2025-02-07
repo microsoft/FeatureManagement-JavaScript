@@ -1,4 +1,7 @@
 {
+    "scripts": {
+        "start": "node server.mjs"
+    },
     "dependencies": {
         "@azure/app-configuration-provider": "latest",
         "@microsoft/feature-management": "latest",
