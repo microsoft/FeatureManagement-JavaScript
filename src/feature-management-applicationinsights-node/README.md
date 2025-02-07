@@ -1,6 +1,6 @@
-# Microsoft Feature Management Application Insights Plugin for Browser
+# Microsoft Feature Management Application Insights Plugin for Node
 
-Feature Management Application Insights Plugin for Browser provides a solution for sending feature flag evaluation events produced by the Feature Management library.
+Feature Management Application Insights Plugin for Node provides a solution for sending feature flag evaluation events produced by the Feature Management library.
 
 ## Getting Started
 
