@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { EvaluationResult, createFeatureEvaluationEventProperties } from "@microsoft/feature-management";
-import { ApplicationInsights, IEventTelemetry } from "@microsoft/applicationinsights-web";
+import { EvaluationResult, createFeatureEvaluationEventProperties, TargetingContextAccessor } from "@microsoft/feature-management";
+import { ApplicationInsights, IEventTelemetry, ITelemetryItem } from "@microsoft/applicationinsights-web";
 
 const TARGETING_ID = "TargetingId";
 const FEATURE_EVALUATION_EVENT_NAME = "FeatureEvaluation";
@@ -38,4 +38,19 @@ export function trackEvent(client: ApplicationInsights, targetingId: string, eve
     // Ensure targetingId is string so that it will be placed in customDimensions
     properties[TARGETING_ID] = targetingId ? targetingId.toString() : "";
     client.trackEvent(event, properties);
+}
+
+/**
+ * Creates a telemetry initializer that adds targeting id to telemetry item's custom properties.
+ * @param targetingContextAccessor The accessor function to get the targeting context.
+ * @returns A telemetry initializer that attaches targeting id to telemetry items.
+ */
+export function createTargetingTelemetryInitializer(targetingContextAccessor: TargetingContextAccessor): (item: ITelemetryItem) => void {
+    return (item: ITelemetryItem) => {
+        const targetingContext = targetingContextAccessor();
+        if (targetingContext?.userId === undefined) {
+            console.warn("Targeting id is undefined.");
+        }
+        item.data = {...item.data, [TARGETING_ID]: targetingContext?.userId || ""};
+    };
 }
