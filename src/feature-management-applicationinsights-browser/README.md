@@ -12,7 +12,7 @@ import { FeatureManager, ConfigurationObjectFeatureFlagProvider } from "@microso
 import { createTelemetryPublisher, trackEvent } from "@microsoft/feature-management-applicationinsights-browser";
 
 const appInsights = new ApplicationInsights({ config: {
-    connectionString: CONNECTION_STRING
+    connectionString: "<APPINSIGHTS_CONNECTION_STRING>"
 }});
 appInsights.loadAppInsights();
 
