@@ -1,8 +1,10 @@
 # Microsoft Feature Management Application Insights Plugin for Browser
 
-Feature Management Application Insights Plugin for Browser provides a solution for sending feature flag evaluation events produced by the Feature Management library.
+Feature Management Application Insights Plugin for Browser provides a solution for sending feature flag evaluation telemetry produced by the [`@microsoft/feature-management`](https://www.npmjs.com/package/@microsoft/feature-management) library.
 
 ## Getting Started
+
+For more information, please go to [Feature reference](https://learn.microsoft.com/azure/azure-app-configuration/feature-management-javascript-reference#application-insights-integration).
 
 ### Usage
 
