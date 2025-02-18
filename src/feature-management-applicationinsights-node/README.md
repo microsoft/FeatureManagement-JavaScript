@@ -1,13 +1,15 @@
 # Microsoft Feature Management Application Insights Plugin for Node
 
-Feature Management Application Insights Plugin for Node provides a solution for sending feature flag evaluation events produced by the Feature Management library.
+Feature Management Application Insights Plugin for Node provides a solution for sending feature flag evaluation telemetry produced by the [`@microsoft/feature-management`](https://www.npmjs.com/package/@microsoft/feature-management) library.
 
 ## Getting Started
+
+For more information, please go to [Feature reference](https://learn.microsoft.com/azure/azure-app-configuration/feature-management-javascript-reference#application-insights-integration).
 
 ### Prerequisites
 
 - Node.js LTS version
-- `applicationinsights` SDK v2(classic)
+- `applicationinsights` SDK 2.x (classic)
 
 ### Usage
 
