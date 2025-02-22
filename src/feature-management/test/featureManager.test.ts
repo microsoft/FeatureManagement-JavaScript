@@ -52,7 +52,7 @@ describe("feature manager", () => {
         expect(featureFlags[1]).to.eq("Beta");
     });
 
-    it("should fail when feature flag is invalid", async () => {
+    it("should fail when feature flag id is invalid", async () => {
         const dataSource = new Map();
         dataSource.set("feature_management", {
             feature_flags: [
@@ -111,7 +111,7 @@ describe("feature manager", () => {
         ]);
     });
 
-    it("should evaluate features with conditions", () => {
+    it("should fail when feature flag is invalid", () => {
         const dataSource = new Map();
         dataSource.set("feature_management", {
             feature_flags: [
@@ -178,6 +178,74 @@ describe("feature manager", () => {
         ]);
     });
 
-    it("should evaluate features with conditions");
+    it("should evaluate client filters based on requirement type", () => {
+        const jsonObject = {
+            "feature_management": {
+                "feature_flags": [
+                    {
+                        "id": "AllFeature",
+                        "enabled": true,
+                        "conditions": {
+                            "requirement_type": "All",
+                            "client_filters": [
+                                {
+                                    "name": "Microsoft.TimeWindow",
+                                    "parameters": {
+                                        "Start": "Tue, 4 Feb 2025 16:00:00 GMT"
+                                    }
+                                },
+                                {
+                                    "name": "Microsoft.Targeting",
+                                    "parameters": {
+                                        "Audience": {
+                                            "Users": [ "Alice" ],
+                                            "Exclusion": {
+                                                "Users": [ "Dave" ]
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "id": "AnyFeature",
+                        "enabled": true,
+                        "conditions": {
+                            // "requirement_type": "Any",
+                            "client_filters": [
+                                {
+                                    "name": "Microsoft.TimeWindow",
+                                    "parameters": {
+                                        "Start": "Tue, 4 Feb 2025 16:00:00 GMT"
+                                    }
+                                },
+                                {
+                                    "name": "Microsoft.Targeting",
+                                    "parameters": {
+                                        "Audience": {
+                                            "Users": [ "Alice" ],
+                                            "Exclusion": {
+                                                "Users": [ "Dave" ]
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        };
+
+        const provider = new ConfigurationObjectFeatureFlagProvider(jsonObject);
+        const featureManager = new FeatureManager(provider);
+        return Promise.all([
+            expect(featureManager.isEnabled("AllFeature", {userId: "Alice"})).eventually.eq(true),
+            expect(featureManager.isEnabled("AllFeature", {userId: "Dave"})).eventually.eq(false),
+            expect(featureManager.isEnabled("AnyFeature", {userId: "Dave"})).eventually.eq(true)
+        ]);
+    });
+
     it("should override default filters with custom filters");
 });
