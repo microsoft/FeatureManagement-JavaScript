@@ -106,8 +106,9 @@ describe("variant assignment with targeting context accessor", () => {
         userId = "Jeff";
         variant = await featureManager.getVariant(Features.VariantFeatureUser);
         expect(variant).to.be.undefined;
-        variant = await featureManager.getVariant(Features.VariantFeatureUser, {userId: "Marsha"}); // targeting id will be overridden by the context accessor
-        expect(variant).to.be.undefined;
+        variant = await featureManager.getVariant(Features.VariantFeatureUser, {userId: "Marsha"}); // targeting id will be overridden
+        expect(variant).not.to.be.undefined;
+        expect(variant?.name).eq("Small");
         groups = ["Group1"];
         variant = await featureManager.getVariant(Features.VariantFeatureGroup);
         expect(variant).not.to.be.undefined;

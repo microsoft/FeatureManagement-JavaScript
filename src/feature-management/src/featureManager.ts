@@ -80,7 +80,7 @@ export class FeatureManager implements IFeatureManager {
         return { variant: undefined, reason: VariantAssignmentReason.None };
     }
 
-    async #isEnabled(featureFlag: FeatureFlag, context?: unknown): Promise<boolean> {
+    async #isEnabled(featureFlag: FeatureFlag, appContext?: unknown): Promise<boolean> {
         if (featureFlag.enabled !== true) {
             // If the feature is not explicitly enabled, then it is disabled by default.
             return false;
@@ -110,11 +110,11 @@ export class FeatureManager implements IFeatureManager {
                 clientFilterEvaluationResult = false;
             }
             else {
-                let appContext = context;
-                if (clientFilter.name === "Microsoft.Targeting" && this.#targetingContextAccessor !== undefined) {
-                    appContext = this.#targetingContextAccessor();
+                if (clientFilter.name === "Microsoft.Targeting") {
+                    clientFilterEvaluationResult = await matchedFeatureFilter.evaluate(contextWithFeatureName, this.#getTargetingContext(appContext));
+                } else {
+                    clientFilterEvaluationResult = await matchedFeatureFilter.evaluate(contextWithFeatureName, appContext);
                 }
-                clientFilterEvaluationResult = await matchedFeatureFilter.evaluate(contextWithFeatureName, appContext);
             }
             if (clientFilterEvaluationResult === shortCircuitEvaluationResult) {
                 return shortCircuitEvaluationResult;
@@ -125,7 +125,7 @@ export class FeatureManager implements IFeatureManager {
         return !shortCircuitEvaluationResult;
     }
 
-    async #evaluateFeature(featureName: string, context: unknown): Promise<EvaluationResult> {
+    async #evaluateFeature(featureName: string, appContext: unknown): Promise<EvaluationResult> {
         const featureFlag = await this.#provider.getFeatureFlag(featureName);
         const result = new EvaluationResult(featureFlag);
 
@@ -138,12 +138,10 @@ export class FeatureManager implements IFeatureManager {
         validateFeatureFlagFormat(featureFlag);
 
         // Evaluate if the feature is enabled.
-        result.enabled = await this.#isEnabled(featureFlag, context);
+        result.enabled = await this.#isEnabled(featureFlag, appContext);
 
-        let targetingContext = context as ITargetingContext;
-        if (this.#targetingContextAccessor !== undefined) {
-            targetingContext = this.#targetingContextAccessor();
-        }
+        // Get targeting context from the app context or the targeting context accessor
+        const targetingContext = this.#getTargetingContext(appContext);
         result.targetingId = targetingContext?.userId;
 
         // Determine Variant
@@ -201,6 +199,14 @@ export class FeatureManager implements IFeatureManager {
         }
 
         return result;
+    }
+
+    #getTargetingContext(context: unknown): ITargetingContext | undefined {
+        let targetingContext = context as ITargetingContext;
+        if (targetingContext === undefined && this.#targetingContextAccessor !== undefined) {
+            targetingContext = this.#targetingContextAccessor();
+        }
+        return targetingContext;
     }
 }
 
