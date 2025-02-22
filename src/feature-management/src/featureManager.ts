@@ -8,13 +8,14 @@ import { IFeatureFlagProvider } from "./featureProvider.js";
 import { TargetingFilter } from "./filter/TargetingFilter.js";
 import { Variant } from "./variant/Variant.js";
 import { IFeatureManager } from "./IFeatureManager.js";
-import { ITargetingContext } from "./common/ITargetingContext.js";
+import { ITargetingContext, TargetingContextAccessor } from "./common/targetingContext.js";
 import { isTargetedGroup, isTargetedPercentile, isTargetedUser } from "./common/targetingEvaluator.js";
 
 export class FeatureManager implements IFeatureManager {
     #provider: IFeatureFlagProvider;
     #featureFilters: Map<string, IFeatureFilter> = new Map();
     #onFeatureEvaluated?: (event: EvaluationResult) => void;
+    #targetingContextAccessor?: TargetingContextAccessor;
 
     constructor(provider: IFeatureFlagProvider, options?: FeatureManagerOptions) {
         this.#provider = provider;
@@ -27,6 +28,7 @@ export class FeatureManager implements IFeatureManager {
         }
 
         this.#onFeatureEvaluated = options?.onFeatureEvaluated;
+        this.#targetingContextAccessor = options?.targetingContextAccessor;
     }
 
     async listFeatureNames(): Promise<string[]> {
@@ -102,11 +104,19 @@ export class FeatureManager implements IFeatureManager {
         for (const clientFilter of clientFilters) {
             const matchedFeatureFilter = this.#featureFilters.get(clientFilter.name);
             const contextWithFeatureName = { featureName: featureFlag.id, parameters: clientFilter.parameters };
+            let clientFilterEvaluationResult: boolean;
             if (matchedFeatureFilter === undefined) {
                 console.warn(`Feature filter ${clientFilter.name} is not found.`);
-                return false;
+                clientFilterEvaluationResult = false;
             }
-            if (await matchedFeatureFilter.evaluate(contextWithFeatureName, context) === shortCircuitEvaluationResult) {
+            else {
+                let appContext = context;
+                if (clientFilter.name === "Microsoft.Targeting" && this.#targetingContextAccessor !== undefined) {
+                    appContext = this.#targetingContextAccessor();
+                }
+                clientFilterEvaluationResult = await matchedFeatureFilter.evaluate(contextWithFeatureName, appContext);
+            }
+            if (clientFilterEvaluationResult === shortCircuitEvaluationResult) {
                 return shortCircuitEvaluationResult;
             }
         }
@@ -130,7 +140,10 @@ export class FeatureManager implements IFeatureManager {
         // Evaluate if the feature is enabled.
         result.enabled = await this.#isEnabled(featureFlag, context);
 
-        const targetingContext = context as ITargetingContext;
+        let targetingContext = context as ITargetingContext;
+        if (this.#targetingContextAccessor !== undefined) {
+            targetingContext = this.#targetingContextAccessor();
+        }
         result.targetingId = targetingContext?.userId;
 
         // Determine Variant
@@ -151,7 +164,7 @@ export class FeatureManager implements IFeatureManager {
                 }
             } else {
                 // enabled, assign based on allocation
-                if (context !== undefined && featureFlag.allocation !== undefined) {
+                if (targetingContext !== undefined && featureFlag.allocation !== undefined) {
                     const variantAndReason = await this.#assignVariant(featureFlag, targetingContext);
                     variantDef = variantAndReason.variant;
                     reason = variantAndReason.reason;
@@ -202,6 +215,11 @@ export interface FeatureManagerOptions {
      * The callback function is called only when telemetry is enabled for the feature flag.
      */
     onFeatureEvaluated?: (event: EvaluationResult) => void;
+
+    /**
+     * The accessor function that provides the @see ITargetingContext for targeting evaluation.
+     */
+    targetingContextAccessor?: TargetingContextAccessor;
 }
 
 export class EvaluationResult {

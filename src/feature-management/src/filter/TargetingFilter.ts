@@ -3,7 +3,7 @@
 
 import { IFeatureFilter } from "./FeatureFilter.js";
 import { isTargetedPercentile } from "../common/targetingEvaluator.js";
-import { ITargetingContext } from "../common/ITargetingContext.js";
+import { ITargetingContext } from "../common/targetingContext.js";
 
 type TargetingFilterParameters = {
     Audience: {
@@ -31,10 +31,6 @@ export class TargetingFilter implements IFeatureFilter {
     async evaluate(context: TargetingFilterEvaluationContext, appContext?: ITargetingContext): Promise<boolean> {
         const { featureName, parameters } = context;
         TargetingFilter.#validateParameters(featureName, parameters);
-
-        if (appContext === undefined) {
-            throw new Error("The app context is required for targeting filter.");
-        }
 
         if (parameters.Audience.Exclusion !== undefined) {
             // check if the user is in the exclusion list
