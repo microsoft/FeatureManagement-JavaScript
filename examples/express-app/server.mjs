@@ -1,8 +1,10 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import express from "express";
-import path from "path";
 
 import { load } from "@azure/app-configuration-provider";
-const connectionString = "<your-connection-string>";;
+const connectionString = "<your-connection-string>";
 const appConfig = await load(connectionString, {
     featureFlagOptions: {
         enabled: true,
@@ -25,6 +27,7 @@ import { ConfigurationObjectFeatureFlagProvider, ConfigurationMapFeatureFlagProv
 You can use either ConfigurationObjectFeatureFlagProvider or ConfigurationMapFeatureFlagProvider to provide feature flags.
 We recommend using Azure App Configuration as the source of feature flags.
 */
+// import path from "path";
 // const config = JSON.parse(await fs.readFile("config.json"));
 // const featureProvider = new ConfigurationObjectFeatureFlagProvider(config);
 
@@ -36,19 +39,17 @@ const PORT = 3000;
 
 // Use a middleware to achieve request-driven configuration refresh
 server.use((req, res, next) => {
-    // this call s not blocking, the configuration will be updated asynchronously
+    // this call is not blocking, the configuration will be updated asynchronously
     appConfig.refresh();
     next();
 })
 
 
 server.get("/", (req, res) => {
-    appConfig.refresh();
     res.send("Hello World!");
 });
 
 server.get("/Beta", async (req, res) => {
-    appConfig.refresh();
     const { userId, groups } = req.query;
 
     if (await featureManager.isEnabled("Beta", { userId: userId, groups: groups ? groups.split(",") : [] })) {
