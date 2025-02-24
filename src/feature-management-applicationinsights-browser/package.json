@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/feature-management-applicationinsights-browser",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Feature Management Application Insights Plugin for Browser provides a solution for sending feature flag evaluation events produced by the Feature Management library.",
   "main": "./dist/esm/index.js",
   "module": "./dist/esm/index.js",
@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "@microsoft/applicationinsights-web": "^3.3.2",
-    "@microsoft/feature-management": "2.0.1"
+    "@microsoft/feature-management": "2.0.2"
   }
 }
   
