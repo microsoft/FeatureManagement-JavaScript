@@ -2,18 +2,19 @@
 
 [![feature-management](https://img.shields.io/npm/v/@microsoft/feature-management?label=@microsoft/feature-management)](https://www.npmjs.com/package/@microsoft/feature-management)
 
-Feature Management is a library for enabling/disabling features at runtime.
-Developers can use feature flags in simple use cases like conditional statement to more advanced scenarios like conditionally adding routes.
+Feature management provides a way to develop and expose application functionality based on features. Many applications have special requirements when a new feature is developed such as when the feature should be enabled and under what conditions. This library provides a way to define these relationships, and also integrates into common JavaScript code patterns to make exposing these features possible.
 
 ## Getting Started
 
-### Prerequisites
+[Azure App Configuration Quickstart](https://learn.microsoft.com/azure/azure-app-configuration/quickstart-feature-flag-javascript): A quickstart guide about how to integrate feature flags from Azure App Configuration into your JavaScript applications.
 
-- Node.js LTS version
+[Feature Overview](https://learn.microsoft.com/azure/azure-app-configuration/feature-management-overview#feature-development-status): This document provides a feature status overview.
+
+[Feature Reference](https://learn.microsoft.com/azure/azure-app-configuration/feature-management-javascript-reference): This document provides a full feature rundown.
 
 ### Usage
 
-You can use feature flags from the Azure App Configuration service, local files or any other sources.
+You can use feature flags from the Azure App Configuration service, local files or any other sources. For more information, please go to [Feature flag configuration](https://learn.microsoft.com/azure/azure-app-configuration/feature-management-javascript-reference#feature-flag-configuration).
 
 #### Use feature flags from Azure App Configuration
 
@@ -21,7 +22,9 @@ The App Configuration JavaScript provider provides feature flags in as a `Map` o
 A builtin `ConfigurationMapFeatureFlagProvider` helps to load feature flags in this case.
 
 ```js
-const appConfig = load(connectionString, {featureFlagOptions}); // load feature flags from Azure App Configuration service
+import { load } from "@azure/app-configuration-provider";
+import { FeatureManager, ConfigurationMapFeatureFlagProvider } from "@microsoft/feature-management";
+const appConfig = await load("<CONNECTION-STRING>", {featureFlagOptions}); // load feature flags from Azure App Configuration service
 const featureProvider = new ConfigurationMapFeatureFlagProvider(appConfig);
 const featureManager = new FeatureManager(featureProvider);
 const isAlphaEnabled = await featureManager.isEnabled("Alpha");
@@ -42,7 +45,7 @@ Content of `sample.json`:
             {
                 "id": "Alpha",
                 "description": "",
-                "enabled": "true",
+                "enabled": true,
                 "conditions": {
                     "client_filters": []
                 }
@@ -54,12 +57,17 @@ Content of `sample.json`:
 
 Load feature flags from `sample.json` file.
 ```js
+import { FeatureManager, ConfigurationObjectFeatureFlagProvider } from "@microsoft/feature-management";
 const config = JSON.parse(await fs.readFile("path/to/sample.json"));
 const featureProvider = new ConfigurationObjectFeatureFlagProvider(config);
 const featureManager = new FeatureManager(featureProvider);
 const isAlphaEnabled = await featureManager.isEnabled("Alpha");
 console.log("Feature Alpha is:", isAlphaEnabled);
 ```
+
+## Examples
+
+See code snippets under [examples/](./examples/) folder.
 
 ## Contributing
 
