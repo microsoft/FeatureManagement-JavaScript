@@ -11,9 +11,9 @@ const featureProvider = new ConfigurationObjectFeatureFlagProvider(config);
 
 // https://nodejs.org/api/async_context.html
 import { AsyncLocalStorage } from "async_hooks";
-const asyncLocalStorage = new AsyncLocalStorage();
+const requestAccessor = new AsyncLocalStorage();
 const exampleTargetingContextAccessor = () => {
-    const req = asyncLocalStorage.getStore();
+    const req = requestAccessor.getStore();
     const { userId, groups } = req.query;
     return { userId: userId, groups: groups ? groups.split(",") : [] };
 };
@@ -31,11 +31,11 @@ const PORT = 3000;
 
 // Use a middleware to store the request object in async local storage.
 // The async local storage allows the targeting context accessor to access the current request throughout its lifetime.
-// Middleware 1
+// Middleware 1 (request object is stored in async local storage here and it will be available across the following chained async operations)
 //   Middleware 2
-//     Request Handler (feature flag evaluation)
+//     Request Handler (feature flag evaluation happens here)
 server.use((req, res, next) => {
-    asyncLocalStorage.run(req, next);
+    requestAccessor.run(req, next);
 });
 
 server.get("/", (req, res) => {
