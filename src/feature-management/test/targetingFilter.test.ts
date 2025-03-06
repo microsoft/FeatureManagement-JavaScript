@@ -139,7 +139,11 @@ describe("targeting filter", () => {
 
         let userId = "";
         let groups: string[] = [];
-        const testTargetingContextAccessor = () => ({ userId: userId, groups: groups });
+        const testTargetingContextAccessor = {
+            getTargetingContext: () => {
+              return { userId: userId, groups: groups };
+            }
+        }
         const provider = new ConfigurationMapFeatureFlagProvider(dataSource);
         const featureManager = new FeatureManager(provider, {targetingContextAccessor: testTargetingContextAccessor});
 

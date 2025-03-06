@@ -15,7 +15,7 @@ type TimeWindowFilterEvaluationContext = {
 }
 
 export class TimeWindowFilter implements IFeatureFilter {
-    name: string = "Microsoft.TimeWindow";
+    readonly name: string = "Microsoft.TimeWindow";
 
     evaluate(context: TimeWindowFilterEvaluationContext): boolean {
         const {featureName, parameters} = context;
