@@ -12,10 +12,12 @@ const featureProvider = new ConfigurationObjectFeatureFlagProvider(config);
 // https://nodejs.org/api/async_context.html
 import { AsyncLocalStorage } from "async_hooks";
 const requestAccessor = new AsyncLocalStorage();
-const exampleTargetingContextAccessor = () => {
-    const req = requestAccessor.getStore();
-    const { userId, groups } = req.query;
-    return { userId: userId, groups: groups ? groups.split(",") : [] };
+const exampleTargetingContextAccessor = {
+    getTargetingContext: () => {
+        const req = requestAccessor.getStore();
+        const { userId, groups } = req.query;
+        return { userId: userId, groups: groups ? groups.split(",") : [] };
+    }
 };
 
 const featureManager = new FeatureManager(
