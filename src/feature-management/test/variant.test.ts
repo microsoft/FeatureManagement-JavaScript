@@ -100,7 +100,7 @@ describe("variant assignment with targeting context accessor", () => {
             getTargetingContext: () => {
               return { userId: userId, groups: groups };
             }
-        }
+        };
         const provider = new ConfigurationObjectFeatureFlagProvider(featureFlagsConfigurationObject);
         const featureManager = new FeatureManager(provider, {targetingContextAccessor: testTargetingContextAccessor});
         userId = "Marsha";

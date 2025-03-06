@@ -143,7 +143,7 @@ describe("targeting filter", () => {
             getTargetingContext: () => {
               return { userId: userId, groups: groups };
             }
-        }
+        };
         const provider = new ConfigurationMapFeatureFlagProvider(dataSource);
         const featureManager = new FeatureManager(provider, {targetingContextAccessor: testTargetingContextAccessor});
 
