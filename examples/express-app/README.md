@@ -31,10 +31,12 @@ The examples are compatible with [LTS versions of Node.js](https://github.com/no
 The targeting mechanism uses the `exampleTargetingContextAccessor` to extract the targeting context from the request. This function retrieves the userId and groups from the query parameters of the request.
 
 ```javascript
-const exampleTargetingContextAccessor = () => {
-    const req = requestAccessor.getStore();
-    const { userId, groups } = req.query;
-    return { userId: userId, groups: groups ? groups.split(",") : [] };
+const exampleTargetingContextAccessor = {
+    getTargetingContext: () => {
+        const req = requestAccessor.getStore();
+        const { userId, groups } = req.query;
+        return { userId: userId, groups: groups ? groups.split(",") : [] };
+    }
 };
 ```
 
