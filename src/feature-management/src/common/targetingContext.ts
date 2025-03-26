@@ -16,6 +16,11 @@ export interface ITargetingContext {
 }
 
 /**
- * Type definition for a function that, when invoked, returns the @see ITargetingContext for targeting evaluation.
+ * Provides access to the current targeting context.
  */
-export type TargetingContextAccessor = () => ITargetingContext;
+export interface ITargetingContextAccessor {
+    /**
+     * Retrieves the current targeting context.
+     */
+    getTargetingContext: () => ITargetingContext | undefined;
+}
