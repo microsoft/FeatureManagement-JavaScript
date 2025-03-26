@@ -3,7 +3,7 @@
 
 import { IFeatureFilter } from "./FeatureFilter.js";
 import { isTargetedPercentile } from "../common/targetingEvaluator.js";
-import { ITargetingContext } from "../common/ITargetingContext.js";
+import { ITargetingContext, ITargetingContextAccessor } from "../common/targetingContext.js";
 
 type TargetingFilterParameters = {
     Audience: {
@@ -26,28 +26,36 @@ type TargetingFilterEvaluationContext = {
 }
 
 export class TargetingFilter implements IFeatureFilter {
-    name: string = "Microsoft.Targeting";
+    readonly name: string = "Microsoft.Targeting";
+    readonly #targetingContextAccessor?: ITargetingContextAccessor;
+
+    constructor(targetingContextAccessor?: ITargetingContextAccessor) {
+        this.#targetingContextAccessor = targetingContextAccessor;
+    }
 
     async evaluate(context: TargetingFilterEvaluationContext, appContext?: ITargetingContext): Promise<boolean> {
         const { featureName, parameters } = context;
         TargetingFilter.#validateParameters(featureName, parameters);
 
-        if (appContext === undefined) {
-            throw new Error("The app context is required for targeting filter.");
+        let targetingContext: ITargetingContext | undefined;
+        if (appContext?.userId !== undefined || appContext?.groups !== undefined) {
+            targetingContext = appContext;
+        } else if (this.#targetingContextAccessor !== undefined) {
+            targetingContext = this.#targetingContextAccessor.getTargetingContext();
         }
 
         if (parameters.Audience.Exclusion !== undefined) {
             // check if the user is in the exclusion list
-            if (appContext?.userId !== undefined &&
+            if (targetingContext?.userId !== undefined &&
                 parameters.Audience.Exclusion.Users !== undefined &&
-                parameters.Audience.Exclusion.Users.includes(appContext.userId)) {
+                parameters.Audience.Exclusion.Users.includes(targetingContext.userId)) {
                 return false;
             }
             // check if the user is in a group within exclusion list
-            if (appContext?.groups !== undefined &&
+            if (targetingContext?.groups !== undefined &&
                 parameters.Audience.Exclusion.Groups !== undefined) {
                 for (const excludedGroup of parameters.Audience.Exclusion.Groups) {
-                    if (appContext.groups.includes(excludedGroup)) {
+                    if (targetingContext.groups.includes(excludedGroup)) {
                         return false;
                     }
                 }
@@ -55,19 +63,19 @@ export class TargetingFilter implements IFeatureFilter {
         }
 
         // check if the user is being targeted directly
-        if (appContext?.userId !== undefined &&
+        if (targetingContext?.userId !== undefined &&
             parameters.Audience.Users !== undefined &&
-            parameters.Audience.Users.includes(appContext.userId)) {
+            parameters.Audience.Users.includes(targetingContext.userId)) {
             return true;
         }
 
         // check if the user is in a group that is being targeted
-        if (appContext?.groups !== undefined &&
+        if (targetingContext?.groups !== undefined &&
             parameters.Audience.Groups !== undefined) {
             for (const group of parameters.Audience.Groups) {
-                if (appContext.groups.includes(group.Name)) {
+                if (targetingContext.groups.includes(group.Name)) {
                     const hint = `${featureName}\n${group.Name}`;
-                    if (await isTargetedPercentile(appContext.userId, hint, 0, group.RolloutPercentage)) {
+                    if (await isTargetedPercentile(targetingContext.userId, hint, 0, group.RolloutPercentage)) {
                         return true;
                     }
                 }
@@ -76,7 +84,7 @@ export class TargetingFilter implements IFeatureFilter {
 
         // check if the user is being targeted by a default rollout percentage
         const hint = featureName;
-        return isTargetedPercentile(appContext?.userId, hint, 0, parameters.Audience.DefaultRolloutPercentage);
+        return isTargetedPercentile(targetingContext?.userId, hint, 0, parameters.Audience.DefaultRolloutPercentage);
     }
 
     static #validateParameters(featureName: string, parameters: TargetingFilterParameters): void {

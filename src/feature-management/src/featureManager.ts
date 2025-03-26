@@ -8,25 +8,25 @@ import { IFeatureFlagProvider } from "./featureProvider.js";
 import { TargetingFilter } from "./filter/TargetingFilter.js";
 import { Variant } from "./variant/Variant.js";
 import { IFeatureManager } from "./IFeatureManager.js";
-import { ITargetingContext } from "./common/ITargetingContext.js";
+import { ITargetingContext, ITargetingContextAccessor } from "./common/targetingContext.js";
 import { isTargetedGroup, isTargetedPercentile, isTargetedUser } from "./common/targetingEvaluator.js";
 
 export class FeatureManager implements IFeatureManager {
-    #provider: IFeatureFlagProvider;
-    #featureFilters: Map<string, IFeatureFilter> = new Map();
-    #onFeatureEvaluated?: (event: EvaluationResult) => void;
+    readonly #provider: IFeatureFlagProvider;
+    readonly #featureFilters: Map<string, IFeatureFilter> = new Map();
+    readonly #onFeatureEvaluated?: (event: EvaluationResult) => void;
+    readonly #targetingContextAccessor?: ITargetingContextAccessor;
 
     constructor(provider: IFeatureFlagProvider, options?: FeatureManagerOptions) {
         this.#provider = provider;
+        this.#onFeatureEvaluated = options?.onFeatureEvaluated;
+        this.#targetingContextAccessor = options?.targetingContextAccessor;
 
-        const builtinFilters = [new TimeWindowFilter(), new TargetingFilter()];
-
+        const builtinFilters = [new TimeWindowFilter(), new TargetingFilter(options?.targetingContextAccessor)];
         // If a custom filter shares a name with an existing filter, the custom filter overrides the existing one.
         for (const filter of [...builtinFilters, ...(options?.customFilters ?? [])]) {
             this.#featureFilters.set(filter.name, filter);
         }
-
-        this.#onFeatureEvaluated = options?.onFeatureEvaluated;
     }
 
     async listFeatureNames(): Promise<string[]> {
@@ -78,7 +78,7 @@ export class FeatureManager implements IFeatureManager {
         return { variant: undefined, reason: VariantAssignmentReason.None };
     }
 
-    async #isEnabled(featureFlag: FeatureFlag, context?: unknown): Promise<boolean> {
+    async #isEnabled(featureFlag: FeatureFlag, appContext?: unknown): Promise<boolean> {
         if (featureFlag.enabled !== true) {
             // If the feature is not explicitly enabled, then it is disabled by default.
             return false;
@@ -106,7 +106,7 @@ export class FeatureManager implements IFeatureManager {
                 console.warn(`Feature filter ${clientFilter.name} is not found.`);
                 return false;
             }
-            if (await matchedFeatureFilter.evaluate(contextWithFeatureName, context) === shortCircuitEvaluationResult) {
+            if (await matchedFeatureFilter.evaluate(contextWithFeatureName, appContext) === shortCircuitEvaluationResult) {
                 return shortCircuitEvaluationResult;
             }
         }
@@ -115,7 +115,7 @@ export class FeatureManager implements IFeatureManager {
         return !shortCircuitEvaluationResult;
     }
 
-    async #evaluateFeature(featureName: string, context: unknown): Promise<EvaluationResult> {
+    async #evaluateFeature(featureName: string, appContext: unknown): Promise<EvaluationResult> {
         const featureFlag = await this.#provider.getFeatureFlag(featureName);
         const result = new EvaluationResult(featureFlag);
 
@@ -128,9 +128,10 @@ export class FeatureManager implements IFeatureManager {
         validateFeatureFlagFormat(featureFlag);
 
         // Evaluate if the feature is enabled.
-        result.enabled = await this.#isEnabled(featureFlag, context);
+        result.enabled = await this.#isEnabled(featureFlag, appContext);
 
-        const targetingContext = context as ITargetingContext;
+        // Get targeting context from the app context or the targeting context accessor
+        const targetingContext = this.#getTargetingContext(appContext);
         result.targetingId = targetingContext?.userId;
 
         // Determine Variant
@@ -151,7 +152,7 @@ export class FeatureManager implements IFeatureManager {
                 }
             } else {
                 // enabled, assign based on allocation
-                if (context !== undefined && featureFlag.allocation !== undefined) {
+                if (targetingContext !== undefined && featureFlag.allocation !== undefined) {
                     const variantAndReason = await this.#assignVariant(featureFlag, targetingContext);
                     variantDef = variantAndReason.variant;
                     reason = variantAndReason.reason;
@@ -189,6 +190,16 @@ export class FeatureManager implements IFeatureManager {
 
         return result;
     }
+
+    #getTargetingContext(context: unknown): ITargetingContext | undefined {
+        let targetingContext: ITargetingContext | undefined = context as ITargetingContext;
+        if (targetingContext?.userId === undefined &&
+            targetingContext?.groups === undefined &&
+            this.#targetingContextAccessor !== undefined) {
+            targetingContext = this.#targetingContextAccessor.getTargetingContext();
+        }
+        return targetingContext;
+    }
 }
 
 export interface FeatureManagerOptions {
@@ -202,6 +213,11 @@ export interface FeatureManagerOptions {
      * The callback function is called only when telemetry is enabled for the feature flag.
      */
     onFeatureEvaluated?: (event: EvaluationResult) => void;
+
+    /**
+     * The accessor function that provides the @see ITargetingContext for targeting evaluation.
+     */
+    targetingContextAccessor?: ITargetingContextAccessor;
 }
 
 export class EvaluationResult {
