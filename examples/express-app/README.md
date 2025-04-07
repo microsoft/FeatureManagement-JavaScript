@@ -8,6 +8,12 @@ The examples are compatible with [LTS versions of Node.js](https://github.com/no
 
 ## Setup & Run
 
+1. Build:
+
+    ```bash
+    npm run build
+    ```
+
 1. Install the dependencies using `npm`:
 
     ```bash
