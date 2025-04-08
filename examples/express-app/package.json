@@ -1,7 +1,6 @@
 {
     "scripts": {
-        "start": "node server.mjs",
-        "build": "cd ../../src/feature-management && npm i && npm run build && cd ../../examples/express-app && npm i"
+        "start": "node server.mjs"
     },
     "dependencies": {
         "@microsoft/feature-management": "../../src/feature-management",
