@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { EvaluationResult, createFeatureEvaluationEventProperties, TargetingContextAccessor } from "@microsoft/feature-management";
+import { EvaluationResult, createFeatureEvaluationEventProperties, ITargetingContextAccessor } from "@microsoft/feature-management";
 import { TelemetryClient, Contracts } from "applicationinsights";
 
 const TARGETING_ID = "TargetingId";
@@ -45,14 +45,14 @@ export function trackEvent(client: TelemetryClient, targetingId: string, event: 
  * @param targetingContextAccessor The accessor function to get the targeting context.
  * @returns A telemetry processor that attaches targeting id to telemetry envelopes.
  */
-export function createTargetingTelemetryProcessor(targetingContextAccessor: TargetingContextAccessor): (envelope: Contracts.EnvelopeTelemetry) => boolean {
+export function createTargetingTelemetryProcessor(targetingContextAccessor: ITargetingContextAccessor): (envelope: Contracts.EnvelopeTelemetry) => boolean {
     return (envelope: Contracts.EnvelopeTelemetry) => {
-        const targetingContext = targetingContextAccessor();
+        const targetingContext = targetingContextAccessor.getTargetingContext();
         if (targetingContext?.userId === undefined) {
             console.warn("Targeting id is undefined.");
         }
         envelope.data.baseData = envelope.data.baseData || {};
-        envelope.data.baseData.properties = {...envelope.data.baseData.properties, [TARGETING_ID]: targetingContext.userId};
+        envelope.data.baseData.properties = {...envelope.data.baseData.properties, [TARGETING_ID]: targetingContext?.userId || ""};
         return true; // If a telemetry processor returns false, that telemetry item isn't sent.
     };
 }

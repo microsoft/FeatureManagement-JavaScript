@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { EvaluationResult, createFeatureEvaluationEventProperties, TargetingContextAccessor } from "@microsoft/feature-management";
+import { EvaluationResult, createFeatureEvaluationEventProperties, ITargetingContextAccessor } from "@microsoft/feature-management";
 import { ApplicationInsights, IEventTelemetry, ITelemetryItem } from "@microsoft/applicationinsights-web";
 
 const TARGETING_ID = "TargetingId";
@@ -45,9 +45,9 @@ export function trackEvent(client: ApplicationInsights, targetingId: string, eve
  * @param targetingContextAccessor The accessor function to get the targeting context.
  * @returns A telemetry initializer that attaches targeting id to telemetry items.
  */
-export function createTargetingTelemetryInitializer(targetingContextAccessor: TargetingContextAccessor): (item: ITelemetryItem) => void {
+export function createTargetingTelemetryInitializer(targetingContextAccessor: ITargetingContextAccessor): (item: ITelemetryItem) => void {
     return (item: ITelemetryItem) => {
-        const targetingContext = targetingContextAccessor();
+        const targetingContext = targetingContextAccessor.getTargetingContext();
         if (targetingContext?.userId === undefined) {
             console.warn("Targeting id is undefined.");
         }

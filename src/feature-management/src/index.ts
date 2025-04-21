@@ -5,5 +5,5 @@ export { FeatureManager, FeatureManagerOptions, EvaluationResult, VariantAssignm
 export { ConfigurationMapFeatureFlagProvider, ConfigurationObjectFeatureFlagProvider, IFeatureFlagProvider } from "./featureProvider.js";
 export { createFeatureEvaluationEventProperties } from "./telemetry/featureEvaluationEvent.js";
 export { IFeatureFilter } from "./filter/FeatureFilter.js";
-export { TargetingContextAccessor, ITargetingContext } from "./common/targetingContext.js";
+export { ITargetingContext, ITargetingContextAccessor } from "./common/targetingContext.js";
 export { VERSION } from "./version.js";

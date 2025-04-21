@@ -139,7 +139,11 @@ describe("targeting filter", () => {
 
         let userId = "";
         let groups: string[] = [];
-        const testTargetingContextAccessor = () => ({ userId: userId, groups: groups });
+        const testTargetingContextAccessor = {
+            getTargetingContext: () => {
+              return { userId: userId, groups: groups };
+            }
+        };
         const provider = new ConfigurationMapFeatureFlagProvider(dataSource);
         const featureManager = new FeatureManager(provider, {targetingContextAccessor: testTargetingContextAccessor});
 
@@ -147,7 +151,7 @@ describe("targeting filter", () => {
         expect(await featureManager.isEnabled("ComplexTargeting")).to.eq(false);
         userId = "Blossom";
         expect(await featureManager.isEnabled("ComplexTargeting")).to.eq(true);
-        expect(await featureManager.isEnabled("ComplexTargeting", {userId: "Aiden"})).to.eq(true); // targeting id will be overridden by the context accessor
+        expect(await featureManager.isEnabled("ComplexTargeting", {userId: "Aiden"})).to.eq(false); // targeting id will be overridden
         userId = "Aiden";
         groups = ["Stage2"];
         expect(await featureManager.isEnabled("ComplexTargeting")).to.eq(true);
