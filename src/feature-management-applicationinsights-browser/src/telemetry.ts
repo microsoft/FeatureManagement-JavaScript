@@ -48,9 +48,11 @@ export function trackEvent(client: ApplicationInsights, targetingId: string, eve
 export function createTargetingTelemetryInitializer(targetingContextAccessor: ITargetingContextAccessor): (item: ITelemetryItem) => void {
     return (item: ITelemetryItem) => {
         const targetingContext = targetingContextAccessor.getTargetingContext();
-        if (targetingContext?.userId === undefined) {
-            console.warn("Targeting id is undefined.");
+        if (targetingContext !== undefined) {
+            if (targetingContext?.userId === undefined) {
+                console.warn("Targeting id is undefined.");
+            }
+            item.data = {...item.data, [TARGETING_ID]: targetingContext?.userId || ""};
         }
-        item.data = {...item.data, [TARGETING_ID]: targetingContext?.userId || ""};
     };
 }
