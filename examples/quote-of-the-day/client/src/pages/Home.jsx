@@ -39,7 +39,7 @@ function Home() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ UserId: currentUser ?? "" }),
+          body: JSON.stringify({ userId: currentUser ?? "" }),
         });
 
         if (response.ok) {

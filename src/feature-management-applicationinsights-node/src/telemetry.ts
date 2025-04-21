@@ -48,11 +48,13 @@ export function trackEvent(client: TelemetryClient, targetingId: string, event: 
 export function createTargetingTelemetryProcessor(targetingContextAccessor: ITargetingContextAccessor): (envelope: Contracts.EnvelopeTelemetry) => boolean {
     return (envelope: Contracts.EnvelopeTelemetry) => {
         const targetingContext = targetingContextAccessor.getTargetingContext();
-        if (targetingContext?.userId === undefined) {
-            console.warn("Targeting id is undefined.");
+        if (targetingContext !== undefined) {
+            if (targetingContext?.userId === undefined) {
+                console.warn("Targeting id is undefined.");
+            }
+            envelope.data.baseData = envelope.data.baseData || {};
+            envelope.data.baseData.properties = {...envelope.data.baseData.properties, [TARGETING_ID]: targetingContext?.userId || ""};
         }
-        envelope.data.baseData = envelope.data.baseData || {};
-        envelope.data.baseData.properties = {...envelope.data.baseData.properties, [TARGETING_ID]: targetingContext?.userId || ""};
-        return true; // If a telemetry processor returns false, that telemetry item isn't sent.
+        return true;
     };
 }

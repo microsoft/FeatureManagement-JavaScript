@@ -19,10 +19,11 @@ const exampleTargetingContextAccessor = {
     getTargetingContext: () => {
         const req = requestAccessor.getStore();
         if (req === undefined) {
-            return { userId: undefined, groups: [] };
+            return undefined;
         }
-        // read user and groups from request query data
-        const { userId, groups } = req.query;
+        // read user and groups from request
+        const userId = req.query.userId ?? req.body.userId;
+        const groups = req.query.groups ?? req.body.groups;
         // return an ITargetingContext with the appropriate user info
         return { userId: userId, groups: groups ? groups.split(",") : [] };
     }
@@ -43,7 +44,7 @@ applicationInsights.defaultClient.addTelemetryProcessor(createTargetingTelemetry
 
 const { load } = require("@azure/app-configuration-provider");
 const { FeatureManager, ConfigurationMapFeatureFlagProvider } = require("@microsoft/feature-management");
-const { createTelemetryPublisher, trackEvent } = require("@microsoft/feature-management-applicationinsights-node");
+const { createTelemetryPublisher } = require("@microsoft/feature-management-applicationinsights-node");
 let appConfig;
 let featureManager;
 async function initializeConfig() {
@@ -103,11 +104,11 @@ function startServer() {
     });
 
     server.post("/api/like", (req, res) => {
-        const { UserId } = req.body;
-        if (UserId === undefined) {
+        const { userId } = req.body;
+        if (userId === undefined) {
             return res.status(400).send({ error: "UserId is required" });
         }
-        trackEvent(applicationInsights.defaultClient, UserId, { name: "Like" });
+        applicationInsights.defaultClient.trackEvent({ name: "Like" });
         res.status(200).send({ message: "Like event logged successfully" });
     });
 

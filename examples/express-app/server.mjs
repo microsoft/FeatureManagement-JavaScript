@@ -16,7 +16,7 @@ const exampleTargetingContextAccessor = {
     getTargetingContext: () => {
         const req = requestAccessor.getStore();
         if (req === undefined) {
-            return { userId: undefined, groups: [] };
+            return undefined;
         }
         // read user and groups from request query data
         const { userId, groups } = req.query;
