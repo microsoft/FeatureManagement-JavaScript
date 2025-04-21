@@ -48,10 +48,7 @@ export function trackEvent(client: TelemetryClient, targetingId: string, event: 
 export function createTargetingTelemetryProcessor(targetingContextAccessor: ITargetingContextAccessor): (envelope: Contracts.EnvelopeTelemetry) => boolean {
     return (envelope: Contracts.EnvelopeTelemetry) => {
         const targetingContext = targetingContextAccessor.getTargetingContext();
-        if (targetingContext !== undefined) {
-            if (targetingContext?.userId === undefined) {
-                console.warn("Targeting id is undefined.");
-            }
+        if (targetingContext?.userId !== undefined) {
             envelope.data.baseData = envelope.data.baseData || {};
             envelope.data.baseData.properties = {...envelope.data.baseData.properties, [TARGETING_ID]: targetingContext?.userId || ""};
         }
