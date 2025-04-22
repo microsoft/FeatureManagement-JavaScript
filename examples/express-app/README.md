@@ -41,6 +41,9 @@ The targeting mechanism uses the `exampleTargetingContextAccessor` to extract th
 const exampleTargetingContextAccessor = {
     getTargetingContext: () => {
         const req = requestAccessor.getStore();
+        if (req === undefined) {
+            return undefined;
+        }
         // read user and groups from request query data
         const { userId, groups } = req.query;
         // return aa ITargetingContext with the appropriate user info
