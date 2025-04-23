@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 const { load } = require("@azure/app-configuration-provider");
-const { FeatureManager, ConfigurationMapFeatureFlagProvider } = require("@microsoft/feature-management");
+const { FeatureManager, ConfigurationMapFeatureFlagProvider, ConfigurationObjectFeatureFlagProvider } = require("@microsoft/feature-management");
 const { createTelemetryPublisher } = require("@microsoft/feature-management-applicationinsights-node");
 const config = require("./config");
 
@@ -27,8 +27,11 @@ async function initializeFeatureManagement(appInsightsClient, targetingContextAc
             }
         }
     });
-
     const featureFlagProvider = new ConfigurationMapFeatureFlagProvider(appConfig);
+
+    // You can also alternatively use local feature flag source.
+    // const featureFlagProvider = new ConfigurationObjectFeatureFlagProvider(config.localFeatureFlags);
+
     const publishTelemetry = createTelemetryPublisher(appInsightsClient);
     featureManager = new FeatureManager(featureFlagProvider, {
         onFeatureEvaluated: publishTelemetry,
@@ -39,7 +42,7 @@ async function initializeFeatureManagement(appInsightsClient, targetingContextAc
 }
 
 // Middleware to refresh configuration before each request
-const configRefreshMiddleware = (req, res, next) => {
+const featureFlagRefreshMiddleware = (req, res, next) => {
     // The configuration refresh happens asynchronously to the processing of your app's incoming requests.
     // It will not block or slow down the incoming request that triggered the refresh. 
     // The request that triggered the refresh may not get the updated configuration values, but later requests will get new configuration values.
@@ -49,5 +52,5 @@ const configRefreshMiddleware = (req, res, next) => {
 
 module.exports = {
     initializeFeatureManagement,
-    configRefreshMiddleware
+    featureFlagRefreshMiddleware
 };

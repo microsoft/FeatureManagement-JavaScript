@@ -6,7 +6,7 @@ const config = require("./config");
 const express = require("express");
 const { targetingContextAccessor, requestStorageMiddleware } = require("./targetingContextAccessor");
 const { initializeAppInsights } = require("./telemetry");
-const { initializeFeatureManagement, configRefreshMiddleware } = require("./featureManagement");
+const { initializeFeatureManagement, featureFlagRefreshMiddleware } = require("./featureManagement");
 const { initializeRoutes } = require("./routes");
 
 // Initialize Express server
@@ -32,7 +32,7 @@ async function startApp() {
         
         // Set up middleware
         server.use(requestStorageMiddleware);
-        server.use(configRefreshMiddleware);
+        server.use(featureFlagRefreshMiddleware);
         server.use(express.json());
         server.use(express.static("public"));
         
