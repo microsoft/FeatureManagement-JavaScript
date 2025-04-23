@@ -30,7 +30,9 @@ async function initializeFeatureManagement(appInsightsClient, targetingContextAc
     const featureFlagProvider = new ConfigurationMapFeatureFlagProvider(appConfig);
 
     // You can also alternatively use local feature flag source.
-    // const featureFlagProvider = new ConfigurationObjectFeatureFlagProvider(config.localFeatureFlags);
+    // const fs = require('fs/promises');
+    // const localFeatureFlags = JSON.parse(await fs.readFile("localFeatureFlags.json"));
+    // const featureFlagProvider = new ConfigurationObjectFeatureFlagProvider(localFeatureFlags);
 
     const publishTelemetry = createTelemetryPublisher(appInsightsClient);
     featureManager = new FeatureManager(featureFlagProvider, {
