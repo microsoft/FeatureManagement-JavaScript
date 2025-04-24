@@ -39,7 +39,7 @@ The `onFeatureEvaluated` option registers a callback that automatically sends te
 
 ### Targeting Context in Telemetry
 
-The telemetry implementation also captures the targeting context, which includes user ID and groups, in the telemetry data:
+`createTargetingTelemetryProcessor` method creates a built-in Application Insights telemetry processor which gets targeting context from the targeting context accessor and attaches the targeting id to telemetry.
 
 ```javascript
 // Initialize Application Insights with targeting context
@@ -48,7 +48,7 @@ applicationInsights.defaultClient.addTelemetryProcessor(
 );
 ```
 
-This ensures that every telemetry event sent to Application Insights includes the targeting identity information, allowing you to correlate feature flag usage with specific users or groups in your analytics.
+This ensures that every telemetry sent to Application Insights includes the targeting id information, allowing you to correlate feature flag usage with specific users or groups in your analytics.
 
 ### Experimentation and A/B Testing
 
