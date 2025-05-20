@@ -8,14 +8,7 @@ The examples are compatible with [LTS versions of Node.js](https://github.com/no
 
 ## Setup & Run
 
-1. Go to `src/feature-management` under the root folder and run:
-
-    ```bash
-    npm run install
-    npm run build
-    ```
-
-1. Go back to `examples/express-app` and install the dependencies using `npm`:
+1. Install the dependencies using `npm`:
 
     ```bash
     npm install
@@ -41,6 +34,9 @@ The targeting mechanism uses the `exampleTargetingContextAccessor` to extract th
 const exampleTargetingContextAccessor = {
     getTargetingContext: () => {
         const req = requestAccessor.getStore();
+        if (req === undefined) {
+            return undefined;
+        }
         // read user and groups from request query data
         const { userId, groups } = req.query;
         // return aa ITargetingContext with the appropriate user info

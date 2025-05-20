@@ -3,7 +3,7 @@
         "start": "node server.mjs"
     },
     "dependencies": {
-        "@microsoft/feature-management": "../../src/feature-management",
+        "@microsoft/feature-management": "2.1.0",
         "express": "^4.21.2"
     }
 }
