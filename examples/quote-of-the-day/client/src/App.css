@@ -1,0 +1,198 @@
+body {
+  margin: 0;
+  font-family: 'Georgia', serif;
+}
+
+.quote-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f4f4f4;
+}
+
+.navbar {
+  background-color: white;
+  border-bottom: 1px solid #eaeaea;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+  align-items: center;
+  font-family: 'Arial', sans-serif;
+  font-size: 16px;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  margin-left: 40px;
+}
+
+.logo {
+  font-size: 1.25em;
+  text-decoration: none;
+  color: black;
+  margin-right: 20px;
+}
+
+.navbar-left nav a {
+  margin-right: 20px;
+  text-decoration: none;
+  color: black;
+  font-weight: 500;
+  font-family: 'Arial', sans-serif;
+}
+
+.navbar-right a {
+  margin-left: 20px;
+  text-decoration: none;
+  color: black;
+  font-weight: 500;
+  font-family: 'Arial', sans-serif;
+}
+
+.quote-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.quote-card {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 700px;
+  position: relative;
+  text-align: left;
+}
+
+.quote-card h2 {
+  font-weight: normal;
+}
+
+.quote-card blockquote {
+  font-size: 2em;
+  font-family: 'Georgia', serif;
+  font-style: italic;
+  color: #4EC2F7;
+  margin: 0 0 20px 0;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.quote-card footer {
+  font-size: 0.55em;
+  color: black;
+  font-family: 'Arial', sans-serif;
+  font-style: normal;
+  text-align: left;
+  font-weight: bold;
+}
+
+.vote-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 0em;
+}
+
+.heart-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  font-size: 24px;
+}
+
+.heart-button:hover {
+  background-color: #F0F0F0;
+}
+
+.heart-button:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+footer {
+  background-color: white;
+  padding-top: 10px;
+  text-align: center;
+  border-top: 1px solid #eaeaea;
+}
+
+footer a {
+  color: #4EC2F7;
+  text-decoration: none;
+}
+
+.register-login-card {
+  width: 300px;
+  margin: 50px auto;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  text-align: center;
+}
+
+h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.input-container {
+  margin-bottom: 15px;
+  text-align: left;
+  width: 100%; /* Ensure the container takes the full width */
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #555;
+}
+
+input {
+  width: calc(100%); /* Add padding for both left and right */
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  box-sizing: border-box; /* Ensure padding doesn't affect the width */
+}
+
+input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.register-login-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.register-login-button:hover {
+  background-color: #0056b3;
+}
+
+.error-message {
+  color: red;
+}
+
+.logout-btn {
+  margin-left: 20px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}

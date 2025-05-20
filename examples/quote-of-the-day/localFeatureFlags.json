@@ -1,0 +1,47 @@
+{
+  "feature_management": {
+    "feature_flags": [
+      {
+        "id": "Greeting",
+        "enabled": true,
+        "variants": [
+          {
+            "name": "Default"
+          },
+          {
+            "name": "Simple",
+            "configuration_value": "Hello!"
+          },
+          {
+            "name": "Long",
+            "configuration_value": "I hope this makes your day!"
+          }
+        ],
+        "allocation": {
+          "percentile": [
+            {
+              "variant": "Default",
+              "from": 0,
+              "to": 50
+            },
+            {
+              "variant": "Simple",
+              "from": 50,
+              "to": 75
+            },
+            {
+              "variant": "Long",
+              "from": 75,
+              "to": 100
+            }
+          ],
+          "default_when_enabled": "Default",
+          "default_when_disabled": "Default"
+        },
+        "telemetry": {
+          "enabled": true
+        }
+      }
+    ]
+  }
+}

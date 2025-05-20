@@ -1,0 +1,9 @@
+{
+    "scripts": {
+        "start": "node server.mjs"
+    },
+    "dependencies": {
+        "@microsoft/feature-management": "2.1.0-preview.1",
+        "express": "^4.21.2"
+    }
+}
