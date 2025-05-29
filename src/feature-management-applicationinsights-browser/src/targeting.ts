@@ -9,7 +9,7 @@ const APPLICATION_INSIGHTS_USER_COOKIE = "ai_user";
 /**
  * A default implementation of ITargetingContextAccessor that retrieves targeting context from the document's cookie.
  */
-export class DefaultHttpTargetingContextAccessor implements ITargetingContextAccessor {    
+export class DefaultHttpTargetingContextAccessor implements ITargetingContextAccessor {
     #document: Document;
     #cookieValue: string;
     #cookieCache: { [key: string]: string } = {};
@@ -20,12 +20,12 @@ export class DefaultHttpTargetingContextAccessor implements ITargetingContextAcc
     }
 
     getTargetingContext(): ITargetingContext {
-        return { 
+        return {
             userId: this.#getCookieValue(APPLICATION_INSIGHTS_USER_COOKIE)
-        }
+        };
     }
 
-    #getCookieValue(name: string): string{
+    #getCookieValue(name: string): string {
         const cookie = this.#document.cookie || "";
         if (this.#cookieValue !== cookie) {
             this.#parseCookie(cookie);
