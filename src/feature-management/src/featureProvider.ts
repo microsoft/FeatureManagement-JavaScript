@@ -3,7 +3,7 @@
 
 import { IGettable } from "./gettable.js";
 import { FeatureFlag, FeatureManagementConfiguration, FEATURE_MANAGEMENT_KEY, FEATURE_FLAGS_KEY } from "./schema/model.js";
-import { IFeatureFlagProvider } from "./models.js";
+import { IFeatureFlagProvider } from "./model.js";
 import { validateFeatureFlag } from "./schema/validator.js";
 
 /**
