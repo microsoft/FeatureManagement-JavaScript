@@ -3,20 +3,8 @@
 
 import { IGettable } from "./gettable.js";
 import { FeatureFlag, FeatureManagementConfiguration, FEATURE_MANAGEMENT_KEY, FEATURE_FLAGS_KEY } from "./schema/model.js";
+import { IFeatureFlagProvider } from "./models.js";
 import { validateFeatureFlag } from "./schema/validator.js";
-
-export interface IFeatureFlagProvider {
-    /**
-     * Get all feature flags.
-     */
-    getFeatureFlags(): Promise<FeatureFlag[]>;
-
-    /**
-     * Get a feature flag by name.
-     * @param featureName The name of the feature flag.
-     */
-    getFeatureFlag(featureName: string): Promise<FeatureFlag | undefined>;
-}
 
 /**
  * A feature flag provider that uses a map-like configuration to provide feature flags.
