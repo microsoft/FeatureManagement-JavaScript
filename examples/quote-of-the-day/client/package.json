@@ -1,0 +1,17 @@
+{
+  "name": "quoteoftheday",
+  "type": "module",
+  "scripts": {
+    "build": "vite build --emptyOutDir"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.27.0",
+    "react-icons": "5.3.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.1"
+  }
+}

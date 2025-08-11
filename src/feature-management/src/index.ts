@@ -2,7 +2,9 @@
 // Licensed under the MIT license.
 
 export { FeatureManager, FeatureManagerOptions, EvaluationResult, VariantAssignmentReason } from "./featureManager.js";
-export { ConfigurationMapFeatureFlagProvider, ConfigurationObjectFeatureFlagProvider, IFeatureFlagProvider } from "./featureProvider.js";
+export { IFeatureFlagProvider, IFeatureManager } from "./models.js";
+export { ConfigurationMapFeatureFlagProvider, ConfigurationObjectFeatureFlagProvider } from "./featureProvider.js";
 export { createFeatureEvaluationEventProperties } from "./telemetry/featureEvaluationEvent.js";
 export { IFeatureFilter } from "./filter/featureFilter.js";
+export { ITargetingContext, ITargetingContextAccessor } from "./common/targetingContext.js";
 export { VERSION } from "./version.js";

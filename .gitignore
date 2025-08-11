@@ -413,3 +413,5 @@ examples/**/**/package-lock.json
 
 # playwright test result
 test-results
+
+**/public

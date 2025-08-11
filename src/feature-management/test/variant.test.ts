@@ -90,5 +90,32 @@ describe("feature variant", () => {
         });
 
     });
+});
 
+describe("variant assignment with targeting context accessor", () => {
+    it("should assign variant based on targeting context accessor", async () => {
+        let userId = "";
+        let groups: string[] = [];
+        const testTargetingContextAccessor = {
+            getTargetingContext: () => {
+              return { userId: userId, groups: groups };
+            }
+        };
+        const provider = new ConfigurationObjectFeatureFlagProvider(featureFlagsConfigurationObject);
+        const featureManager = new FeatureManager(provider, {targetingContextAccessor: testTargetingContextAccessor});
+        userId = "Marsha";
+        let variant = await featureManager.getVariant(Features.VariantFeatureUser);
+        expect(variant).not.to.be.undefined;
+        expect(variant?.name).eq("Small");
+        userId = "Jeff";
+        variant = await featureManager.getVariant(Features.VariantFeatureUser);
+        expect(variant).to.be.undefined;
+        variant = await featureManager.getVariant(Features.VariantFeatureUser, {userId: "Marsha"}); // targeting id will be overridden
+        expect(variant).not.to.be.undefined;
+        expect(variant?.name).eq("Small");
+        groups = ["Group1"];
+        variant = await featureManager.getVariant(Features.VariantFeatureGroup);
+        expect(variant).not.to.be.undefined;
+        expect(variant?.name).eq("Small");
+    });
 });
