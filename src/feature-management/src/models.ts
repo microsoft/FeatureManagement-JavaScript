@@ -1,8 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { ITargetingContext } from "./common/targetingContext";
-import { Variant } from "./variant/Variant";
+import { ITargetingContext } from "./common/targetingContext.js";
+import { FeatureFlag } from "./schema/model.js";
+import { Variant } from "./variant/variant.js";
 
 export interface IFeatureManager {
     /**
@@ -23,4 +24,17 @@ export interface IFeatureManager {
      * @param context a targeting context object used to evaluate which variant the user will be assigned.
      */
     getVariant(featureName: string, context: ITargetingContext): Promise<Variant | undefined>;
+}
+
+export interface IFeatureFlagProvider {
+    /**
+     * Get all feature flags.
+     */
+    getFeatureFlags(): Promise<FeatureFlag[]>;
+
+    /**
+     * Get a feature flag by name.
+     * @param featureName The name of the feature flag.
+     */
+    getFeatureFlag(featureName: string): Promise<FeatureFlag | undefined>;
 }

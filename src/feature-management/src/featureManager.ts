@@ -1,13 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { TimeWindowFilter } from "./filter/TimeWindowFilter.js";
-import { IFeatureFilter } from "./filter/FeatureFilter.js";
+import { TimeWindowFilter } from "./filter/timeWindowFilter.js";
+import { IFeatureFilter } from "./filter/featureFilter.js";
 import { FeatureFlag, RequirementType, VariantDefinition } from "./schema/model.js";
-import { IFeatureFlagProvider } from "./featureProvider.js";
-import { TargetingFilter } from "./filter/TargetingFilter.js";
-import { Variant } from "./variant/Variant.js";
-import { IFeatureManager } from "./IFeatureManager.js";
+import { IFeatureFlagProvider, IFeatureManager } from "./models.js";
+import { TargetingFilter } from "./filter/targetingFilter.js";
+import { Variant } from "./variant/variant.js";
 import { ITargetingContext, ITargetingContextAccessor } from "./common/targetingContext.js";
 import { isTargetedGroup, isTargetedPercentile, isTargetedUser } from "./common/targetingEvaluator.js";
 

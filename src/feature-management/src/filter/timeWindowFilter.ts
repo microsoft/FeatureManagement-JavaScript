@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { IFeatureFilter } from "./FeatureFilter.js";
+import { IFeatureFilter } from "./featureFilter.js";
 
 // [Start, End)
 type TimeWindowParameters = {
