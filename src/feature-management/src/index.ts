@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 export { FeatureManager, FeatureManagerOptions, EvaluationResult, VariantAssignmentReason } from "./featureManager.js";
-export { IFeatureFlagProvider, IFeatureManager } from "./models.js";
+export { IFeatureFlagProvider, IFeatureManager } from "./model.js";
 export { ConfigurationMapFeatureFlagProvider, ConfigurationObjectFeatureFlagProvider } from "./featureProvider.js";
 export { createFeatureEvaluationEventProperties } from "./telemetry/featureEvaluationEvent.js";
 export { IFeatureFilter } from "./filter/featureFilter.js";
