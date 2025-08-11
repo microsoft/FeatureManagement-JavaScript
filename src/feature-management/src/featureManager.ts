@@ -4,7 +4,7 @@
 import { TimeWindowFilter } from "./filter/timeWindowFilter.js";
 import { IFeatureFilter } from "./filter/featureFilter.js";
 import { FeatureFlag, RequirementType, VariantDefinition } from "./schema/model.js";
-import { IFeatureFlagProvider, IFeatureManager } from "./models.js";
+import { IFeatureFlagProvider, IFeatureManager } from "./model.js";
 import { TargetingFilter } from "./filter/targetingFilter.js";
 import { Variant } from "./variant/variant.js";
 import { ITargetingContext, ITargetingContextAccessor } from "./common/targetingContext.js";
