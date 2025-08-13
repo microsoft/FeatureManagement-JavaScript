@@ -415,3 +415,7 @@ examples/**/**/package-lock.json
 test-results
 
 **/public
+
+# application insights package
+src/feature-management-applicationinsights-browser/package-lock.json
+src/feature-management-applicationinsights-node/package-lock.json
