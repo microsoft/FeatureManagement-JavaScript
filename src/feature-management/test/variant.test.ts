@@ -3,7 +3,7 @@
 
 import * as chai from "chai";
 import * as chaiAsPromised from "chai-as-promised";
-import { FeatureManager, ConfigurationObjectFeatureFlagProvider } from "../";
+import { FeatureManager, ConfigurationObjectFeatureFlagProvider } from "../src/index.js";
 import { Features, featureFlagsConfigurationObject } from "./sampleVariantFeatureFlags.js";
 chai.use(chaiAsPromised);
 const expect = chai.expect;
