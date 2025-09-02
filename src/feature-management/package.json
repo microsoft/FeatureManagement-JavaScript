@@ -16,12 +16,12 @@
     "build": "npm run clean && rollup --config && npm run build-test",
     "build-test": "npm run build-test-esm && npm run build-test-cjs",
     "build-test-esm": "tsc -p ./tsconfig.test.esm.json",
-    "build-test-cjs": "tsc -p ./tsconfig.test.cjs.json && cpy cjs-package.json out/cjs --rename=package.json",
+    "build-test-cjs": "tsc -p ./tsconfig.test.cjs.json && cpy cjs-package.json out/commonjs --rename=package.json",
     "clean": "rimraf dist out types",
     "dev": "rollup --config --watch",
     "lint": "eslint src/ test/ --ignore-pattern test/browser/testcases.js",
     "fix-lint": "eslint src/ test/ --fix --ignore-pattern test/browser/testcases.js",
-    "test": "mocha out/esm/test/*.test.js out/cjs/test/*.test.js --parallel",
+    "test": "mocha out/esm/test/*.test.js out/commonjs/test/*.test.js --parallel",
     "test-browser": "npx playwright install chromium && npx playwright test"
   },
   "repository": {
