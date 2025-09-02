@@ -14,12 +14,14 @@
   ],
   "scripts": {
     "build": "npm run clean && rollup --config && npm run build-test",
-    "build-test": "tsc -p ./tsconfig.test.json",
+    "build-test": "npm run build-test-esm && npm run build-test-cjs",
+    "build-test-esm": "tsc -p ./tsconfig.test.esm.json",
+    "build-test-cjs": "tsc -p ./tsconfig.test.cjs.json && echo {\"type\":\"commonjs\"} > out/cjs/package.json",
     "clean": "rimraf dist out types",
     "dev": "rollup --config --watch",
     "lint": "eslint src/ test/ --ignore-pattern test/browser/testcases.js",
     "fix-lint": "eslint src/ test/ --fix --ignore-pattern test/browser/testcases.js",
-    "test": "mocha out/test/*.test.{js,cjs,mjs} --parallel",
+    "test": "mocha out/esm/test/*.test.js out/cjs/test/*.test.js --parallel",
     "test-browser": "npx playwright install chromium && npx playwright test"
   },
   "repository": {
@@ -43,8 +45,8 @@
     "@typescript-eslint/eslint-plugin": "^8.41.0",
     "@typescript-eslint/parser": "^8.41.0",
     "@playwright/test": "^1.55.0",
-    "chai": "^6.0.1",
-    "chai-as-promised": "^8.0.2",
+    "chai": "^4.5.0",
+    "chai-as-promised": "^7.1.2",
     "eslint": "^9.34.0",
     "mocha": "^11.7.1",
     "rimraf": "^6.0.1",
