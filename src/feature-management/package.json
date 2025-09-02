@@ -16,7 +16,7 @@
     "build": "npm run clean && rollup --config && npm run build-test",
     "build-test": "npm run build-test-esm && npm run build-test-cjs",
     "build-test-esm": "tsc -p ./tsconfig.test.esm.json",
-    "build-test-cjs": "tsc -p ./tsconfig.test.cjs.json && echo {\"type\":\"commonjs\"} > out/cjs/package.json",
+    "build-test-cjs": "tsc -p ./tsconfig.test.cjs.json && cpy cjs-package.json out/cjs --rename=package.json",
     "clean": "rimraf dist out types",
     "dev": "rollup --config --watch",
     "lint": "eslint src/ test/ --ignore-pattern test/browser/testcases.js",
@@ -37,6 +37,7 @@
   },
   "homepage": "https://github.com/microsoft/FeatureManagement-JavaScript#readme",
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
     "@rollup/plugin-typescript": "^11.1.6",
     "@types/chai": "^5.2.2",
     "@types/chai-as-promised": "8.0.2",
@@ -44,9 +45,9 @@
     "@types/node": "^22.18.0",
     "@typescript-eslint/eslint-plugin": "^8.41.0",
     "@typescript-eslint/parser": "^8.41.0",
-    "@playwright/test": "^1.55.0",
     "chai": "^4.5.0",
     "chai-as-promised": "^7.1.2",
+    "cpy-cli": "^6.0.0",
     "eslint": "^9.34.0",
     "mocha": "^11.7.1",
     "rimraf": "^6.0.1",
@@ -55,7 +56,5 @@
     "sinon": "^21.0.0",
     "tslib": "^2.8.1",
     "typescript": "^5.9.2"
-  },
-  "dependencies": {
   }
 }
