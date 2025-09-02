@@ -7,7 +7,6 @@
             "ES2022"
         ],
         "skipDefaultLibCheck": true,
-        "module": "ESNext",
         "moduleResolution": "Node",
         "target": "ES2022",
         "strictNullChecks": true,

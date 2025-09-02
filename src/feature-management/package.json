@@ -24,7 +24,7 @@
   "scripts": {
     "build": "npm run clean && rollup --config && npm run build-test",
     "build-test": "npm run build-test-esm && npm run build-test-cjs",
-    "build-test-esm": "tsc -p ./tsconfig.test.esm.json",
+    "build-test-esm": "tsc -p ./tsconfig.test.esm.json && cpy esm-package.json out/esm --rename=package.json",
     "build-test-cjs": "tsc -p ./tsconfig.test.cjs.json && cpy cjs-package.json out/commonjs --rename=package.json",
     "clean": "rimraf dist out types",
     "dev": "rollup --config --watch",
