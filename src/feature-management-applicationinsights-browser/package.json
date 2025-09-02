@@ -3,7 +3,6 @@
   "version": "2.2.0",
   "description": "Feature Management Application Insights Plugin for Browser provides a solution for sending feature flag evaluation events produced by the Feature Management library.",
   "main": "./dist/esm/index.js",
-  "module": "./dist/esm/index.js",
   "type": "module",
   "types": "types/index.d.ts",
   "files": [

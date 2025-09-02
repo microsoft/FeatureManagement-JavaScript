@@ -2,16 +2,25 @@
   "name": "@microsoft/feature-management-applicationinsights-node",
   "version": "2.2.0",
   "description": "Feature Management Application Insights Plugin for Node.js provides a solution for sending feature flag evaluation events produced by the Feature Management library.",
-  "main": "./dist/commonjs/index.js",
-  "module": "./dist/esm/index.js",
-  "type": "module",
-  "types": "types/index.d.ts",
   "files": [
     "dist/",
     "types/",
     "LICENSE",
     "README.md"
   ],
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./types/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./types/index.d.ts",
+        "default": "./dist/commonjs/index.js"
+      }
+    }
+  },
   "scripts": {
     "build": "npm run link && npm run clean && rollup --config",
     "clean": "rimraf dist types",
