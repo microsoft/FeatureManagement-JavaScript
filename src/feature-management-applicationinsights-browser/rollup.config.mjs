@@ -23,8 +23,8 @@ export default [
             "ESNext"
           ],
           "skipDefaultLibCheck": true,
-          "module": "ESNext",
-          "moduleResolution": "Node",
+          "module": "NodeNext",
+          "moduleResolution": "NodeNext",
           "target": "ES2022",
           "strictNullChecks": true,
           "strictFunctionTypes": true,
@@ -35,6 +35,7 @@ export default [
     ],
   },
   {
+    external: ["@microsoft/feature-management"],
     input: "src/index.ts",
     output: [{ file: "types/index.d.ts", format: "esm" }],
     plugins: [dts()],
