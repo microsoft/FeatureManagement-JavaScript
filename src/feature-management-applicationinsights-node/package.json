@@ -2,15 +2,25 @@
   "name": "@microsoft/feature-management-applicationinsights-node",
   "version": "2.2.0",
   "description": "Feature Management Application Insights Plugin for Node.js provides a solution for sending feature flag evaluation events produced by the Feature Management library.",
-  "main": "./dist/commonjs/index.js",
-  "module": "./dist/esm/index.js",
-  "types": "types/index.d.ts",
   "files": [
     "dist/",
     "types/",
     "LICENSE",
     "README.md"
   ],
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./types/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./types/index.d.ts",
+        "default": "./dist/commonjs/index.js"
+      }
+    }
+  },
   "scripts": {
     "build": "npm run link && npm run clean && rollup --config",
     "clean": "rimraf dist types",
@@ -32,16 +42,16 @@
   },
   "homepage": "https://github.com/microsoft/FeatureManagement-JavaScript#readme",
   "devDependencies": {
-    "@rollup/plugin-typescript": "^11.1.5",
-    "@types/node": "^20.10.7",
-    "@typescript-eslint/eslint-plugin": "^6.18.1",
-    "@typescript-eslint/parser": "^6.18.1",
-    "eslint": "^8.56.0",
-    "rimraf": "^5.0.5",
-    "rollup": "^4.9.4",
-    "rollup-plugin-dts": "^6.1.0",
-    "tslib": "^2.6.2",
-    "typescript": "^5.3.3"
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/node": "^22.18.0",
+    "@typescript-eslint/eslint-plugin": "^8.41.0",
+    "@typescript-eslint/parser": "^8.41.0",
+    "eslint": "^9.34.0",
+    "rimraf": "^6.0.1",
+    "rollup": "^4.50.0",
+    "rollup-plugin-dts": "^6.2.3",
+    "tslib": "^2.8.1",
+    "typescript": "^5.9.2"
   },
   "dependencies": {
     "applicationinsights": "^2.9.6",

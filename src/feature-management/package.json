@@ -2,23 +2,35 @@
   "name": "@microsoft/feature-management",
   "version": "2.2.0",
   "description": "Feature Management is a library for enabling/disabling features at runtime. Developers can use feature flags in simple use cases like conditional statement to more advanced scenarios like conditionally adding routes.",
-  "main": "./dist/commonjs/index.js",
-  "module": "./dist/esm/index.js",
-  "types": "types/index.d.ts",
   "files": [
     "dist/",
     "types/",
     "LICENSE",
     "README.md"
   ],
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./types/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./types/index.d.ts",
+        "default": "./dist/commonjs/index.js"
+      }
+    }
+  },
   "scripts": {
     "build": "npm run clean && rollup --config && npm run build-test",
-    "build-test": "tsc -p ./tsconfig.test.json",
+    "build-test": "npm run build-test-esm && npm run build-test-cjs",
+    "build-test-esm": "tsc -p ./tsconfig.test.esm.json && cpy esm-package.json out/esm --rename=package.json",
+    "build-test-cjs": "tsc -p ./tsconfig.test.cjs.json && cpy cjs-package.json out/commonjs --rename=package.json",
     "clean": "rimraf dist out types",
     "dev": "rollup --config --watch",
     "lint": "eslint src/ test/ --ignore-pattern test/browser/testcases.js",
     "fix-lint": "eslint src/ test/ --fix --ignore-pattern test/browser/testcases.js",
-    "test": "mocha out/test/*.test.{js,cjs,mjs} --parallel",
+    "test": "mocha out/esm/test/*.test.js out/commonjs/test/*.test.js --parallel",
     "test-browser": "npx playwright install chromium && npx playwright test"
   },
   "repository": {
@@ -34,23 +46,24 @@
   },
   "homepage": "https://github.com/microsoft/FeatureManagement-JavaScript#readme",
   "devDependencies": {
-    "@rollup/plugin-typescript": "^11.1.5",
-    "@types/mocha": "^10.0.6",
-    "@types/node": "^20.10.7",
-    "@typescript-eslint/eslint-plugin": "^6.18.1",
-    "@typescript-eslint/parser": "^6.18.1",
-    "@playwright/test": "^1.46.1",
-    "chai": "^4.4.0",
-    "chai-as-promised": "^7.1.1",
-    "eslint": "^8.56.0",
-    "mocha": "^10.2.0",
-    "rimraf": "^5.0.5",
-    "rollup": "^4.22.4",
-    "rollup-plugin-dts": "^6.1.0",
-    "sinon": "^18.0.0",
-    "tslib": "^2.6.2",
-    "typescript": "^5.3.3"
-  },
-  "dependencies": {
+    "@playwright/test": "^1.55.0",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/chai": "^5.2.2",
+    "@types/chai-as-promised": "8.0.2",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.18.0",
+    "@typescript-eslint/eslint-plugin": "^8.41.0",
+    "@typescript-eslint/parser": "^8.41.0",
+    "chai": "^4.5.0",
+    "chai-as-promised": "^7.1.2",
+    "cpy-cli": "^6.0.0",
+    "eslint": "^9.34.0",
+    "mocha": "^11.7.1",
+    "rimraf": "^6.0.1",
+    "rollup": "^4.50.0",
+    "rollup-plugin-dts": "^6.2.3",
+    "sinon": "^21.0.0",
+    "tslib": "^2.8.1",
+    "typescript": "^5.9.2"
   }
 }

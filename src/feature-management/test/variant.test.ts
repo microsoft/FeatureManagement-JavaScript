@@ -1,8 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import * as chai from "chai";
-import * as chaiAsPromised from "chai-as-promised";
+import chaiAsPromised from "chai-as-promised";
 import { FeatureManager, ConfigurationObjectFeatureFlagProvider } from "../src/index.js";
 import { Features, featureFlagsConfigurationObject } from "./sampleVariantFeatureFlags.js";
 chai.use(chaiAsPromised);
@@ -119,3 +120,4 @@ describe("variant assignment with targeting context accessor", () => {
         expect(variant?.name).eq("Small");
     });
 });
+/* eslint-enable @typescript-eslint/no-unused-expressions */
