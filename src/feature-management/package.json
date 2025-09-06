@@ -31,7 +31,7 @@
     "lint": "eslint src/ test/ --ignore-pattern test/browser/testcases.js",
     "fix-lint": "eslint src/ test/ --fix --ignore-pattern test/browser/testcases.js",
     "test": "mocha out/esm/test/*.test.js out/commonjs/test/*.test.js --parallel",
-    "test-browser": "npx playwright install chromium && npx playwright test"
+    "test-browser": "npx playwright install chromium && vitest --config vitest.browser.config.ts run"
   },
   "repository": {
     "type": "git",
@@ -46,7 +46,6 @@
   },
   "homepage": "https://github.com/microsoft/FeatureManagement-JavaScript#readme",
   "devDependencies": {
-    "@playwright/test": "^1.55.0",
     "@rollup/plugin-typescript": "^11.1.6",
     "@types/chai": "^5.2.2",
     "@types/chai-as-promised": "8.0.2",
@@ -64,6 +63,9 @@
     "rollup-plugin-dts": "^6.2.3",
     "sinon": "^21.0.0",
     "tslib": "^2.8.1",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4",
+    "@vitest/browser": "^3.2.4",
+    "playwright": "^1.55.0"
   }
 }
