@@ -4,16 +4,15 @@
   "description": "Feature Management Application Insights Plugin for Browser provides a solution for sending feature flag evaluation events produced by the Feature Management library.",
   "main": "./dist/esm/index.js",
   "type": "module",
-  "types": "types/index.d.ts",
+  "types": "./dist/types/index.d.ts",
   "files": [
     "dist/",
-    "types/",
     "LICENSE",
     "README.md"
   ],
   "scripts": {
     "build": "npm run link && npm run clean && rollup --config",
-    "clean": "rimraf dist types",
+    "clean": "rimraf dist",
     "link": "npm link ../feature-management",
     "dev": "rollup --config --watch",
     "lint": "eslint src/",

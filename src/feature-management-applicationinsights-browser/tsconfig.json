@@ -1,21 +1,26 @@
 {
     "compilerOptions": {
+        // Include ES2022 (modern JS), ESNext (future features), DOM and web worker APIs for browser support.
         "lib": [
             "DOM",
             "WebWorker",
             "ESNext",
             "ES2022"
         ],
-        "skipDefaultLibCheck": true,
-        "module": "ESNext",
-        "moduleResolution": "Node",
+        // Generate modern JavaScript syntax compatible with modern browsers.
         "target": "ES2022",
+
+        // Use Node-style resolution to locate imports
+        "moduleResolution": "Node",
+
+        // Ensure strict type-checking
         "strictNullChecks": true,
         "strictFunctionTypes": true,
+        "skipDefaultLibCheck": true,
+
+        // Generate source maps and inline original TypeScript sources for debugging.
         "sourceMap": true,
         "inlineSources": true,
-        "allowSyntheticDefaultImports": true,
-        "esModuleInterop": true
     },
     "exclude": [
         "node_modules",

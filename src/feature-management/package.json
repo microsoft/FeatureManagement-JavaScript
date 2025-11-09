@@ -4,7 +4,6 @@
   "description": "Feature Management is a library for enabling/disabling features at runtime. Developers can use feature flags in simple use cases like conditional statement to more advanced scenarios like conditionally adding routes.",
   "files": [
     "dist/",
-    "types/",
     "LICENSE",
     "README.md"
   ],
@@ -12,11 +11,11 @@
     "./package.json": "./package.json",
     ".": {
       "import": {
-        "types": "./types/index.d.ts",
+        "types": "./dist/types/index.d.ts",
         "default": "./dist/esm/index.js"
       },
       "require": {
-        "types": "./types/index.d.ts",
+        "types": "./dist/types/index.d.ts",
         "default": "./dist/commonjs/index.js"
       }
     }
@@ -26,7 +25,7 @@
     "build-test": "npm run build-test-esm && npm run build-test-cjs",
     "build-test-esm": "tsc -p ./tsconfig.test.esm.json && cpy esm-package.json out/esm --rename=package.json",
     "build-test-cjs": "tsc -p ./tsconfig.test.cjs.json && cpy cjs-package.json out/commonjs --rename=package.json",
-    "clean": "rimraf dist out types",
+    "clean": "rimraf dist out",
     "dev": "rollup --config --watch",
     "lint": "eslint src/ test/ --ignore-pattern test/browser/testcases.js",
     "fix-lint": "eslint src/ test/ --fix --ignore-pattern test/browser/testcases.js",
