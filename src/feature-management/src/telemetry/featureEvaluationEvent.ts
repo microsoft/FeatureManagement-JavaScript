@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { EvaluationResult, VariantAssignmentReason } from "../featureManager";
+import { EvaluationResult, VariantAssignmentReason } from "../featureManager.js";
 import { EVALUATION_EVENT_VERSION } from "../version.js";
 
 const VERSION = "Version";

@@ -1,9 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import * as chai from "chai";
-import * as chaiAsPromised from "chai-as-promised";
-chai.use(chaiAsPromised);
 const expect = chai.expect;
 
 import {
@@ -20,7 +19,7 @@ import {
     START_NOT_MATCHED_ERROR_MESSAGE,
     TIME_WINDOW_DURATION_OUT_OF_RANGE_ERROR_MESSAGE } from "../src/filter/recurrence/validator.js";
 import { VALUE_OUT_OF_RANGE_ERROR_MESSAGE, UNRECOGNIZABLE_VALUE_ERROR_MESSAGE, REQUIRED_PARAMETER_MISSING_ERROR_MESSAGE, buildInvalidParameterErrorMessage } from "../src/filter/utils.js";
-import { DayOfWeek, RecurrencePatternType, RecurrenceRangeType } from "../src/filter/recurrence/model";
+import { DayOfWeek, RecurrencePatternType, RecurrenceRangeType } from "../src/filter/recurrence/model.js";
 import { matchRecurrence } from "../src/filter/recurrence/evaluator.js";
 
 describe("recurrence validator", () => {
@@ -605,3 +604,4 @@ describe("recurrence evaluator", () => {
         expect(matchRecurrence(new Date("2023-09-10T15:59:59+00:00"), spec19)).to.be.false;
     });
 });
+/* eslint-enable @typescript-eslint/no-unused-expressions */
