@@ -248,4 +248,85 @@ describe("feature manager", () => {
     });
 
     it("should override default filters with custom filters");
+
+    it("should skip missing filter and continue evaluating when requirement type is Any", () => {
+        const jsonObject = {
+            "feature_management": {
+                "feature_flags": [
+                    {
+                        "id": "MissingFilterAny",
+                        "enabled": true,
+                        "conditions": {
+                            "requirement_type": "Any",
+                            "client_filters": [
+                                {
+                                    "name": "UnregisteredFilter",
+                                    "parameters": {}
+                                },
+                                {
+                                    "name": "Microsoft.Targeting",
+                                    "parameters": {
+                                        "Audience": {
+                                            "Users": [ "Alice" ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "id": "MissingFilterAll",
+                        "enabled": true,
+                        "conditions": {
+                            "requirement_type": "All",
+                            "client_filters": [
+                                {
+                                    "name": "UnregisteredFilter",
+                                    "parameters": {}
+                                },
+                                {
+                                    "name": "Microsoft.Targeting",
+                                    "parameters": {
+                                        "Audience": {
+                                            "Users": [ "Alice" ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "id": "AllMissingFiltersAny",
+                        "enabled": true,
+                        "conditions": {
+                            "requirement_type": "Any",
+                            "client_filters": [
+                                {
+                                    "name": "UnregisteredFilter1",
+                                    "parameters": {}
+                                },
+                                {
+                                    "name": "UnregisteredFilter2",
+                                    "parameters": {}
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        };
+
+        const provider = new ConfigurationObjectFeatureFlagProvider(jsonObject);
+        const featureManager = new FeatureManager(provider);
+        return Promise.all([
+            // Any: missing filter is skipped, targeting filter matches Alice => enabled
+            expect(featureManager.isEnabled("MissingFilterAny", {userId: "Alice"})).eventually.eq(true),
+            // Any: missing filter is skipped, targeting filter does not match Bob => disabled
+            expect(featureManager.isEnabled("MissingFilterAny", {userId: "Bob"})).eventually.eq(false),
+            // All: missing filter means cannot satisfy all conditions => disabled
+            expect(featureManager.isEnabled("MissingFilterAll", {userId: "Alice"})).eventually.eq(false),
+            // Any: all filters are missing => disabled (no filter can match)
+            expect(featureManager.isEnabled("AllMissingFiltersAny", {userId: "Alice"})).eventually.eq(false)
+        ]);
+    });
 });
