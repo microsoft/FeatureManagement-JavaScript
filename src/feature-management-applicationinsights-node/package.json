@@ -54,7 +54,7 @@
   },
   "dependencies": {
     "applicationinsights": "^2.9.6",
-    "@microsoft/feature-management": "2.3.0"
+    "@microsoft/feature-management": "2.3.1"
   }
 }
   
