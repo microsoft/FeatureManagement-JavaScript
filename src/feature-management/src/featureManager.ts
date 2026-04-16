@@ -103,7 +103,12 @@ export class FeatureManager implements IFeatureManager {
             const contextWithFeatureName = { featureName: featureFlag.id, parameters: clientFilter.parameters };
             if (matchedFeatureFilter === undefined) {
                 console.warn(`Feature filter ${clientFilter.name} is not found.`);
-                return false;
+                if (requirementType === "All") {
+                    // A missing filter means we cannot satisfy all conditions.
+                    return false;
+                }
+                // For "Any", skip the missing filter and continue evaluating.
+                continue;
             }
             if (await matchedFeatureFilter.evaluate(contextWithFeatureName, appContext) === shortCircuitEvaluationResult) {
                 return shortCircuitEvaluationResult;
