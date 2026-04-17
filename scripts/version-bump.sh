@@ -161,7 +161,7 @@ git checkout -b "$BRANCH_NAME" "origin/$TARGET_BRANCH"
 
 # ── Read current version ────────────────────────────────────────────────────
 
-CURRENT_VERSION=$(grep -oP 'VERSION = "\K[^"]+' "$FM_VERSION_TS")
+CURRENT_VERSION=$(grep -oP '^export const VERSION = "\K[^"]+' "$FM_VERSION_TS")
 info "Current version : $CURRENT_VERSION"
 
 if [[ "$CURRENT_VERSION" == "$NEW_VERSION" ]]; then
