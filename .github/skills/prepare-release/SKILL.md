@@ -54,24 +54,35 @@ Ask the user whether this is a **stable** or **preview** release, and what the *
 
 #### Step 1: Version Bump PR
 
-Create a version bump PR targeting `main`:
+Create a version bump PR targeting `main` by running the version bump script:
 
-1. Fetch the latest `main` branch.
-2. Create a new branch from `main` named `<username>/version-<new_version>`
-3. Read the current version from `src/feature-management/src/version.ts`.
-4. Update the version in all 7 files (see [Version Files](#version-files) section above) by directly editing each file
-5. Commit all changes with message: `Version bump <new_version>`.
-6. Push the branch and create a PR targeting `main` with title: `Version bump <new_version>`.
+```bash
+./scripts/version-bump.sh <new_version>
+```
+
+For example: `./scripts/version-bump.sh 2.5.0`
+
+The script will automatically:
+1. Read the current version from `src/feature-management/src/version.ts`.
+2. Create a new branch from `main` named `<username>/version-<new_version>`.
+3. Update the version in all 7 files (see [Version Files](#version-files) section above).
+4. Commit, push, and create a PR to `main` with title: `Version bump <new_version>`.
+
+When the script prompts `Proceed? [y/N]`, confirm by entering `y`.
 
 **Sample PR**: https://github.com/microsoft/FeatureManagement-JavaScript/pull/120
 
 #### Step 2: Merge Main to Release Branch
 
-After the version bump PR is merged, create a PR to merge `main` into the release branch:
+After the version bump PR is merged, create a PR to merge `main` into the release branch by running:
 
-1. Fetch the latest `main` branch.
-2. Create a new branch from `main` named `<username>/merge-main-to-release`.
-3. Push the branch and create a PR targeting `release/v{major}` (e.g., `release/v2`) with title: `Merge main to release/v{major}`.
+```bash
+./scripts/merge-to-release.sh <new_version>
+```
+
+For example: `./scripts/merge-to-release.sh 2.5.0`
+
+When the script prompts `Proceed? [y/N]`, confirm by entering `y`.
 
 > **Important**: Use "Merge commit" (not squash) when merging this PR to preserve commit history.
 
@@ -81,22 +92,27 @@ After the version bump PR is merged, create a PR to merge `main` into the releas
 
 #### Step 1: Version Bump PR
 
-Create a version bump PR targeting `preview`:
+Create a version bump PR targeting `preview` by running the version bump script with the `--preview` flag:
 
-1. Fetch the latest `preview` branch.
-2. Create a new branch from `preview` named `<username>/version-<new_version>`
-3. Read the current version from `src/feature-management/src/version.ts`.
-4. Update the version in all 7 files (see [Version Files](#version-files) section above) by directly editing each file
-5. Commit all changes with message: `Version bump <new_version>`.
-6. Push the branch and create a PR targeting `preview` with title: `Version bump <new_version>`.
+```bash
+./scripts/version-bump.sh <new_version> --preview
+```
+
+For example: `./scripts/version-bump.sh 2.5.0-preview.1 --preview`
+
+When the script prompts `Proceed? [y/N]`, confirm by entering `y`.
 
 #### Step 2: Merge Preview to Release Branch
 
-After the version bump PR is merged, create a PR to merge `preview` into the release branch:
+After the version bump PR is merged, create a PR to merge `preview` into the release branch by running:
 
-1. Fetch the latest `preview` branch.
-2. Create a new branch from `preview` named `<username>/merge-preview-to-release`.
-3. Push the branch and create a PR targeting `release/v{major}` (e.g., `release/v2`) with title: `Merge preview to release/v{major}`.
+```bash
+./scripts/merge-to-release.sh <new_version> --preview
+```
+
+For example: `./scripts/merge-to-release.sh 2.5.0-preview.1 --preview`
+
+When the script prompts `Proceed? [y/N]`, confirm by entering `y`.
 
 > **Important**: Use "Merge commit" (not squash) when merging this PR to preserve commit history.
 
