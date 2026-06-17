@@ -53,7 +53,7 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "applicationinsights": "^2.9.6",
+    "applicationinsights": "^3.15.0",
     "@microsoft/feature-management": "2.3.1"
   }
 }
