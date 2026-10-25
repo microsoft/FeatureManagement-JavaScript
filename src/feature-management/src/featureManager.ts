@@ -6,6 +6,7 @@ import { IFeatureFilter } from "./filter/featureFilter.js";
 import { FeatureFlag, RequirementType, VariantDefinition } from "./schema/model.js";
 import { IFeatureFlagProvider, IFeatureManager } from "./model.js";
 import { TargetingFilter } from "./filter/targetingFilter.js";
+import { ParentFeatureFilter } from "./filter/parentFeatureFilter.js";
 import { Variant } from "./variant/variant.js";
 import { ITargetingContext, ITargetingContextAccessor } from "./common/targetingContext.js";
 import { isTargetedGroup, isTargetedPercentile, isTargetedUser } from "./common/targetingEvaluator.js";
@@ -21,7 +22,10 @@ export class FeatureManager implements IFeatureManager {
         this.#onFeatureEvaluated = options?.onFeatureEvaluated;
         this.#targetingContextAccessor = options?.targetingContextAccessor;
 
-        const builtinFilters = [new TimeWindowFilter(), new TargetingFilter(options?.targetingContextAccessor)];
+        const builtinFilters = [
+            new TimeWindowFilter(),
+            new TargetingFilter(options?.targetingContextAccessor),
+            new ParentFeatureFilter(this)];
         // If a custom filter shares a name with an existing filter, the custom filter overrides the existing one.
         for (const filter of [...builtinFilters, ...(options?.customFilters ?? [])]) {
             this.#featureFilters.set(filter.name, filter);
